@@ -1,0 +1,122 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+
+@import "tailwindcss";
+
+@layer utilities {
+  @media (min-width: 800px) {
+    .h-800px-50 {
+      height: 50px;
+    }
+    .my-800px-20 {
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+    .textAt-800px {
+      font-size: 20px;
+    }
+    .padding-at-800px {
+      padding-left: 40px;
+      padding-right: 40px;
+    }
+    .text-px {
+      font-size: 60px;
+    }
+    .width-60-800px {
+      width: 60%;
+    }
+    .width-80per-800px {
+      width: 80%;
+    }
+    .width-800px-50 {
+      width: 50%;
+    }
+    .marigin-top-800px {
+      margin-top: 0;
+    }
+    .padding-nav-800px {
+      padding-bottom: 0px;
+    }
+    .height-800px {
+      height: 75vh;
+    }
+    .min-800-h {
+      min-height: 80vh;
+    }
+    .min-w-800px-335 {
+      width: 335px;
+    }
+    .mbZero-800px {
+      margin-bottom: 0px;
+    }
+    .text-color-for-800px {
+      color: #fff;
+    }
+    .flex-800px {
+      display: flex;
+    }
+    .flex-with-items-center {
+      display: flex;
+      align-items: center;
+    }
+    .mb-nav-hidden-at-800px {
+      display: none;
+    }
+    .display-block-800px {
+      display: block;
+    }
+  }
+  @media (min-width: 1000px) {
+    .m1000px-block {
+      display: block;
+    }
+  }
+}
+
+* {
+  scroll-behavior: smooth;
+}
+body {
+  font-family: "Poppins", sans-serif;
+  background: #f6f6f5;
+  scroll-behavior: smooth;
+}
+input,
+select {
+  outline: none;
+}
+.batch_heart {
+  background: tomato;
+  width: 15px;
+  height: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 100%;
+  position: absolute;
+  right: -24%;
+  top: -9%;
+  cursor: pointer;
+}
+.greenColor {
+  color: #22c55e;
+  font-weight: 600;
+}
+
+.redColor {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+/* Chrome, Safari, Edge, Opera */
+/* input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+/* input[type="number"] {
+  /* -moz-appearance: textfield;
+} */
