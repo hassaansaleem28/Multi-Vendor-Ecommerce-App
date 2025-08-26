@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Header from "../components/Layouts/Header";
 import styles from "../styles/styles";
 import { productData } from "../static/data";
-import ProductCard from "../components/ProductCard";
+import ProductCard from "../components/UserComps/ProductCard";
 
 function BestSellingPage() {
   const [data, setData] = useState();

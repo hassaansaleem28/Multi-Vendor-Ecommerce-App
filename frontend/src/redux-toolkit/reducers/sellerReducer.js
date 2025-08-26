@@ -3,7 +3,7 @@ import { clearErrors } from "../actions/userActions";
 import { loadSeller } from "../actions/sellerActions";
 
 const initialState = {
-  isSeller: false,
+  isLoading: true,
 };
 
 export const sellerReducer = createReducer(initialState, builder => {

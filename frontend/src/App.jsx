@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { Bounce } from "react-toastify";
 import { useEffect } from "react";
 import { loadUser } from "./redux-toolkit/actions/userActions";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import HomePage from "./pages/HomePage";
 import ProductPage from "./pages/ProductPage";
 import BestSellingPage from "./pages/BestSellingPage";
@@ -15,28 +15,36 @@ import EventPage from "./pages/EventPage";
 import FaqPage from "./pages/FaqPage";
 import ProductDetailsPage from "./pages/ProductDetailsPage";
 import ProfilePage from "./pages/ProfilePage";
-import ProtectedRoute from "./ProtectedRoute";
 import CheckoutPage from "./pages/CheckoutPage";
 import ShopCreatePage from "./pages/ShopCreatePage";
 import SellerActivationPage from "./pages/SellerActivationPage";
 import ShopLoginPage from "./pages/ShopLoginPage";
 import { loadSeller } from "./redux-toolkit/actions/sellerActions";
-import SellerProtectedRoute from "./SellerProtectedRoute";
 import ShopHomePage from "./pages/ShopHomePage";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import SellerProtectedRoute from "./routes/SellerProtectedRoute";
+import ShopDashboardPage from "./pages/ShopDashboardPage";
+import ShopCreateProduct from "./components/SellerComps/ShopCreateProduct";
+import ShopAllProducts from "./components/SellerComps/ShopAllProducts";
+import ShopCreateEvent from "./components/SellerComps/ShopCreateEvent";
+import ShopAllEvents from "./components/SellerComps/ShopAllEvents";
+import ShopAllCoupons from "./components/SellerComps/ShopAllCoupons";
+import { getAllProducts } from "./redux-toolkit/actions/productActions";
+import ShopPreviewPage from "./components/SellerComps/ShopPreviewPage";
+import { getAllEvents } from "./redux-toolkit/actions/eventActions";
 
 function App() {
   const dispatch = useDispatch();
-  const { isAuthenticated } = useSelector(state => state.user);
-  const { isSeller, seller } = useSelector(state => state.seller);
 
   useEffect(
     function () {
       dispatch(loadUser());
       dispatch(loadSeller());
+      dispatch(getAllProducts());
+      dispatch(getAllEvents());
     },
     [dispatch]
   );
-  console.log(isSeller, seller);
   return (
     <BrowserRouter>
       <Routes>
@@ -45,7 +53,7 @@ function App() {
         <Route
           path="/profile"
           element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <ProtectedRoute>
               <ProfilePage />
             </ProtectedRoute>
           }
@@ -59,10 +67,59 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductPage />} />
         <Route path="/shop-create" element={<ShopCreatePage />} />
+        <Route path="/shop/preview/:id" element={<ShopPreviewPage />} />
+        <Route
+          path="/dashboard"
+          element={
+            <SellerProtectedRoute>
+              <ShopDashboardPage />
+            </SellerProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard-create-product"
+          element={
+            <SellerProtectedRoute>
+              <ShopCreateProduct />
+            </SellerProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard-products"
+          element={
+            <SellerProtectedRoute>
+              <ShopAllProducts />
+            </SellerProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard-coupons"
+          element={
+            <SellerProtectedRoute>
+              <ShopAllCoupons />
+            </SellerProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard-events"
+          element={
+            <SellerProtectedRoute>
+              <ShopAllEvents />
+            </SellerProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard-create-event"
+          element={
+            <SellerProtectedRoute>
+              <ShopCreateEvent />
+            </SellerProtectedRoute>
+          }
+        />
         <Route
           path="/shop/:id"
           element={
-            <SellerProtectedRoute isSeller={isSeller}>
+            <SellerProtectedRoute>
               <ShopHomePage />
             </SellerProtectedRoute>
           }

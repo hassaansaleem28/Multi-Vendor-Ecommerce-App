@@ -1,7 +1,7 @@
 import { useState } from "react";
-import Footer from "../components/Footer";
 import Header from "../components/Layouts/Header";
 import styles from "../styles/styles";
+import Footer from "../components/UserComps/Footer";
 
 function FaqPage() {
   return (

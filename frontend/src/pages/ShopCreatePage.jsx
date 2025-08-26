@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
-import ShopCreate from "../components/ShopCreate";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import ShopCreate from "../components/SellerComps/ShopCreate";
 
 function ShopCreatePage() {
   const { isSeller, seller } = useSelector(state => state.seller);

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import styles from "../../styles/styles";
 import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
 import { useState } from "react";
-import { categoriesData, productData } from "../../static/data";
+import { categoriesData } from "../../static/data";
 import {
   AiOutlineHeart,
   AiOutlineSearch,
@@ -13,9 +13,9 @@ import { BiMenuAltLeft } from "react-icons/bi";
 import Dropdown from "./Dropdown";
 import Navbar from "./Navbar";
 import { useSelector } from "react-redux";
-import Cart from "../Cart";
-import WishList from "../WishList";
+import WishList from "../UserComps/WishList";
 import { RxCross1 } from "react-icons/rx";
+import Cart from "../UserComps/Cart";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -28,12 +28,13 @@ function Header({ activeHeading }) {
   const [open, setOpen] = useState(false);
   const [openCart, setOpenCart] = useState(false);
   const [openWishList, setOpenWishList] = useState(false);
+  const { allProducts } = useSelector(state => state.product);
 
   function handleSearchChange(e) {
     const term = e.target.value;
     setSearchTerm(term);
 
-    const filteredProducts = productData.filter(product =>
+    const filteredProducts = allProducts.filter(product =>
       product.name.toLowerCase().includes(term.toLowerCase())
     );
     setSearchData(filteredProducts);
@@ -76,7 +77,7 @@ function Header({ activeHeading }) {
                     <Link to={`/product/${Product}`} key={i}>
                       <div className="w-full flex items-start py-3">
                         <img
-                          src={prod.image_Url}
+                          src={`${API_BASE_URL}/${prod.images[0]}`}
                           className="w-[40px] h-[40px] mr-[10px]"
                         />
                         <h1>{prod.name}</h1>

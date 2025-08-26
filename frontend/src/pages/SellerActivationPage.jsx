@@ -13,11 +13,10 @@ function SellerActivationPage() {
     if (url) {
       async function activateEmail() {
         try {
-          const res = await axios.post(
+          await axios.post(
             `${API_BASE_URL}/api/v2/seller/seller-account/activation`,
             { url }
           );
-          console.log(res);
         } catch (error) {
           console.error("Error activating email:", error);
           setError(true);

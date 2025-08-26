@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import Signup from "../components/Signup";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
+import Signup from "../components/UserComps/Signup";
 
 function SignupPage() {
   const { isAuthenticated } = useSelector(state => state.user);

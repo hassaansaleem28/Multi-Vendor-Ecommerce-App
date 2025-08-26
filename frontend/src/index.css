@@ -29,11 +29,23 @@
     .width-80per-800px {
       width: 80%;
     }
+    .width-800px-75per {
+      width: 72%;
+    }
     .width-800px-50 {
       width: 50%;
     }
+    .width-800px-40 {
+      width: 40%;
+    }
+    .width-800px-25 {
+      width: 25%;
+    }
     .marigin-top-800px {
       margin-top: 0;
+    }
+    .marigin-800px-unset {
+      margin-top: unset;
     }
     .padding-nav-800px {
       padding-bottom: 0px;
@@ -41,11 +53,20 @@
     .height-800px {
       height: 75vh;
     }
+    .height-800px-90 {
+      height: 90vh;
+    }
+    .position-800px {
+      position: sticky;
+    }
     .min-800-h {
       min-height: 80vh;
     }
     .min-w-800px-335 {
       width: 335px;
+    }
+    .width-at-800px {
+      width: 330px;
     }
     .mbZero-800px {
       margin-bottom: 0px;
@@ -65,6 +86,9 @@
     }
     .display-block-800px {
       display: block;
+    }
+    .overflow-scroll-800 {
+      overflow-y: scroll;
     }
   }
   @media (min-width: 1000px) {

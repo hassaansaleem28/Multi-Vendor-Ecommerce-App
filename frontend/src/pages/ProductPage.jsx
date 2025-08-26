@@ -2,25 +2,29 @@ import { useEffect, useState } from "react";
 import Header from "../components/Layouts/Header";
 import styles from "../styles/styles";
 import { useSearchParams } from "react-router-dom";
-import { productData } from "../static/data";
-import ProductCard from "../components/ProductCard";
+import ProductCard from "../components/UserComps/ProductCard";
+import { useSelector } from "react-redux";
 
 function ProductPage() {
   const [searchParams] = useSearchParams();
   const categoryData = searchParams.get("category");
-  const [data, setData] = useState();
+  const [dataa, setDataa] = useState([]);
+  const { allProducts } = useSelector(state => state.product);
 
-  useEffect(function () {
-    if (categoryData === null) {
-      const data =
-        productData && productData.sort((a, b) => a.total_sell - b.total_sell);
-      setData(data);
-    } else {
-      const data =
-        productData && productData.filter(i => i.category === categoryData);
-      setData(data);
-    }
-  }, []);
+  useEffect(
+    function () {
+      if (categoryData === null) {
+        const data =
+          allProducts && allProducts.sort((a, b) => a.sold_out - b.sold_out);
+        setDataa(data);
+      } else {
+        const data =
+          allProducts && allProducts.filter(i => i.category === categoryData);
+        setDataa(data);
+      }
+    },
+    [categoryData, allProducts]
+  );
   return (
     <div>
       <Header activeHeading={3} />
@@ -28,10 +32,10 @@ function ProductPage() {
       <br />
       <div className={`${styles.section}`}>
         <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[25px] lg:grid-cols-4 lg:gap-[25px] xl:grid-cols-5 xl:gap-[30px] mb-12">
-          {data &&
-            data.map((prod, i) => <ProductCard product={prod} key={i} />)}
+          {dataa &&
+            dataa.map((prod, i) => <ProductCard product={prod} key={i} />)}
         </div>
-        {data && data.length === 0 ? (
+        {dataa && dataa.length === 0 ? (
           <h1 className="text-center w-full pb-[110px] text-[20px]">
             No Products found!
           </h1>

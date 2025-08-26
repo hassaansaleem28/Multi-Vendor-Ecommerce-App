@@ -1,11 +1,11 @@
-import BestDeals from "../components/BestDeals";
-import Categories from "../components/Categories";
-import Events from "../components/Events";
-import FeaturedProducts from "../components/FeaturedProducts";
-import Footer from "../components/Footer";
-import Hero from "../components/Hero";
 import Header from "../components/Layouts/Header";
-import Sponsors from "../components/Sponsors";
+import BestDeals from "../components/UserComps/BestDeals";
+import Categories from "../components/UserComps/Categories";
+import Events from "../components/UserComps/Events";
+import FeaturedProducts from "../components/UserComps/FeaturedProducts";
+import Footer from "../components/UserComps/Footer";
+import Hero from "../components/UserComps/Hero";
+import Sponsors from "../components/UserComps/Sponsors";
 
 function HomePage() {
   return (

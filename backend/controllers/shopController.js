@@ -102,7 +102,7 @@ export async function loginSeller(req, res) {
     }
     const isPasswordMatched = await seller.comparePassword(password);
     if (!isPasswordMatched) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "Invalid credentials!" });
     }
     sendShopToken(seller, 201, res);
   } catch (error) {
@@ -124,5 +124,28 @@ export async function loadSeller(req, res) {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+export async function logoutSeller(req, res) {
+  try {
+    res.cookie("seller_token", null, {
+      expires: new Date(Date.now()),
+      httpOnly: true,
+    });
+    res.status(201).json({ success: true, message: "Logout Successful!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+export async function getShopInfo(req, res) {
+  try {
+    const shop = await Shop.findById(req.params.id);
+    res.status(201).json({ success: true, shop });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });
   }
 }

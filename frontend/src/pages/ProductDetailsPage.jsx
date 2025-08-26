@@ -1,20 +1,25 @@
 import { useParams } from "react-router-dom";
-import Footer from "../components/Footer";
 import Header from "../components/Layouts/Header";
-import ProductDetails from "../components/ProductDetails";
 import { useEffect, useState } from "react";
-import { productData } from "../static/data";
-import SuggestedProducts from "../components/SuggestedProducts";
+import SuggestedProducts from "../components/UserComps/SuggestedProducts";
+import Footer from "../components/UserComps/Footer";
+import ProductDetails from "../components/UserComps/ProductDetails";
+import { useDispatch, useSelector } from "react-redux";
 
 function ProductDetailsPage() {
   const { name } = useParams();
   const [data, setData] = useState(null);
   const productName = name.replace(/-/g, " ");
+  const { allProducts } = useSelector(state => state.product);
 
-  useEffect(function () {
-    const data = productData.find(prod => prod.name === productName);
-    setData(data);
-  }, []);
+  useEffect(
+    function () {
+      const data =
+        allProducts && allProducts?.find(prod => prod.name === productName);
+      setData(data);
+    },
+    [productName, allProducts]
+  );
 
   return (
     <div>

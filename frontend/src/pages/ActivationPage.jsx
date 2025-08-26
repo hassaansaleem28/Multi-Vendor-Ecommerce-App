@@ -13,11 +13,7 @@ function ActivationPage() {
     if (url) {
       async function activateEmail() {
         try {
-          const res = await axios.post(
-            `${API_BASE_URL}/api/v2/user/activation`,
-            { url }
-          );
-          console.log(res);
+          await axios.post(`${API_BASE_URL}/api/v2/user/activation`, { url });
         } catch (error) {
           console.error("Error activating email:", error);
           setError(true);

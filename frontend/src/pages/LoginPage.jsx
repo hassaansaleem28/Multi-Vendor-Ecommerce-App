@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import Login from "../components/Login";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import Login from "../components/UserComps/Login";
 
 function LoginPage() {
   const { isAuthenticated } = useSelector(state => state.user);

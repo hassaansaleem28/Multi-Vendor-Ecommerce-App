@@ -1,0 +1,76 @@
+import Shop from "../models/ShopModel.js";
+import Product from "../models/ProductModel.js";
+import fs from "fs";
+
+export async function createProduct(req, res) {
+  try {
+    const shopId = req.body.shopId;
+    const shop = await Shop.findById(shopId);
+    if (!shop) return res.status(400).json({ message: "ShopId is invalid!" });
+    else {
+      const files = req.files;
+      const imgUrls = files.map(file => `${file.filename}`);
+      const productData = req.body;
+      productData.images = imgUrls;
+      productData.shop = shop;
+
+      const product = await Product.create(productData);
+      res.status(201).json({ success: true, product });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+export async function getAllProductsShop(req, res) {
+  try {
+    const products = await Product.find({ shopId: req.params.id });
+    res.status(201).json({
+      success: true,
+      products,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+export async function deleteProduct(req, res) {
+  try {
+    const productId = req.params.id;
+    const productData = await Product.findById(productId);
+    productData.images.forEach(imgUrl => {
+      const filename = imgUrl;
+      const filePath = `uploads/${filename}`;
+      fs.unlink(filePath, error => {
+        if (error) {
+          console.log(error);
+        }
+      });
+    });
+    const product = await Product.findByIdAndDelete(productId);
+    if (!product)
+      return res
+        .status(500)
+        .json({ success: false, message: "Product not found with this id!" });
+
+    res.status(201).json({
+      success: true,
+      message: "Product Deleted Successfully!",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+export async function getAllProducts(req, res) {
+  try {
+    const products = await Product.find().sort({ createdAt: -1 });
+    res.status(201).json({ success: true, products });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });
+  }
+}
