@@ -1,17 +1,20 @@
 import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
-import { MdOutlineTrackChanges } from "react-icons/md";
 import { DataGrid } from "@mui/x-data-grid";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllOrdersUser } from "../../redux-toolkit/actions/orderActions";
+import { MdTrackChanges } from "react-icons/md";
 
 function TrackOrder() {
-  const orders = [
-    {
-      _id: "617461983471289jd92",
-      orderItems: [{ name: "Iphone 14 pro max" }],
-      totalPrice: 120,
-      orderStatus: "Processing",
-    },
-  ];
+  const { orders } = useSelector(state => state.orders);
+  const { user } = useSelector(state => state.user);
+  const dispatch = useDispatch();
+
+  useEffect(function () {
+    dispatch(getAllOrdersUser(user._id));
+  }, []);
+
   const columns = [
     {
       field: "id",
@@ -42,33 +45,32 @@ function TrackOrder() {
       flex: 0.8,
     },
     {
-      field: " ",
+      field: "actions",
       headerName: "",
       sortable: false,
-      type: "number",
-      minWidth: 130,
+      minWidth: 150,
       flex: 1,
       renderCell: params => (
-        <>
-          <Link to={`/order/${params.id}`}>
-            <Button>
-              <MdOutlineTrackChanges size={20} />
-            </Button>
-          </Link>
-        </>
+        <Link to={`/user/track-order/${params.id}`}>
+          <Button>
+            <MdTrackChanges size={20} />
+          </Button>
+        </Link>
       ),
     },
   ];
   const row = [];
+
   orders &&
     orders.forEach(item => {
       row.push({
         id: item._id,
-        itemsQty: item.orderItems.length,
-        total: "US$" + item.totalPrice,
-        status: item.orderStatus,
+        itemsQty: item?.cart?.length,
+        total: "US$" + item?.totalPrice,
+        status: item?.status,
       });
     });
+
   return (
     <div className="pl-8 pt-1 flex flex-col  min-h-[200px] max-h-[600px]">
       <DataGrid

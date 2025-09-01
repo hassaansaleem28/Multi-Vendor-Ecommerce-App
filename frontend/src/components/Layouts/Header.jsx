@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import styles from "../../styles/styles";
 import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { categoriesData } from "../../static/data";
 import {
   AiOutlineHeart,
@@ -21,6 +21,9 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function Header({ activeHeading }) {
   const { isAuthenticated, user } = useSelector(state => state.user);
+  const { isSeller } = useSelector(state => state.seller);
+  const { cart } = useSelector(state => state.cart);
+  const { wishlist } = useSelector(state => state.wishlist);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchData, setSearchData] = useState(null);
   const [dropdown, setDropdown] = useState(false);
@@ -39,10 +42,12 @@ function Header({ activeHeading }) {
     );
     setSearchData(filteredProducts);
   }
-  window.addEventListener("scroll", () => {
-    if (window.scrollY > 70) setActive(true);
-    else setActive(false);
-  });
+  useEffect(function () {
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 70) setActive(true);
+      else setActive(false);
+    });
+  }, []);
 
   return (
     <>
@@ -91,7 +96,8 @@ function Header({ activeHeading }) {
           <div className={`${styles.button} rounded-xl`}>
             <Link to="/shop-create">
               <h1 className="text-[#fff] flex font-bold items-center ">
-                Become Seller <IoIosArrowForward className="ml-1" />
+                {isSeller ? "Dashboard" : "Become Seller"}{" "}
+                <IoIosArrowForward className="ml-1" />
               </h1>
             </Link>
           </div>
@@ -143,7 +149,7 @@ function Header({ activeHeading }) {
               >
                 <AiOutlineHeart size={30} color="rgb(255 255 255 / 83%)" />
                 <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 top right p-0 m-0 text-white font-mono text-[12px] leading-tight text-center">
-                  0
+                  {wishlist && wishlist.length}
                 </span>
               </div>
             </div>
@@ -157,7 +163,7 @@ function Header({ activeHeading }) {
                   color="rgb(255 255 255 / 83%)"
                 />
                 <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 top right p-0 m-0 text-white font-mono text-[12px] leading-tight text-center">
-                  1
+                  {cart && cart.length}
                 </span>
               </div>
             </div>
@@ -166,7 +172,7 @@ function Header({ activeHeading }) {
                 {isAuthenticated ? (
                   <Link to="/profile">
                     <img
-                      src={`${API_BASE_URL}/${user.avatar.url}`}
+                      src={`${API_BASE_URL}/${user?.avatar?.url}`}
                       alt="Image "
                       className="w-[35px] rounded-full h-[35px]"
                     />
@@ -214,7 +220,7 @@ function Header({ activeHeading }) {
             <div className="relative mr-[20px]">
               <AiOutlineShoppingCart size={30} />
               <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 top right p-0 m-0 text-white font-mono text-[12px] leading-tight text-center">
-                1
+                {cart && cart.length}
               </span>
             </div>
           </div>
@@ -252,10 +258,8 @@ function Header({ activeHeading }) {
                 {searchData && (
                   <div className="absolute bg-[#fff] z-10 shadow w-full left-0 p-3">
                     {searchData.map((prod, i) => {
-                      const d = prod.name;
-                      const Product = d.replace(/\s+/g, "-");
                       return (
-                        <Link to={`/product/${Product}`} key={i}>
+                        <Link to={`/product/${prod._id}`} key={i}>
                           <div className="flex items-center">
                             <img
                               src={prod.image_Url[0].url}

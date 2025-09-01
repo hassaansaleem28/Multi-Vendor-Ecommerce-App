@@ -27,7 +27,6 @@ function ShopInfo({ isOwner }) {
     }
     getData();
   }, []);
-  console.log(data);
 
   async function logoutHandler() {
     setIsLoading(true);

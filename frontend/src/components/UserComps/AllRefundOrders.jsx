@@ -1,17 +1,22 @@
 import Button from "@mui/material/Button";
 import { DataGrid } from "@mui/x-data-grid";
+import { useEffect } from "react";
 import { AiOutlineArrowRight } from "react-icons/ai";
 import { Link } from "react-router-dom";
+import { getAllOrdersUser } from "../../redux-toolkit/actions/orderActions";
+import { useDispatch, useSelector } from "react-redux";
 
 function AllRefundOrders() {
-  const orders = [
-    {
-      _id: "617461983471289jd92",
-      orderItems: [{ name: "Iphone 14 pro max" }],
-      totalPrice: 120,
-      orderStatus: "Processing",
-    },
-  ];
+  const { orders } = useSelector(state => state.orders);
+  const { user } = useSelector(state => state.user);
+  const dispatch = useDispatch();
+
+  useEffect(function () {
+    dispatch(getAllOrdersUser(user._id));
+  }, []);
+
+  const eligibleOrders =
+    orders && orders.filter(item => item.status === "Processing refund");
   const columns = [
     {
       field: "id",
@@ -56,16 +61,19 @@ function AllRefundOrders() {
       ),
     },
   ];
+
   const row = [];
-  orders &&
-    orders.forEach(item => {
+
+  eligibleOrders &&
+    eligibleOrders.forEach(item => {
       row.push({
         id: item._id,
-        itemsQty: item.orderItems.length,
-        total: "US$" + item.totalPrice,
-        status: item.orderStatus,
+        itemsQty: item?.cart?.length,
+        total: "US$" + item?.totalPrice,
+        status: item?.status,
       });
     });
+
   return (
     <div className="pl-8 pt-1 flex flex-col  min-h-[200px] max-h-[600px]">
       <DataGrid

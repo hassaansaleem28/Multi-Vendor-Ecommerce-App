@@ -1,9 +1,29 @@
 import styles from "../../styles/styles";
+import { Link } from "react-router-dom";
 import CountDown from "./CountDown";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { addToCart } from "../../redux-toolkit/actions/cartActions";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function EventCard({ active, data }) {
+  const { cart } = useSelector(state => state.cart);
+  const dispatch = useDispatch();
+
+  function addToCarthandler(data) {
+    const isItemExists = cart && cart?.find(i => i?._id === data._id);
+    if (isItemExists) {
+      toast.error("Item already in cart!");
+    } else {
+      if (data.stock < 1) return toast.error("Product stock is Limited!");
+      else {
+        const cartData = { ...data, qty: 1 };
+        dispatch(addToCart(cartData));
+        toast.success("Item added to cart successfully!");
+      }
+    }
+  }
   return (
     <div
       className={`w-full block bg-white rounded-lg ${
@@ -31,6 +51,22 @@ function EventCard({ active, data }) {
           </span>
         </div>
         <CountDown data={data} />
+        <br />
+        <div className="flex items-center gap-5">
+          <Link to={`/product/${data?._id}?isEvent=true`}>
+            <div
+              className={`${styles.button} rounded-[6px] font-[500] text-[1.2rem] text-[#fff]`}
+            >
+              See details
+            </div>
+          </Link>
+          <div
+            className={`${styles.button} rounded-[6px] font-[500] text-[1.2rem] text-[#fff] cursor-pointer`}
+            onClick={() => addToCarthandler(data)}
+          >
+            Add to cart
+          </div>
+        </div>
       </div>
     </div>
   );

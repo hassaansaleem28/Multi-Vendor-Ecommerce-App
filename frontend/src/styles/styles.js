@@ -8,7 +8,7 @@ const styles = {
   shop_name: "pt-3 text-[15px] text-blue-400 pb-3",
   active_indicator: "absolute button-[-27%] left-0 h-[3px] w-full bg-[crimson]",
   button:
-    "w-[150px] bg-black hover:bg-gray-800 h-[50px] my-3 flex items-center justify-center cursor pointer",
+    "w-[170px] bg-black hover:bg-gray-800 h-[50px] my-3 flex items-center justify-center cursor pointer",
   cart_button:
     "px-[20px] h-[38px] rounded-[20px] bg-[#f63b60] flex justify-center items-center cursor-pointer",
   cart_button_text: "text-[#fff] text-[16px] font-[600]",

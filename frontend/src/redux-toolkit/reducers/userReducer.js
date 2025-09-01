@@ -1,5 +1,11 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { clearErrors, loadUser } from "../actions/userActions";
+import {
+  clearErrors,
+  deleteAddress,
+  loadUser,
+  updateAddresses,
+  updateUser,
+} from "../actions/userActions";
 const initialState = {
   isAuthenticated: false,
 };
@@ -17,6 +23,40 @@ export const userReducer = createReducer(initialState, builder => {
     .addCase(loadUser.rejected, (state, action) => {
       state.loading = false;
       state.isAuthenticated = false;
+      state.error = action.payload;
+    })
+    // update user info
+    .addCase(updateUser.pending, state => {
+      state.loading = true;
+    })
+    .addCase(updateUser.fulfilled, (state, action) => {
+      state.loading = false;
+      state.user = action.payload;
+    })
+    .addCase(updateUser.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    })
+    .addCase(updateAddresses.pending, state => {
+      state.addressloading = true;
+    })
+    .addCase(updateAddresses.fulfilled, (state, action) => {
+      state.addressloading = false;
+      state.user = action.payload;
+    })
+    .addCase(updateAddresses.rejected, (state, action) => {
+      state.addressloading = false;
+      state.error = action.payload;
+    })
+    .addCase(deleteAddress.pending, state => {
+      state.deletingAddress = true;
+    })
+    .addCase(deleteAddress.fulfilled, (state, action) => {
+      state.deletingAddress = false;
+      state.user = action.payload;
+    })
+    .addCase(deleteAddress.rejected, (state, action) => {
+      state.deletingAddress = false;
       state.error = action.payload;
     })
     .addCase(clearErrors, state => {

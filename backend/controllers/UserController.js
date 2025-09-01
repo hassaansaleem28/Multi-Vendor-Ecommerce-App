@@ -128,3 +128,114 @@ export async function loadUser(req, res) {
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
+
+export async function updateUser(req, res) {
+  try {
+    const { fullName, email, password, phoneNumber } = req.body;
+    const user = await User.findOne({ email }).select("+password");
+    if (!user)
+      return res.json({ success: false, message: "User doesn't exist!" });
+    const isPasswordMatched = await user.comparePassword(password);
+    if (!isPasswordMatched)
+      return res
+        .status(400)
+        .json({ success: false, message: "Invaild Credentails!" });
+    user.fullName = fullName;
+    user.email = email;
+    user.phoneNumber = phoneNumber;
+
+    await user.save();
+    res.status(201).json({ success: true, user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false });
+  }
+}
+
+export async function updateAvatar(req, res) {
+  try {
+    const existUser = await User.findById(req.user.id);
+    const existAvatarPath = `uploads/${existUser?.avatar?.url}`;
+    fs.unlinkSync(existAvatarPath);
+    const fileUrl = path.join(req.file.filename);
+    const user = await User.findByIdAndUpdate(req.user.id, {
+      avatar: { url: fileUrl },
+    });
+    res.status(201).json({ success: true, user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });
+  }
+}
+
+// update user addresses
+
+export async function updateAddresses(req, res) {
+  try {
+    const user = await User.findById(req.user.id);
+    const sameTypeAddress = user.addresses.find(
+      address => address.addressType === req.body.addressType
+    );
+    if (sameTypeAddress)
+      return res.json({
+        success: false,
+        message: `${req.body.addressType} address already exists!`,
+      });
+    const existsAddress = user.addresses.find(
+      address => address._id === req.body._id
+    );
+    if (existsAddress) Object.assign(existsAddress, req.body);
+    else user.addresses.push(req.body); // Adding new address to the array
+    await user.save();
+
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false });
+  }
+}
+
+export async function deleteUserAddress(req, res) {
+  try {
+    const userId = req.user._id;
+    const addressId = req.params.id;
+
+    await User.updateOne(
+      {
+        _id: userId,
+      },
+      { $pull: { addresses: { _id: addressId } } }
+    );
+
+    const user = await User.findById(userId);
+    res.status(201).json({ success: true, user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });
+  }
+}
+
+export async function updateUserPassword(req, res) {
+  try {
+    const user = await User.findById(req.user.id).select("+password");
+    const isPasswordMatched = await user.comparePassword(req.body.oldPassword);
+    if (!isPasswordMatched)
+      return res.status(400).json({
+        success: false,
+        message: "Old Password is incorrect!",
+      });
+    if (req.body.newPassword !== req.body.confirmPassword)
+      return res.status(400).json({
+        success: false,
+        message: "Password doesn' t match with eachother!",
+      });
+    user.password = req.body.newPassword;
+
+    await user.save();
+    res
+      .status(201)
+      .json({ success: true, message: "Password Updated Successfully!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });
+  }
+}

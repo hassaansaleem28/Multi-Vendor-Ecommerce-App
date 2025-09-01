@@ -1,21 +1,15 @@
-import {
-  AiOutlineArrowRight,
-  AiOutlineCamera,
-  AiOutlineDelete,
-} from "react-icons/ai";
+import { AiOutlineArrowRight } from "react-icons/ai";
 import { DataGrid } from "@mui/x-data-grid";
 import { Link } from "react-router-dom";
 import Button from "@mui/material/Button";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { getAllOrdersUser } from "../../redux-toolkit/actions/orderActions";
 
 function AllOrders() {
-  const orders = [
-    {
-      _id: "617461983471289jd92",
-      orderItems: [{ name: "Iphone 14 pro max" }],
-      totalPrice: 120,
-      orderStatus: "Processing",
-    },
-  ];
+  const { orders } = useSelector(state => state.orders);
+  const { user } = useSelector(state => state.user);
+  const dispatch = useDispatch();
   const columns = [
     {
       field: "id",
@@ -62,14 +56,17 @@ function AllOrders() {
   ];
 
   const row = [];
+  useEffect(function () {
+    dispatch(getAllOrdersUser(user._id));
+  }, []);
 
   orders &&
     orders.forEach(item => {
       row.push({
         id: item._id,
-        itemsQty: item.orderItems.length,
-        total: "US$" + item.totalPrice,
-        status: item.orderStatus,
+        itemsQty: item?.cart?.length,
+        total: "US$" + item?.totalPrice,
+        status: item?.status,
       });
     });
   return (

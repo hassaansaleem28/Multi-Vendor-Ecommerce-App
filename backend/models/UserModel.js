@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const userSchema = new mongoose.Schema({
@@ -17,6 +17,31 @@ const userSchema = new mongoose.Schema({
     minLength: [4, "Password should be greater than 4 characters"],
     select: false,
   },
+  phoneNumber: {
+    type: Number,
+  },
+  addresses: [
+    {
+      country: {
+        type: String,
+      },
+      city: {
+        type: String,
+      },
+      address1: {
+        type: String,
+      },
+      address2: {
+        type: String,
+      },
+      zipCode: {
+        type: Number,
+      },
+      addressType: {
+        type: String,
+      },
+    },
+  ],
   role: {
     type: String,
     default: "user",
@@ -24,7 +49,7 @@ const userSchema = new mongoose.Schema({
   avatar: {
     public_id: {
       type: String,
-      required: true,
+      // required: true,
     },
     url: {
       type: String,

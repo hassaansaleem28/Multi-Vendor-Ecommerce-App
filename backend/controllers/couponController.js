@@ -1,4 +1,5 @@
 import coupon from "../models/couponModel.js";
+import User from "../models/UserModel.js";
 
 export async function createCounponCode(req, res) {
   try {
@@ -41,5 +42,15 @@ export async function deleteCoupon(req, res) {
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
+
+export async function getCouponValue(req, res) {
+  try {
+    const couponCode = await coupon.findOne({ name: req.params.name });
+    res.status(200).json({ success: true, couponCode });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });
   }
 }

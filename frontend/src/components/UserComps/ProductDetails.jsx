@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styles from "../../styles/styles";
 import {
   AiFillHeart,
@@ -10,22 +10,46 @@ import {
 import ProductDetailsInfo from "./ProductDetailsInfo";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllProductsShop } from "../../redux-toolkit/actions/productActions";
+import {
+  addToWishlist,
+  removeFromWishlist,
+} from "../../redux-toolkit/actions/wishlistActions";
+import { addToCart } from "../../redux-toolkit/actions/cartActions";
+import { toast } from "react-toastify";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function ProductDetails({ data }) {
+  const { wishlist } = useSelector(state => state.wishlist);
+  const { cart } = useSelector(state => state.cart);
+  const { product } = useSelector(state => state.product);
+
   const [count, setCount] = useState(1);
   const [click, setClick] = useState(false);
   const [select, setSelect] = useState(0);
-  const navigate = useNavigate();
 
-  const { product } = useSelector(state => state.product);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const totalReviewsLength =
+    product && product.reduce((acc, prod) => acc + prod.reviews.length, 0);
+  const totalRatings =
+    product &&
+    product.reduce(
+      (acc, prod) =>
+        acc + prod.reviews.reduce((sum, rev) => sum + rev.rating, 0),
+      0
+    );
+  const avgRating = totalRatings / totalReviewsLength || 0;
+
   useEffect(
     function () {
       dispatch(getAllProductsShop(data && data?.shop._id));
+      if (wishlist && wishlist.find(item => item._id === data?._id))
+        setClick(true);
+      else setClick(false);
     },
-    [dispatch, data]
+    [dispatch, data, wishlist, data?._id]
   );
 
   function IncrementCount() {
@@ -36,6 +60,30 @@ function ProductDetails({ data }) {
   }
   function handleMessageSubmit() {
     navigate("/inbox?conversation=50nfqkwfnqw");
+  }
+
+  function removeFromWishListhandler(data) {
+    console.log("YES");
+    setClick(click => !click);
+    dispatch(removeFromWishlist(data));
+  }
+  function addToWishListhandler(data) {
+    console.log("HELLO");
+    setClick(click => !click);
+    dispatch(addToWishlist(data));
+  }
+  function addToCarthandler(id) {
+    const isItemExists = cart && cart?.find(i => i?._id === id);
+    if (isItemExists) {
+      toast.error("Item already in cart!");
+    } else {
+      if (product.stock < 1) return toast.error("Product stock is Limited!");
+      else {
+        const cartData = { ...data, qty: count };
+        dispatch(addToCart(cartData));
+        toast.success("Item added to cart successfully!");
+      }
+    }
   }
 
   return (
@@ -98,7 +146,7 @@ function ProductDetails({ data }) {
                       <AiFillHeart
                         size={30}
                         className="cursor-pointer"
-                        onClick={() => setClick(!click)}
+                        onClick={() => removeFromWishListhandler(data)}
                         color={click ? "red" : "#333"}
                         title="Remove from wishlist"
                       />
@@ -106,7 +154,7 @@ function ProductDetails({ data }) {
                       <AiOutlineHeart
                         size={30}
                         className="cursor-pointer "
-                        onClick={() => setClick(!click)}
+                        onClick={() => addToWishListhandler(data)}
                         color={click ? "red" : "#333"}
                         title="Add to wishlist"
                       />
@@ -114,10 +162,12 @@ function ProductDetails({ data }) {
                   </div>
                 </div>
                 <div
-                  className={`${styles.button} !mt-6 !rounded !h-11 flex items-center`}
+                  className={`${styles.button} !mt-6 !rounded cursor-pointer !h-11 flex items-center`}
+                  onClick={() => addToCarthandler(data._id)}
                 >
-                  <span className="text-white flex items-center">
-                    Add to cart <AiOutlineShoppingCart className="ml-1" />
+                  <span className="text-white flex items-center cursor-pointer">
+                    Add to cart{" "}
+                    <AiOutlineShoppingCart className="ml-1 cursor-pointer" />
                   </span>
                 </div>
                 <div className="flex items-center pt-8">
@@ -134,7 +184,9 @@ function ProductDetails({ data }) {
                     <h3 className={`${styles.shop_name} pb-1 pt-1`}>
                       {data.shop.name}
                     </h3>
-                    <h5 className="pb-3 text-[15px]">(4/5) Ratings</h5>
+                    <h5 className="pb-3 text-[15px]">
+                      ({avgRating}/5) Ratings
+                    </h5>
                   </div>
                   <div
                     className={`${styles.button} !bg-[#6443d1] !mt-4 !rounded !h-11`}
@@ -148,7 +200,12 @@ function ProductDetails({ data }) {
               </div>
             </div>
           </div>
-          <ProductDetailsInfo data={data} product={product} />
+          <ProductDetailsInfo
+            data={data}
+            product={product}
+            totalReviewsLength={totalReviewsLength}
+            avgRating={avgRating}
+          />
           <br />
           <br />
         </div>
