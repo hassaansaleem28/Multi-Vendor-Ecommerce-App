@@ -58,7 +58,7 @@ function ProductDetailsInfo({ data, product, totalReviewsLength, avgRating }) {
           className="w-full min-h-[40vh] flex py-3 flex-col overflow-y-hidden
          items-center"
         >
-          {data?.reviews.map((review, i) => (
+          {data?.reviews?.map((review, i) => (
             <div className="w-full flex my-2" key={i}>
               <img
                 src={`${API_BASE_URL}/${review?.user?.avatar?.url}`}
@@ -75,7 +75,7 @@ function ProductDetailsInfo({ data, product, totalReviewsLength, avgRating }) {
             </div>
           ))}
           <div className="w-full flex justify-center">
-            {data && data.reviews.length === 0 && <h5>No reviews yet!</h5>}
+            {data && data?.reviews?.length === 0 && <h5>No reviews yet!</h5>}
           </div>
         </div>
       ) : null}

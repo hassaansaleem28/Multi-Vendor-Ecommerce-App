@@ -6,6 +6,8 @@ import {
   loadSeller,
   loginSeller,
   logoutSeller,
+  updateShopAvatar,
+  updateShopProfile,
 } from "../controllers/shopController.js";
 import upload from "../multer.js";
 import { isSeller } from "../middleware/auth.js";
@@ -18,5 +20,12 @@ shopRouter.post("/login-seller", loginSeller);
 shopRouter.get("/getSeller", isSeller, loadSeller);
 shopRouter.get("/logout-seller", logoutSeller);
 shopRouter.get("/get-shop-info/:id", getShopInfo);
+shopRouter.put(
+  "/update-shop-avatar",
+  isSeller,
+  upload.single("image"),
+  updateShopAvatar
+);
+shopRouter.put("/update-shop-profile", isSeller, updateShopProfile);
 
 export default shopRouter;

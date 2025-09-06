@@ -4,10 +4,11 @@ import CountDown from "./CountDown";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { addToCart } from "../../redux-toolkit/actions/cartActions";
+import Loader from "../UserComps/Loader";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-function EventCard({ active, data }) {
+function EventCard({ active, data, isLoading }) {
   const { cart } = useSelector(state => state.cart);
   const dispatch = useDispatch();
 
@@ -24,6 +25,7 @@ function EventCard({ active, data }) {
       }
     }
   }
+  if (isLoading) return <Loader />;
   return (
     <div
       className={`w-full block bg-white rounded-lg ${
@@ -31,10 +33,10 @@ function EventCard({ active, data }) {
       } lg:flex p-2`}
     >
       <div className="w-full lg:w-[50%] m-auto">
-        <img src={`${API_BASE_URL}/${data && data.images[1]}`} alt="Image" />
+        <img src={`${API_BASE_URL}/${data && data?.images[0]}`} alt="Image" />
       </div>
       <div className="w-full lg:[w-50%] flex flex-col justify-center">
-        <h2 className={`${styles.productTitle}`}>{name}</h2>
+        <h2 className={`${styles.productTitle}`}>{data.name}</h2>
         <p>{data?.description}</p>
         <div className="flex py-2 justify-between">
           <div className="flex">
@@ -46,7 +48,7 @@ function EventCard({ active, data }) {
             </h5>
           </div>
           <span className="pr-3 font-[400] text-[17px] text-[#44a55e]">
-            120 Sold
+            {data.sold_out} Sold
             {/* {data?.sold_out} Sold */}
           </span>
         </div>

@@ -16,6 +16,7 @@ import {
 } from "../../redux-toolkit/actions/wishlistActions";
 import { addToCart } from "../../redux-toolkit/actions/cartActions";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -23,6 +24,7 @@ function ProductDetails({ data }) {
   const { wishlist } = useSelector(state => state.wishlist);
   const { cart } = useSelector(state => state.cart);
   const { product } = useSelector(state => state.product);
+  const { user, isAuthenticated } = useSelector(state => state.user);
 
   const [count, setCount] = useState(1);
   const [click, setClick] = useState(false);
@@ -41,7 +43,6 @@ function ProductDetails({ data }) {
       0
     );
   const avgRating = totalRatings / totalReviewsLength || 0;
-
   useEffect(
     function () {
       dispatch(getAllProductsShop(data && data?.shop._id));
@@ -58,17 +59,32 @@ function ProductDetails({ data }) {
   function DecrementCount() {
     if (count > 1) setCount(count - 1);
   }
-  function handleMessageSubmit() {
-    navigate("/inbox?conversation=50nfqkwfnqw");
+  async function handleMessageSubmit() {
+    try {
+      if (isAuthenticated) {
+        const groupTitle = data?._id + user?._id;
+        const userId = user?._id;
+        const sellerId = data?.shop?._id;
+        await axios
+          .post(`${API_BASE_URL}/api/v2/conversation/create-new-conversation`, {
+            groupTitle,
+            userId,
+            sellerId,
+          })
+          .then(res => navigate(`/conversation/${res.data.conversation._id}`));
+      } else {
+        toast.error("Please login to create a conversation!");
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message);
+    }
   }
 
   function removeFromWishListhandler(data) {
-    console.log("YES");
     setClick(click => !click);
     dispatch(removeFromWishlist(data));
   }
   function addToWishListhandler(data) {
-    console.log("HELLO");
     setClick(click => !click);
     dispatch(addToWishlist(data));
   }
@@ -189,10 +205,10 @@ function ProductDetails({ data }) {
                     </h5>
                   </div>
                   <div
-                    className={`${styles.button} !bg-[#6443d1] !mt-4 !rounded !h-11`}
+                    className={`${styles.button} !bg-[#6443d1] !mt-4 cursor-pointer !rounded !h-11`}
                     onClick={handleMessageSubmit}
                   >
-                    <span className="text-white flex items-center">
+                    <span className="text-white flex items-center cursor-pointer">
                       Send Message <AiOutlineMessage className="ml-1" />
                     </span>
                   </div>

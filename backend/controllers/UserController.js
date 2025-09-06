@@ -239,3 +239,13 @@ export async function updateUserPassword(req, res) {
     res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });
   }
 }
+
+export async function getUser4Id(req, res) {
+  try {
+    const user = await User.findById(req.params.id);
+    res.json({ success: true, user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });
+  }
+}

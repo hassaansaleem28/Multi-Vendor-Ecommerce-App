@@ -1,19 +1,19 @@
 import DashboardHeader from "../components/SellerComps/DashboardHeader";
-import DashboardHero from "../components/SellerComps/DashboardHero";
+import ShopSettings from "../components/SellerComps/ShopSettings";
 import DashboardSidebar from "../components/SellerComps/DashboardSidebar";
 
-function ShopDashboardPage() {
+function ShopSettingsPage() {
   return (
     <div>
       <DashboardHeader />
       <div className="flex items-start justify-between w-full">
         <div className="w-[80px] width-at-800px">
-          <DashboardSidebar activeHeading={1} />
+          <DashboardSidebar activeHeading={11} />
         </div>
-        <DashboardHero />
+        <ShopSettings />
       </div>
     </div>
   );
 }
 
-export default ShopDashboardPage;
+export default ShopSettingsPage;

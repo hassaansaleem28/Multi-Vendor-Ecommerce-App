@@ -42,6 +42,10 @@ import ShopOrderDetails from "./components/SellerComps/ShopOrderDetails";
 import UserOrderDetails from "./components/UserComps/UserOrderDetails";
 import TrackOrderPage from "./pages/TrackOrderPage";
 import ShopAllRefunds from "./components/SellerComps/ShopAllRefunds";
+import ShopSettingsPage from "./pages/ShopSettingsPage";
+import ShopWithdrawMoneyPage from "./pages/ShopWithdrawMoneyPage";
+import ShopInboxPage from "./pages/ShopInboxPage";
+import UserInbox from "./components/UserComps/UserInbox";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -100,6 +104,14 @@ function App() {
           }
         />
         <Route
+          path="/inbox"
+          element={
+            <ProtectedRoute>
+              <UserInbox />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="user/order/:id"
           element={
             <ProtectedRoute>
@@ -130,6 +142,14 @@ function App() {
           element={
             <SellerProtectedRoute>
               <ShopDashboardPage />
+            </SellerProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard-settings"
+          element={
+            <SellerProtectedRoute>
+              <ShopSettingsPage />
             </SellerProtectedRoute>
           }
         />
@@ -202,6 +222,22 @@ function App() {
           element={
             <SellerProtectedRoute>
               <ShopHomePage />
+            </SellerProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard-messages"
+          element={
+            <SellerProtectedRoute>
+              <ShopInboxPage />
+            </SellerProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard-withdraw-money"
+          element={
+            <SellerProtectedRoute>
+              <ShopWithdrawMoneyPage />
             </SellerProtectedRoute>
           }
         />

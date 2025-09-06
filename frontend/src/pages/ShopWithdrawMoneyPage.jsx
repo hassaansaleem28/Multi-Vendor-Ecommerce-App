@@ -1,19 +1,19 @@
 import DashboardHeader from "../components/SellerComps/DashboardHeader";
-import DashboardHero from "../components/SellerComps/DashboardHero";
 import DashboardSidebar from "../components/SellerComps/DashboardSidebar";
+import ShopWithdrawMoney from "../components/SellerComps/ShopWithdrawMoney";
 
-function ShopDashboardPage() {
+function ShopWithdrawMoneyPage() {
   return (
     <div>
       <DashboardHeader />
       <div className="flex items-start justify-between w-full">
         <div className="w-[80px] width-at-800px">
-          <DashboardSidebar activeHeading={1} />
+          <DashboardSidebar activeHeading={7} />
         </div>
-        <DashboardHero />
+        <ShopWithdrawMoney />
       </div>
     </div>
   );
 }
 
-export default ShopDashboardPage;
+export default ShopWithdrawMoneyPage;

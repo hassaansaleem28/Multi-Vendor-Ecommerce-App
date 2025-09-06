@@ -3,6 +3,7 @@ import {
   activateUser,
   createUser,
   deleteUserAddress,
+  getUser4Id,
   loadUser,
   loginUser,
   logoutUser,
@@ -35,5 +36,6 @@ userRouter.delete(
   deleteUserAddress
 );
 userRouter.put("/update-user-password", isAuthenticated, updateUserPassword);
+userRouter.get("/get-user-4id/:id", getUser4Id);
 
 export default userRouter;

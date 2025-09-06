@@ -19,7 +19,7 @@ import {
 import { toast } from "react-toastify";
 import { addToCart } from "../../redux-toolkit/actions/cartActions";
 
-function ProductCard({ product }) {
+function ProductCard({ product, isEvent }) {
   const [click, setClick] = useState(false);
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
@@ -61,7 +61,13 @@ function ProductCard({ product }) {
     <>
       <div className="w-full h-[370px] bg-white rounded-lg shadow-sm p-3 relative cursor-pointer">
         <div className="flex justify-end"></div>
-        <Link to={`/product/${product._id}`}>
+        <Link
+          to={`${
+            isEvent
+              ? `/product/${product._id}?isEvent=true`
+              : `/product/${product._id}`
+          }`}
+        >
           <img
             src={product.images && product.images[0]}
             alt="Image"
@@ -71,7 +77,14 @@ function ProductCard({ product }) {
         <Link to={`/shop/preview/${product.shop._id}`}>
           <h5 className={`${styles.shop_name}`}>{product.shop.name}</h5>
         </Link>
-        <Link to={`/product/${product._id}`}>
+        <Link
+          to={`${
+            isEvent
+              ? `/product/${product._id}?isEvent=true`
+              : `/product/${product._id}`
+          }`}
+        >
+          {" "}
           <h4 className="pb-3 font-[500]">
             {product?.name.length > 40
               ? product?.name.slice(0, 40) + "..."

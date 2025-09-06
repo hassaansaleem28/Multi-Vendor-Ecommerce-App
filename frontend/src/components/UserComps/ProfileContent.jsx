@@ -9,6 +9,7 @@ import UserAddress from "./UserAddress";
 import { toast } from "react-toastify";
 import {
   clearErrors,
+  loadUser,
   updateUser,
 } from "../../redux-toolkit/actions/userActions";
 import axios from "axios";
@@ -50,7 +51,8 @@ function ProfileContent({ active }) {
         withCredentials: true,
       })
       .then(() => {
-        window.location.reload();
+        dispatch(loadUser());
+        toast.success("Profile Updated!");
       })
       .catch(error => {
         toast.error(error);

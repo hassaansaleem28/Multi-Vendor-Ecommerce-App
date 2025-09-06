@@ -1,32 +1,51 @@
 import styles from "../../styles/styles";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Loader from "../UserComps/Loader";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllProductsShop } from "../../redux-toolkit/actions/productActions";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function ShopInfo({ isOwner }) {
   const [data, setData] = useState({});
+  const { product } = useSelector(state => state.product);
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
+  const totalReviewsLength =
+    product && product.reduce((acc, prod) => acc + prod.reviews.length, 0);
+  const totalRatings =
+    product &&
+    product.reduce(
+      (acc, prod) =>
+        acc + prod.reviews.reduce((sum, rev) => sum + rev.rating, 0),
+      0
+    );
+  const avgRating = totalRatings / totalReviewsLength || 0;
 
   const { id } = useParams();
-  useEffect(function () {
-    async function getData() {
-      try {
-        setIsLoading(true);
-        const res = await axios.get(
-          `${API_BASE_URL}/api/v2/seller/get-shop-info/${id}`
-        );
-        setData(res.data.shop);
-        setIsLoading(false);
-      } catch (error) {
-        console.error(error);
-        setIsLoading(false);
+
+  useEffect(
+    function () {
+      async function getData() {
+        try {
+          setIsLoading(true);
+          dispatch(getAllProductsShop(id));
+          const res = await axios.get(
+            `${API_BASE_URL}/api/v2/seller/get-shop-info/${id}`
+          );
+          setData(res.data.shop);
+          setIsLoading(false);
+        } catch (error) {
+          console.error(error);
+          setIsLoading(false);
+        }
       }
-    }
-    getData();
-  }, []);
+      getData();
+    },
+    [dispatch]
+  );
 
   async function logoutHandler() {
     setIsLoading(true);
@@ -65,11 +84,11 @@ function ShopInfo({ isOwner }) {
           </div>
           <div className="p-3">
             <h5 className="font-[600]">Total Products</h5>
-            <h4 className="text-[#000000a6]">10</h4>
+            <h4 className="text-[#000000a6]">{product && product.length}</h4>
           </div>
           <div className="p-3">
             <h5 className="font-[600]">Shop Ratings</h5>
-            <h4 className="text-[#000000a6]">4/5</h4>
+            <h4 className="text-[#000000a6]">{avgRating}</h4>
           </div>
           <div className="p-3">
             <h5 className="font-[600]">Joined on</h5>
@@ -79,11 +98,13 @@ function ShopInfo({ isOwner }) {
           </div>
           {isOwner && (
             <div className="py-3 px-4">
-              <div
-                className={`${styles.button} !w-full !h-[42px] !rounded-[5px]`}
-              >
-                <span className="text-white">Edit Shop</span>
-              </div>
+              <Link to={"/settings"}>
+                <div
+                  className={`${styles.button} !w-full !h-[42px] !rounded-[5px]`}
+                >
+                  <span className="text-white">Edit Shop</span>
+                </div>
+              </Link>
               <div
                 className={`${styles.button} !w-full !h-[42px] !rounded-[5px] cursor-pointer`}
                 onClick={logoutHandler}

@@ -10,6 +10,8 @@ import eventsRouter from "./routes/eventRoutes.js";
 import couponRouter from "./routes/couponRoutes.js";
 import stripeRouter from "./routes/stripeRoutes.js";
 import orderRouter from "./routes/orderRoutes.js";
+import conversationRouter from "./routes/conversationRoutes.js";
+import messagesRouter from "./routes/messagesRoutes.js";
 
 const app = express();
 app.use(express.json());
@@ -34,6 +36,8 @@ app.use("/api/v2/events", eventsRouter);
 app.use("/api/v2/coupons", couponRouter);
 app.use("/api/v2/payment", stripeRouter);
 app.use("/api/v2/order", orderRouter);
+app.use("/api/v2/conversation", conversationRouter);
+app.use("/api/v2/messages", messagesRouter);
 
 app.listen(process.env.PORT || 5000, () => {
   console.log(`Server is running on port ${process.env.PORT || 5000}...`);

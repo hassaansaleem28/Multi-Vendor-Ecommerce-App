@@ -1,19 +1,20 @@
 import DashboardHeader from "../components/SellerComps/DashboardHeader";
-import DashboardHero from "../components/SellerComps/DashboardHero";
+import DashboardMessages from "../components/SellerComps/DashboardMessages";
 import DashboardSidebar from "../components/SellerComps/DashboardSidebar";
 
-function ShopDashboardPage() {
+function ShopInboxPage() {
   return (
-    <div>
-      <DashboardHeader />
+    <div className="mt-10">
+      {/* <DashboardHeader /> */}
+
       <div className="flex items-start justify-between w-full">
         <div className="w-[80px] width-at-800px">
-          <DashboardSidebar activeHeading={1} />
+          <DashboardSidebar activeHeading={8} />
         </div>
-        <DashboardHero />
+        <DashboardMessages />
       </div>
     </div>
   );
 }
 
-export default ShopDashboardPage;
+export default ShopInboxPage;

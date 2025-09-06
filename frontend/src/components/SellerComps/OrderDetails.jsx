@@ -166,8 +166,6 @@ function OrderDetails() {
               ))}
           </select>
         )}
-      {console.log(data?.status)}
-      {console.log(data?.status === "Processing refund")}
       {data?.status === "Processing refund" ||
       data?.status === "Refund Success" ? (
         <select

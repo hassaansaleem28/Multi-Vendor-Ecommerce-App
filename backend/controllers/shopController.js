@@ -149,3 +149,39 @@ export async function getShopInfo(req, res) {
     res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });
   }
 }
+
+export async function updateShopAvatar(req, res) {
+  try {
+    const existSeller = await Shop.findById(req.seller._id);
+    const existAvatarPath = `uploads/${existSeller?.avatar?.url}`;
+    fs.unlinkSync(existAvatarPath);
+    const fileUrl = path.join(req.file.filename);
+    const seller = await Shop.findByIdAndUpdate(req.seller._id, {
+      avatar: { url: fileUrl },
+    });
+    res.status(200).json({ success: true, seller });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });
+  }
+}
+
+export async function updateShopProfile(req, res) {
+  try {
+    const { name, description, address, phoneNumber, zipCode } = req.body;
+    const shop = await Shop.findOne(req.seller._id);
+    if (!shop)
+      return res.json({ success: false, message: "Shop doesn't exist!" });
+
+    shop.name = name;
+    shop.description = description;
+    shop.address = address;
+    shop.phoneNumber = phoneNumber;
+    shop.zipCode = zipCode;
+
+    await shop.save();
+    res.status(201).json({ success: true, shop });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false });
+  }
+}
