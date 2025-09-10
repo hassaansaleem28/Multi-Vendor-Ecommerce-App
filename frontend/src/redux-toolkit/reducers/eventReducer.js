@@ -5,6 +5,7 @@ import {
   getAllEventsShop,
   deleteEvent,
   getAllEvents,
+  getAllEventsAdmin,
 } from "../actions/eventActions";
 
 const initialState = {
@@ -36,6 +37,18 @@ export const eventReducer = createReducer(initialState, builder => {
       state.events = action.payload;
     })
     .addCase(getAllEventsShop.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    })
+    // get all the events for admin
+    .addCase(getAllEventsAdmin.pending, state => {
+      state.isLoading = true;
+    })
+    .addCase(getAllEventsAdmin.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.allEventsAdmin = action.payload;
+    })
+    .addCase(getAllEventsAdmin.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     })

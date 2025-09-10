@@ -24,7 +24,6 @@ function DashboardMessages() {
   const [newMessage, setNewMessage] = useState("");
   const [userData, setUserData] = useState(null);
   const [activeStatus, setActiveStatus] = useState(false);
-  const [issLoading, setIssLoading] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState([]);
 
   useEffect(function () {
@@ -50,15 +49,12 @@ function DashboardMessages() {
     function () {
       async function getConversations() {
         try {
-          setIssLoading(true);
           const { data } = await axios.get(
             `${API_BASE_URL}/api/v2/conversation/get-all-seller-conversations/${seller._id}`,
             { withCredentials: true }
           );
           setConversations(data.conversations);
-          setIssLoading(false);
         } catch (error) {
-          setIssLoading(false);
           console.error(error);
           toast.error(error?.response?.data?.message);
         }
@@ -90,15 +86,12 @@ function DashboardMessages() {
     function () {
       async function getMessage() {
         try {
-          setIssLoading(true);
           const res = await axios.get(
             `${API_BASE_URL}/api/v2/messages/get-all-messages/${currentChat?._id}`
           );
           setMessages(res?.data?.messages);
-          setIssLoading(false);
         } catch (error) {
           console.error(error);
-          setIssLoading(false);
         }
       }
       getMessage();
@@ -108,7 +101,6 @@ function DashboardMessages() {
   // create new messages
   async function updateLastMessage() {
     try {
-      setIssLoading(true);
       socket.emit("updateLastMessage", {
         lastMessage: newMessage,
         lastMessageId: seller._id,
@@ -117,11 +109,9 @@ function DashboardMessages() {
         `${API_BASE_URL}/api/v2/conversation/update-last-message/${currentChat._id}`,
         { lastMessage: newMessage, lastMessageId: seller._id }
       );
-      setIssLoading(false);
       if (data) setNewMessage("");
     } catch (error) {
       console.error(error);
-      setIssLoading(false);
     }
   }
   async function sendMessageHandler(e) {
@@ -141,7 +131,6 @@ function DashboardMessages() {
     });
     try {
       if (newMessage !== "") {
-        setIssLoading(true);
         await axios
           .post(`${API_BASE_URL}/api/v2/messages/create-new-message`, message)
           .then(res => {
@@ -150,9 +139,7 @@ function DashboardMessages() {
           })
           .catch(error => console.error(error));
       }
-      setIssLoading(false);
     } catch (error) {
-      setIssLoading(false);
       console.error(error);
     }
   }
@@ -165,39 +152,35 @@ function DashboardMessages() {
           <h1 className="text-center text-[30px] py-3 font-[Poppins]">
             All Messages
           </h1>
-          {issLoading
-            ? ""
-            : conversations &&
-              conversations.map((conversation, i) => (
-                <MessageList
-                  key={i}
-                  conversation={conversation}
-                  i={i}
-                  setOpen={setOpen}
-                  setCurrentChat={setCurrentChat}
-                  setActiveStatus={setActiveStatus}
-                  sellerInfo={seller._id}
-                  userData={userData}
-                  setUserData={setUserData}
-                  online={onlineCheck(conversation)}
-                />
-              ))}
+          {conversations &&
+            conversations.map((conversation, i) => (
+              <MessageList
+                key={i}
+                conversation={conversation}
+                i={i}
+                setOpen={setOpen}
+                setCurrentChat={setCurrentChat}
+                setActiveStatus={setActiveStatus}
+                sellerInfo={seller._id}
+                userData={userData}
+                setUserData={setUserData}
+                online={onlineCheck(conversation)}
+              />
+            ))}
         </>
       )}
-      {issLoading
-        ? "Loading..."
-        : open && (
-            <SellerInbox
-              setOpen={setOpen}
-              newMessage={newMessage}
-              setNewMessage={setNewMessage}
-              sendMessageHandler={sendMessageHandler}
-              messages={messages}
-              userData={userData}
-              sellerId={seller._id}
-              activeStatus={activeStatus}
-            />
-          )}
+      {open && (
+        <SellerInbox
+          setOpen={setOpen}
+          newMessage={newMessage}
+          setNewMessage={setNewMessage}
+          sendMessageHandler={sendMessageHandler}
+          messages={messages}
+          userData={userData}
+          sellerId={seller._id}
+          activeStatus={activeStatus}
+        />
+      )}
     </div>
   );
 }

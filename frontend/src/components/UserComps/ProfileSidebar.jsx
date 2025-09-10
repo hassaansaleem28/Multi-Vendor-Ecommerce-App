@@ -1,21 +1,24 @@
-import { AiOutlineCreditCard, AiOutlineMessage } from "react-icons/ai";
+import { AiOutlineMessage } from "react-icons/ai";
 import { HiOutlineReceiptRefund, HiOutlineShoppingBag } from "react-icons/hi";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { TbAddressBook } from "react-icons/tb";
 import { RxPerson } from "react-icons/rx";
 import { useNavigate } from "react-router-dom";
 import {
+  MdOutlineAdminPanelSettings,
   MdOutlineLogout,
-  MdOutlinePassword,
   MdOutlineTrackChanges,
 } from "react-icons/md";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function ProfileSidebar({ active, setActive }) {
   const navigate = useNavigate();
+  const { user } = useSelector(state => state.user);
+
   async function logoutHandler() {
     try {
       const res = await axios.get(`${API_BASE_URL}/api/v2/user/logout-user`, {
@@ -124,6 +127,24 @@ function ProfileSidebar({ active, setActive }) {
           Address
         </span>
       </div>
+      {user && user.role === "Admin" && (
+        <div
+          className="flex items-center cursor-pointer w-full mb-8"
+          onClick={() => setActive(9) || navigate("/admin-dashboard")}
+        >
+          <MdOutlineAdminPanelSettings
+            size={20}
+            color={active === 9 ? "red" : ""}
+          />
+          <span
+            className={`pl-3 ${
+              active === 3 ? "text-[red]" : ""
+            } display-block-800px hidden`}
+          >
+            Admin Dashboard
+          </span>
+        </div>
+      )}
       <div
         className="flex items-center cursor-pointer w-full mb-8"
         onClick={() => setActive(8) || logoutHandler()}

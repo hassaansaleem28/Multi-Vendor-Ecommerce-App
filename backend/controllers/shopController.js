@@ -185,3 +185,30 @@ export async function updateShopProfile(req, res) {
     res.status(500).json({ success: false });
   }
 }
+
+export async function getAllSellers(req, res) {
+  try {
+    const sellers = await Shop.find().sort({ createdAt: -1 });
+    return res.status(201).json({ success: true, sellers });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });
+  }
+}
+
+export async function deleteSellerFromAdmin(req, res) {
+  try {
+    const sellerToDelete = await Shop.findById(req.params.id);
+    if (!sellerToDelete)
+      return res
+        .status(404)
+        .json({ success: false, message: "Seller not found!" });
+    await Shop.findByIdAndDelete(req.params.id);
+    res
+      .status(201)
+      .json({ success: true, message: "Seller Deleted Successfully!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });
+  }
+}

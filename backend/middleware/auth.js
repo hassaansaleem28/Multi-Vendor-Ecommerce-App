@@ -37,3 +37,20 @@ export async function isSeller(req, res, next) {
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
+
+export function isAdmin(...roles) {
+  try {
+    return function (req, res, next) {
+      if (!roles.includes(req.user?.role)) {
+        console.error(`${req.user.role} don't have access to these resources!`);
+        return res
+          .status(400)
+          .json({ success: false, message: "Can't access this resources!" });
+      }
+      next();
+    };
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}

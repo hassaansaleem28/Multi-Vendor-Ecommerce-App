@@ -6,7 +6,6 @@ import { useSelector } from "react-redux";
 function BestDeals() {
   const [dataa, setDataa] = useState([]);
   const { allProducts } = useSelector(state => state.product);
-  console.log(allProducts);
   useEffect(
     function () {
       const sortedData =

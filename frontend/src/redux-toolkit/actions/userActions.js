@@ -76,3 +76,20 @@ export const deleteAddress = createAsyncThunk(
     }
   }
 );
+
+export const getAllUsers = createAsyncThunk(
+  "getAllUsers/load",
+  async (_, thunkAPI) => {
+    try {
+      const { data } = await axios.get(
+        `${API_BASE_URL}/api/v2/user/get-all-users`,
+        { withCredentials: true }
+      );
+      return data.users;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to fetch all users!"
+      );
+    }
+  }
+);

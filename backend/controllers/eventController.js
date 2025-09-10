@@ -77,3 +77,12 @@ export async function getAllEvents(req, res) {
     res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });
   }
 }
+
+export async function getAllEventsAdmin(req, res) {
+  try {
+    const events = await Events.find().sort({ createdAt: -1 });
+    res.status(201).json({ success: true, events });
+  } catch (error) {
+    console.error(error);
+  }
+}

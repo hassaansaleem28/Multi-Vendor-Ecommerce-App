@@ -123,3 +123,13 @@ export async function createReviewForProduct(req, res) {
     res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });
   }
 }
+
+export async function getAllProductsAdmin(req, res) {
+  try {
+    const products = await Product.find().sort({ createdAt: -1 });
+    return res.status(201).json({ success: true, products });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });
+  }
+}

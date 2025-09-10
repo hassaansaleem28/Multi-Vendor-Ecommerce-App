@@ -72,3 +72,22 @@ export const getAllProducts = createAsyncThunk(
     }
   }
 );
+
+export const getAllProductsAdmin = createAsyncThunk(
+  "getAllProductsAdmin/load",
+  async (_, thunkAPI) => {
+    try {
+      const { data } = await axios.get(
+        `${API_BASE_URL}/api/v2/product/get-all-products-admin`,
+        { withCredentials: true }
+      );
+      return data.products;
+    } catch (error) {
+      console.error(error);
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message ||
+          "Failed to load all products for admin!"
+      );
+    }
+  }
+);

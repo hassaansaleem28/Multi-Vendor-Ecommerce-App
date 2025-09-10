@@ -33,3 +33,22 @@ export const getAllOrdersShop = createAsyncThunk(
     }
   }
 );
+
+export const getAllOrdersAdmin = createAsyncThunk(
+  "getAdminOrders/load",
+  async (_, thunkApi) => {
+    try {
+      const { data } = await axios.get(
+        `${API_BASE_URL}/api/v2/order/get-all-orders-admin`,
+        {
+          withCredentials: true,
+        }
+      );
+      return data.orders;
+    } catch (error) {
+      return thunkApi.rejectWithValue(
+        error?.response?.data?.message || "Failed to fetch admin orders!"
+      );
+    }
+  }
+);

@@ -46,6 +46,14 @@ import ShopSettingsPage from "./pages/ShopSettingsPage";
 import ShopWithdrawMoneyPage from "./pages/ShopWithdrawMoneyPage";
 import ShopInboxPage from "./pages/ShopInboxPage";
 import UserInbox from "./components/UserComps/UserInbox";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
+import AdminProtectedRoute from "./routes/AdminProtectedRoute";
+import AdminAllUsersPage from "./pages/AdminAllUsersPage";
+import AdminAllSellersPage from "./pages/AdminAllSellersPage";
+import AdminAllOrdersPage from "./pages/AdminAllOrdersPage";
+import AdminAllProductsPage from "./pages/AdminAllProductsPage";
+import AdminAllEventsPage from "./pages/AdminAllEventsPage";
+import AdminWithdrawPage from "./pages/AdminWithdrawPage";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -59,7 +67,6 @@ function App() {
         `${API_BASE_URL}/api/v2/payment/stripeapikey`
       );
       setStripeApiKey(data.stripeApiKey);
-      console.log(stripeApiKey);
     } catch (error) {
       console.error(error);
     }
@@ -254,6 +261,63 @@ function App() {
           }
         />
         <Route path="/order/success" element={<OrderSuccessPage />} />
+        {/* ADMIN ROUTES------- */}
+        <Route
+          path="/admin-dashboard"
+          element={
+            <AdminProtectedRoute>
+              <AdminDashboardPage />
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin-users"
+          element={
+            <AdminProtectedRoute>
+              <AdminAllUsersPage />
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin-sellers"
+          element={
+            <AdminProtectedRoute>
+              <AdminAllSellersPage />
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin-orders"
+          element={
+            <AdminProtectedRoute>
+              <AdminAllOrdersPage />
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin-products"
+          element={
+            <AdminProtectedRoute>
+              <AdminAllProductsPage />
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin-events"
+          element={
+            <AdminProtectedRoute>
+              <AdminAllEventsPage />
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin-withdraw-request"
+          element={
+            <AdminProtectedRoute>
+              <AdminWithdrawPage />
+            </AdminProtectedRoute>
+          }
+        />
       </Routes>
       <ToastContainer
         position="top-center"

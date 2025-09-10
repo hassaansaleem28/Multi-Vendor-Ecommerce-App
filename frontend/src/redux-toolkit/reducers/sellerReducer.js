@@ -1,6 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { clearErrors } from "../actions/userActions";
-import { loadSeller } from "../actions/sellerActions";
+import { getAllSellers, loadSeller } from "../actions/sellerActions";
 
 const initialState = {
   isLoading: true,
@@ -19,6 +19,17 @@ export const sellerReducer = createReducer(initialState, builder => {
     .addCase(loadSeller.rejected, (state, action) => {
       state.isLoading = false;
       state.isSeller = false;
+      state.error = action.payload;
+    })
+    .addCase(getAllSellers.pending, state => {
+      state.isLoading = true;
+    })
+    .addCase(getAllSellers.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.sellers = action.payload;
+    })
+    .addCase(getAllSellers.rejected, (state, action) => {
+      state.isLoading = false;
       state.error = action.payload;
     })
     .addCase(clearErrors, state => {

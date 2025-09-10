@@ -72,3 +72,23 @@ export const getAllEvents = createAsyncThunk(
     }
   }
 );
+
+export const getAllEventsAdmin = createAsyncThunk(
+  "getAllEventsAdmin/load",
+  async (_, thunkAPI) => {
+    try {
+      const { data } = await axios.get(
+        `${API_BASE_URL}/api/v2/events/get-all-events-admin`,
+        {
+          withCredentials: true,
+        }
+      );
+      return data.events;
+    } catch (error) {
+      console.error(error);
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to get all events for admin!"
+      );
+    }
+  }
+);

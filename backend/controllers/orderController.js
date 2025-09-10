@@ -146,3 +146,13 @@ export async function acceptOrderRefund(req, res) {
     res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });
   }
 }
+
+export async function getAllOrdersAdmin(req, res) {
+  try {
+    const orders = await order.find().sort({ deliveredAt: -1, createdAt: -1 });
+    res.status(201).json({ success: true, orders });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: "INTERNAL SERVER ERROR!" });
+  }
+}

@@ -30,6 +30,7 @@ function UserInbox() {
 
   useEffect(function () {
     socket.on("getMessage", data => {
+      console.log(data);
       setArrivalMessage({
         sender: data.senderId,
         text: data.text,
@@ -37,6 +38,7 @@ function UserInbox() {
       });
     });
   }, []);
+  console.log(arrivalMessage);
 
   useEffect(
     function () {
@@ -203,7 +205,6 @@ function MessageList({
   const [active, setActive] = useState(0);
   const [user, setUser] = useState([]);
   const navigate = useNavigate();
-
   useEffect(
     function () {
       setActiveStatus(online);

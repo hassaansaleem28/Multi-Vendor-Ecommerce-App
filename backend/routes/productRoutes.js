@@ -4,10 +4,11 @@ import {
   createReviewForProduct,
   deleteProduct,
   getAllProducts,
+  getAllProductsAdmin,
   getAllProductsShop,
 } from "../controllers/productController.js";
 import upload from "../multer.js";
-import { isAuthenticated, isSeller } from "../middleware/auth.js";
+import { isAdmin, isAuthenticated, isSeller } from "../middleware/auth.js";
 
 const productRouter = express.Router();
 
@@ -20,5 +21,10 @@ productRouter.put(
   isAuthenticated,
   createReviewForProduct
 );
-
+productRouter.get(
+  "/get-all-products-admin",
+  isAuthenticated,
+  isAdmin("Admin"),
+  getAllProductsAdmin
+);
 export default productRouter;

@@ -2,6 +2,8 @@ import express from "express";
 import {
   activateSeller,
   createShop,
+  deleteSellerFromAdmin,
+  getAllSellers,
   getShopInfo,
   loadSeller,
   loginSeller,
@@ -10,7 +12,7 @@ import {
   updateShopProfile,
 } from "../controllers/shopController.js";
 import upload from "../multer.js";
-import { isSeller } from "../middleware/auth.js";
+import { isAdmin, isAuthenticated, isSeller } from "../middleware/auth.js";
 
 const shopRouter = express.Router();
 
@@ -27,5 +29,17 @@ shopRouter.put(
   updateShopAvatar
 );
 shopRouter.put("/update-shop-profile", isSeller, updateShopProfile);
+shopRouter.get(
+  "/get-all-sellers-admin",
+  isAuthenticated,
+  isAdmin("Admin"),
+  getAllSellers
+);
+shopRouter.delete(
+  "/delete-seller-from-admin/:id",
+  isAuthenticated,
+  isAdmin("Admin"),
+  deleteSellerFromAdmin
+);
 
 export default shopRouter;

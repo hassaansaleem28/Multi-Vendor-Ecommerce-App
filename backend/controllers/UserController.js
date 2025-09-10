@@ -249,3 +249,30 @@ export async function getUser4Id(req, res) {
     res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });
   }
 }
+
+export async function getAllUsers(req, res) {
+  try {
+    const users = await User.find().sort({ createdAt: -1 });
+    return res.status(201).json({ success: true, users });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });
+  }
+}
+
+export async function deleteUserFromAdmin(req, res) {
+  try {
+    const userToDelete = await User.findById(req.params.id);
+    if (!userToDelete)
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found!" });
+    await User.findByIdAndDelete(req.params.id);
+    res
+      .status(201)
+      .json({ success: true, message: "User Deleted Successfully!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });
+  }
+}

@@ -4,6 +4,7 @@ import {
   createProduct,
   deleteProduct,
   getAllProducts,
+  getAllProductsAdmin,
   getAllProductsShop,
 } from "../actions/productActions";
 
@@ -59,6 +60,17 @@ export const productReducer = createReducer(initialState, builder => {
       state.allProducts = action.payload;
     })
     .addCase(getAllProducts.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    })
+    .addCase(getAllProductsAdmin.pending, state => {
+      state.isLoading = true;
+    })
+    .addCase(getAllProductsAdmin.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.allProductsAdmin = action.payload;
+    })
+    .addCase(getAllProductsAdmin.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     })

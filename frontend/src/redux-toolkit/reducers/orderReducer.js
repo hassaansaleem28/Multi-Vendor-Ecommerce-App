@@ -1,6 +1,10 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { clearErrors } from "../actions/userActions";
-import { getAllOrdersShop, getAllOrdersUser } from "../actions/orderActions";
+import {
+  getAllOrdersAdmin,
+  getAllOrdersShop,
+  getAllOrdersUser,
+} from "../actions/orderActions";
 
 const initialState = {
   isLoading: true,
@@ -29,6 +33,18 @@ export const orderReducer = createReducer(initialState, builder => {
       state.shopOrders = action.payload;
     })
     .addCase(getAllOrdersShop.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    })
+    // get all orders of admin
+    .addCase(getAllOrdersAdmin.pending, state => {
+      state.isLoading = true;
+    })
+    .addCase(getAllOrdersAdmin.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.adminOrders = action.payload;
+    })
+    .addCase(getAllOrdersAdmin.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     })

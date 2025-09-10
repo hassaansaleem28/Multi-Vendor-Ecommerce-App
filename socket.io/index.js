@@ -75,7 +75,7 @@ io.on("connection", socket => {
     }
   });
   // UPdate and Get the last message-
-  socket.on("updatesLastMessage", ({ lastMessage, lastMessageId }) => {
+  socket.on("updateLastMessage", ({ lastMessage, lastMessageId }) => {
     io.emit("getLastMessage", { lastMessage, lastMessageId });
   });
 

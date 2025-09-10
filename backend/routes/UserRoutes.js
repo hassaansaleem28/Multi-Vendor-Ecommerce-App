@@ -3,6 +3,8 @@ import {
   activateUser,
   createUser,
   deleteUserAddress,
+  deleteUserFromAdmin,
+  getAllUsers,
   getUser4Id,
   loadUser,
   loginUser,
@@ -13,7 +15,7 @@ import {
   updateUserPassword,
 } from "../controllers/UserController.js";
 import upload from "../multer.js";
-import { isAuthenticated } from "../middleware/auth.js";
+import { isAdmin, isAuthenticated } from "../middleware/auth.js";
 
 const userRouter = express.Router();
 
@@ -37,5 +39,17 @@ userRouter.delete(
 );
 userRouter.put("/update-user-password", isAuthenticated, updateUserPassword);
 userRouter.get("/get-user-4id/:id", getUser4Id);
+userRouter.get(
+  "/get-all-users",
+  isAuthenticated,
+  isAdmin("Admin"),
+  getAllUsers
+);
+userRouter.delete(
+  "/delete-user-from-admin/:id",
+  isAuthenticated,
+  isAdmin("Admin"),
+  deleteUserFromAdmin
+);
 
 export default userRouter;

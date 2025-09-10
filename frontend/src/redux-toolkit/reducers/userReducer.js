@@ -2,6 +2,7 @@ import { createReducer } from "@reduxjs/toolkit";
 import {
   clearErrors,
   deleteAddress,
+  getAllUsers,
   loadUser,
   updateAddresses,
   updateUser,
@@ -57,6 +58,17 @@ export const userReducer = createReducer(initialState, builder => {
     })
     .addCase(deleteAddress.rejected, (state, action) => {
       state.deletingAddress = false;
+      state.error = action.payload;
+    })
+    .addCase(getAllUsers.pending, state => {
+      state.isLoading = true;
+    })
+    .addCase(getAllUsers.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.users = action.payload;
+    })
+    .addCase(getAllUsers.rejected, (state, action) => {
+      state.isLoading = false;
       state.error = action.payload;
     })
     .addCase(clearErrors, state => {

@@ -159,6 +159,7 @@ function Header({ activeHeading }) {
                 onClick={() => setOpenCart(true)}
               >
                 <AiOutlineShoppingCart
+                  className="cursor-pointer"
                   size={30}
                   color="rgb(255 255 255 / 83%)"
                 />
@@ -260,7 +261,7 @@ function Header({ activeHeading }) {
                     {searchData.map((prod, i) => {
                       return (
                         <Link to={`/product/${prod._id}`} key={i}>
-                          <div className="flex items-center">
+                          <div className="flex items-center cursor-pointer">
                             <img
                               src={prod.image_Url[0].url}
                               className="w-[50px] mr-2"
@@ -276,8 +277,9 @@ function Header({ activeHeading }) {
               <Navbar active={activeHeading} />
               <div className={`${styles.button} ml-4 !rounded-[4px]`}>
                 <Link to="/shop-create">
-                  <h1 className="text-[#fff] flex font-bold items-center ">
-                    Become Seller <IoIosArrowForward className="ml-1" />
+                  <h1 className="text-[#fff] flex font-bold items-center cursor-pointer">
+                    {isSeller ? "Your Shop" : "Become Seller"}
+                    <IoIosArrowForward className="ml-1 cursor-pointer" />
                   </h1>
                 </Link>
               </div>
@@ -289,7 +291,7 @@ function Header({ activeHeading }) {
                   <>
                     <Link
                       to={"/login"}
-                      className="text-[18px] pr-[10px] text-[#000000b7]"
+                      className="cursor-pointer text-[18px] pr-[10px] text-[#000000b7]"
                     >
                       Login /
                     </Link>
@@ -306,7 +308,7 @@ function Header({ activeHeading }) {
                       <img
                         src={`${API_BASE_URL}/${user.avatar.url}`}
                         alt="Image "
-                        className="w-[60px] rounded-full h-[60px] border-[3px] border-[#14febc]"
+                        className="w-[60px] rounded-full h-[60px] border-[3px] border-[#14febc] cursor-pointer"
                       />
                     </Link>
                   </div>
