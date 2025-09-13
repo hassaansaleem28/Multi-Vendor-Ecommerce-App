@@ -143,7 +143,6 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductPage />} />
         <Route path="/shop-create" element={<ShopCreatePage />} />
-        <Route path="/shop/preview/:id" element={<ShopPreviewPage />} />
         <Route
           path="/dashboard"
           element={
@@ -224,6 +223,7 @@ function App() {
             </SellerProtectedRoute>
           }
         />
+        <Route path="/shop/preview/:id" element={<ShopPreviewPage />} />
         <Route
           path="/shop/:id"
           element={

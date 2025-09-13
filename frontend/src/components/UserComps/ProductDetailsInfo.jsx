@@ -114,7 +114,7 @@ function ProductDetailsInfo({ data, product, totalReviewsLength, avgRating }) {
                 Total Reviews :{" "}
                 <span className="font-[500]">{totalReviewsLength}</span>
               </h5>
-              <Link to={"/"}>
+              <Link to={`/shop/preview/${data?.shopId}`}>
                 <div
                   className={`${styles.button} !rounded-[4px] !h-[39.5px] mt-3`}
                 >

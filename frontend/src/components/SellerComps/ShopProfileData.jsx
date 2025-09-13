@@ -28,7 +28,7 @@ function ShopProfileData({ isOwner }) {
   );
   return (
     <div className="w-full">
-      <div className="flex w-full items-center justify-between">
+      <div className="flex-800px w-full items-center justify-between">
         <div className="w-full flex mb-15">
           <div className="flex items-center" onClick={() => setActive(1)}>
             <h5
@@ -63,7 +63,7 @@ function ShopProfileData({ isOwner }) {
             <div>
               <Link to={"/dashboard"}>
                 <div
-                  className={`${styles.button} mt-[-15px] font-[600] !rounded-[8px]`}
+                  className={`${styles.button} ml-20 mt-[-15px] font-[600] !rounded-[8px]`}
                 >
                   <span className="text-[#fff]">Dashboard</span>
                 </div>

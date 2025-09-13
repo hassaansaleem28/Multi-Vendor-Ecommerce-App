@@ -1,5 +1,6 @@
 import order from "../models/orderModel.js";
 import Product from "../models/ProductModel.js";
+import Shop from "../models/ShopModel.js";
 
 export async function createOrder(req, res) {
   try {
@@ -72,24 +73,38 @@ export async function updateOrderStatus(req, res) {
     if (!orderr)
       return res.json({ success: false, message: "User not found!" });
     if (req.body.status === "Transferred to delivery partner") {
-      orderr?.cart?.forEach(async item => {
-        await updateOrder(item._id, item.qty);
-      });
+      orderr?.cart?.forEach(
+        async item => await updateOrder(item._id, item.qty)
+      );
     }
     orderr.status = req.body?.status;
-    if (orderr.body?.status === "Delivered") {
+    if (req.body?.status === "Delivered") {
       orderr.deliveredAt = Date.now();
       orderr.paymentInfo.status = "Succeeded";
+      const serviceCharges = orderr.totalPrice * 0.1;
+      await updateSellerInfo(orderr.totalPrice - serviceCharges);
     }
     await orderr.save({ validateBeforeSave: false });
     res.status(200).json({ success: true, orderr });
 
     async function updateOrder(id, qty) {
       const product = await Product.findById(id);
-      product.stock -= qty;
-      product.sold_out += qty;
 
-      await product.save({ validateBeforeSave: false });
+      if (product) {
+        product.stock -= qty;
+        product.sold_out += qty;
+      }
+
+      await product?.save({ validateBeforeSave: false });
+    }
+    async function updateSellerInfo(amount) {
+      try {
+        const seller = await Shop.findById(req.seller.id);
+        seller.availableBalance += amount;
+        await seller.save();
+      } catch (error) {
+        console.error(error);
+      }
     }
   } catch (error) {
     console.error(error);

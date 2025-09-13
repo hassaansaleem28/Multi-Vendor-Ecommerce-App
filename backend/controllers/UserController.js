@@ -21,6 +21,10 @@ export async function createUser(req, res) {
       return res.status(400).json({ message: "User already exists" });
     }
     const fileName = req.file?.filename;
+    if (!fileName)
+      return res
+        .status(500)
+        .json({ success: false, message: "Please upload a avatar!" });
     const fileUrl = path?.join(fileName);
     const user = {
       fullName,

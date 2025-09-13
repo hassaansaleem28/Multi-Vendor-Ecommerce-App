@@ -1,10 +1,23 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function CountDown({ data }) {
   const [timeLeft, setTimeLeft] = useState(calcTimeLeft());
   useEffect(function () {
     const timer = setTimeout(() => {
       setTimeLeft(calcTimeLeft());
+      if (
+        typeof timeLeft.days === "undefined" &&
+        typeof timeLeft.hours === "undefined" &&
+        typeof timeLeft.minutes === "undefined" &&
+        typeof timeLeft.seconds === "undefined"
+      ) {
+        axios.delete(
+          `${API_BASE_URL}/api/v2/events/delete-shop-event/${data._id}`
+        );
+      }
     }, 1000);
     return () => clearTimeout(timer);
   });

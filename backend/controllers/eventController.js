@@ -40,10 +40,9 @@ export async function getAllEventsShop(req, res) {
 export async function deleteEvent(req, res) {
   try {
     const productId = req.params.id;
-
     const eventsData = await Events.findById(productId);
 
-    eventsData.images.forEach(imgUrl => {
+    eventsData?.images?.forEach(imgUrl => {
       const filename = imgUrl;
       const filePath = `uploads/${filename}`;
       fs.unlink(filePath, error => {

@@ -13,7 +13,7 @@ const eventsRouter = express.Router();
 
 eventsRouter.post("/create-event", upload.array("images"), createEvent);
 eventsRouter.get("/get-all-events-shop/:id", getAllEventsShop);
-eventsRouter.delete("/delete-shop-event/:id", isSeller, deleteEvent);
+eventsRouter.delete("/delete-shop-event/:id", deleteEvent);
 eventsRouter.get("/get-all-events", getAllEvents);
 eventsRouter.get(
   "/get-all-events-admin",

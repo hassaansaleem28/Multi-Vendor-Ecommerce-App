@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import Header from "../Layouts/Header";
 import { format } from "timeago.js";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -25,8 +25,10 @@ function UserInbox() {
   const [messages, setMessages] = useState(null);
   const [newMessage, setNewMessage] = useState("");
   const [userData, setUserData] = useState(null);
+  const [images, setImages] = useState(null);
   const [activeStatus, setActiveStatus] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState([]);
+  const scrollRef = useRef(null);
 
   useEffect(function () {
     socket.on("getMessage", data => {
@@ -146,6 +148,58 @@ function UserInbox() {
       console.error(error);
     }
   }
+
+  async function handleImageUpload(e) {
+    const file = e.target.files[0];
+    setImages(file);
+    imageSendingHandler(file);
+  }
+  async function imageSendingHandler(e) {
+    const formData = new FormData();
+    formData.append("images", e);
+    formData.append("sender", user._id);
+    formData.append("text", newMessage);
+    formData.append("conversationId", currentChat._id);
+    const receiverId = currentChat.memebers?.find(
+      member => member !== user._id
+    );
+    socket.emit("sendMessage", {
+      senderId: user._id,
+      receiverId,
+      images: e,
+    });
+    try {
+      await axios
+        .post(`${API_BASE_URL}/api/v2/messages/create-new-message`, formData)
+        .then(res => {
+          setImages();
+          setMessages([...messages, res.data?.message]);
+          updateLastMessageForImage();
+        });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  async function updateLastMessageForImage() {
+    try {
+      await axios.put(
+        `${API_BASE_URL}/api/v2/conversation/update-last-message/${currentChat._id}`,
+        {
+          lastMessage: "PHOTO",
+          lastMessageId: user._id,
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  useEffect(
+    function () {
+      scrollRef.current?.scrollIntoView({ behaviour: "smooth" });
+    },
+    [messages]
+  );
+
   if (loading) return <Loader />;
 
   return (
@@ -183,8 +237,8 @@ function UserInbox() {
           sellerId={user._id}
           userData={userData}
           activeStatus={activeStatus}
-          // scrollRef={scrollRef}
-          // handleImageUpload={handleImageUpload}
+          scrollRef={scrollRef}
+          handleImageUpload={handleImageUpload}
         />
       )}
     </div>
@@ -305,44 +359,58 @@ const SellerInbox = ({
       {/* messages */}
       <div className="px-3 h-[75vh] py-3 overflow-y-scroll">
         {messages &&
-          messages.map((item, index) => (
-            <div
-              className={`flex w-full my-2 ${
-                item.sender === sellerId ? "justify-end" : "justify-start"
-              }`}
-              ref={scrollRef}
-              key={index}
-            >
-              {item.sender !== sellerId && (
-                <img
-                  src={`${API_BASE_URL}/${userData?.avatar?.url}`}
-                  className="w-[40px] h-[40px] rounded-full mr-3"
-                  alt=""
-                />
-              )}
-              {item.images.length !== 0 ? (
-                <img
-                  src={`${API_BASE_URL}/${item?.images}`}
-                  className="w-[300px] h-[300px] object-cover rounded-[10px] ml-2 mb-2"
-                />
-              ) : null}
-              {item.text !== "" && (
-                <div>
-                  <div
-                    className={`w-max p-2 rounded ${
-                      item.sender === sellerId ? "bg-[#000]" : "bg-[#38c776]"
-                    } text-[#fff] h-min`}
-                  >
-                    <p>{item.text}</p>
-                  </div>
-
-                  <p className="text-[12px] text-[#000000d3] pt-1">
-                    {format(item.createdAt)}
-                  </p>
-                </div>
-              )}
-            </div>
-          ))}
+          messages.map((item, index) => {
+            return (
+              <div
+                className={`flex w-full my-2 ${
+                  item.sender === sellerId ? "justify-end" : "justify-start"
+                }`}
+                ref={scrollRef}
+                key={index}
+              >
+                {item.sender !== sellerId && (
+                  <img
+                    src={`${API_BASE_URL}/${userData?.avatar?.url}`}
+                    className="w-[40px] h-[40px] rounded-full mr-3"
+                    alt=""
+                  />
+                )}
+                {item?.images && (
+                  <img
+                    src={`${API_BASE_URL}/${item?.images}`}
+                    className="w-[300px] h-[300px] object-cover rounded-[10px] ml-2 mb-2"
+                  />
+                )}
+                {item.text !== "" && (
+                  <>
+                    {item?.images && (
+                      <img
+                        src={`${API_BASE_URL}/${item.images}`}
+                        className="w-[300px] h-[300px] object-cover rounded-[10px] ml-2 mb-2"
+                      />
+                    )}
+                    {item.text !== "" && (
+                      <div>
+                        <div
+                          className={`w-max p-2 rounded ${
+                            item.sender === sellerId
+                              ? "bg-[#000]"
+                              : "bg-[#38c776]"
+                          } text-[#fff] h-min`}
+                        >
+                          {" "}
+                          <p>{item?.text}</p>
+                        </div>
+                        <p className="text-[12px] text-[#000000d3] pt-1">
+                          {format(item.createdAt)}
+                        </p>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            );
+          })}
       </div>
 
       {/* send message input */}

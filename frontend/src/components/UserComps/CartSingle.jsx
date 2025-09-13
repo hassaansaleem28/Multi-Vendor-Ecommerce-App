@@ -24,10 +24,9 @@ function CartSingle({ item, quantityChangeHandler, removeFromCarthandler }) {
     const updateCartData = { ...data, qty: val === 1 ? 1 : val - 1 };
     quantityChangeHandler(updateCartData);
   }
-  console.log(item);
   return (
     <div className="border-b p-4">
-      <div className="w-full flex items-center">
+      <div className="w-full flex-800px items-center">
         <div>
           <div
             className={`bg-[#e44343] border border-[#e4434373] rounded-full w-[25px] h-[25px] ${styles.normalFlex} justify-center cursor-pointer`}

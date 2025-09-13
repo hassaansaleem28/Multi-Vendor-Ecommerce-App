@@ -15,7 +15,7 @@ function WishListSingle({
     <div className="border-b p-4">
       <div className="w-full flex items-center">
         <RxCross1
-          className="cursor-pointer"
+          className="cursor-pointer marigin-left-unset marigin-bottom-unset mb-2 ml-2"
           onClick={() => removeFromWishlistHandler(item)}
         />
         <img
@@ -25,7 +25,7 @@ function WishListSingle({
         />
         <div className="pl-[5px]">
           <h1 className="">{item.name}</h1>
-          <h4 className="font-[600] text-[17px] pt-[3px] text-[#d02222] font-Roboto">
+          <h4 className="font-[600] pt-3 padding-top-800px text-[17px] text-[#d02222] font-Roboto">
             US ${totalPrice}
           </h4>
         </div>

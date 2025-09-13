@@ -12,6 +12,7 @@ import stripeRouter from "./routes/stripeRoutes.js";
 import orderRouter from "./routes/orderRoutes.js";
 import conversationRouter from "./routes/conversationRoutes.js";
 import messagesRouter from "./routes/messagesRoutes.js";
+import withdrawRouter from "./routes/withdrawRoutes.js";
 
 const app = express();
 app.use(express.json());
@@ -38,6 +39,7 @@ app.use("/api/v2/payment", stripeRouter);
 app.use("/api/v2/order", orderRouter);
 app.use("/api/v2/conversation", conversationRouter);
 app.use("/api/v2/messages", messagesRouter);
+app.use("/api/v2/withdraw-request", withdrawRouter);
 
 app.listen(process.env.PORT || 5000, () => {
   console.log(`Server is running on port ${process.env.PORT || 5000}...`);

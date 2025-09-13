@@ -25,7 +25,7 @@ function Signup() {
       formData.append("email", email);
       formData.append("password", password);
       formData.append("file", avatar);
-      const data = await axios.post(
+      const { data } = await axios.post(
         `${API_BASE_URL}/api/v2/user/create-user`,
         formData,
         {
@@ -34,7 +34,7 @@ function Signup() {
           },
         }
       );
-      toast.success(data.data.message);
+      if (data?.success) toast.success(data?.message);
       setFullName("");
       setEmail("");
       setPassword("");

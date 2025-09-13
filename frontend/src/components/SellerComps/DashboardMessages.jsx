@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AiOutlineArrowRight, AiOutlineSend } from "react-icons/ai";
 import { TfiGallery } from "react-icons/tfi";
 import { useSelector } from "react-redux";
@@ -24,7 +24,9 @@ function DashboardMessages() {
   const [newMessage, setNewMessage] = useState("");
   const [userData, setUserData] = useState(null);
   const [activeStatus, setActiveStatus] = useState(false);
+  const [images, setImages] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
+  const scrollRef = useRef(null);
 
   useEffect(function () {
     socket.on("getMessage", data => {
@@ -39,7 +41,7 @@ function DashboardMessages() {
   useEffect(
     function () {
       arrivalMessage &&
-        currentChat?.members.includes(arrivalMessage.sender) &&
+        currentChat?.memebers?.includes(arrivalMessage.sender) &&
         setMessages(prev => [...prev, arrivalMessage]);
     },
     [arrivalMessage, currentChat]
@@ -114,6 +116,19 @@ function DashboardMessages() {
       console.error(error);
     }
   }
+  async function updateLastMessageForImage() {
+    try {
+      await axios.put(
+        `${API_BASE_URL}/api/v2/conversation/update-last-message/${currentChat._id}`,
+        {
+          lastMessage: "PHOTO",
+          lastMessageId: seller._id,
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  }
   async function sendMessageHandler(e) {
     e.preventDefault();
     const message = {
@@ -143,6 +158,45 @@ function DashboardMessages() {
       console.error(error);
     }
   }
+  async function handleImageUpload(e) {
+    const file = e.target.files[0];
+    setImages(file);
+    imageSendingHandler(file);
+  }
+  async function imageSendingHandler(e) {
+    const formData = new FormData();
+    formData.append("images", e);
+    formData.append("sender", seller._id);
+    formData.append("text", newMessage);
+    formData.append("conversationId", currentChat._id);
+    const receiverId = currentChat.memebers?.find(
+      member => member !== seller._id
+    );
+    socket.emit("sendMessage", {
+      senderId: seller._id,
+      receiverId,
+      images: e,
+    });
+    try {
+      await axios
+        .post(`${API_BASE_URL}/api/v2/messages/create-new-message`, formData)
+        .then(res => {
+          setImages();
+          setMessages([...messages, res.data?.message]);
+          updateLastMessageForImage();
+        });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(
+    function () {
+      scrollRef.current?.scrollIntoView({ behaviour: "smooth" });
+    },
+    [messages]
+  );
+
   if (isLoading) return <Loader />;
 
   return (
@@ -176,8 +230,10 @@ function DashboardMessages() {
           setNewMessage={setNewMessage}
           sendMessageHandler={sendMessageHandler}
           messages={messages}
+          handleImageUpload={handleImageUpload}
           userData={userData}
           sellerId={seller._id}
+          scrollRef={scrollRef}
           activeStatus={activeStatus}
         />
       )}
@@ -254,7 +310,7 @@ function MessageList({
             <p className="text-[16px] text-[#000c]">
               {conversation?.lastMessageId !== user?._id
                 ? "You: "
-                : user?.fullName.split(" ")[0] + ": "}
+                : user?.fullName?.split(" ")[0] + ": "}
               {conversation?.lastMessage}
             </p>
           </div>
@@ -275,6 +331,8 @@ function SellerInbox({
   sendMessageHandler,
   sellerId,
   activeStatus,
+  scrollRef,
+  handleImageUpload,
 }) {
   return (
     <div className="w-full min-h-[87vh] flex flex-col justify-between">
@@ -300,35 +358,45 @@ function SellerInbox({
       {/* messages */}
       <div className="px-3 h-[65vh] py-3 overflow-y-scroll">
         {messages &&
-          messages.map((msg, i) => (
-            <div
-              key={i}
-              className={`flex w-full my-2 ${
-                msg.sender === sellerId ? "justify-end" : "justify-start"
-              }`}
-            >
-              {msg.sender !== sellerId && (
-                <img
-                  src={`${API_BASE_URL}/${userData?.avatar?.url}`}
-                  alt="pfp"
-                  className="w-[40px] h-[40px] mr-3 rounded-full"
-                />
-              )}
-              <div>
-                <div
-                  className={`w-max p-2 rounded ${
-                    msg.sender === sellerId ? "bg-[#000]" : "bg-[#38c776]"
-                  } text-[#fff] h-min`}
-                >
-                  {" "}
-                  <p>{msg?.text}</p>
-                </div>
-                <p className="text-[12px] text-[#000000d3] pt-1">
-                  {format(msg.createdAt)}
-                </p>
+          messages.map((msg, i) => {
+            return (
+              <div
+                key={i}
+                className={`flex w-full my-2 ${
+                  msg.sender === sellerId ? "justify-end" : "justify-start"
+                }`}
+                ref={scrollRef}
+              >
+                {msg.sender !== sellerId && (
+                  <img
+                    src={`${API_BASE_URL}/${userData?.avatar?.url}`}
+                    alt="pfp"
+                    className="w-[40px] h-[40px] mr-3 rounded-full"
+                  />
+                )}
+                {msg?.images && (
+                  <img
+                    src={`${API_BASE_URL}/${msg.images}`}
+                    className="w-[300px] h-[300px] object-cover rounded-[10px] mr-2"
+                  />
+                )}
+                {msg.text !== "" && (
+                  <div>
+                    <div
+                      className={`w-max p-2 rounded ${
+                        msg.sender === sellerId ? "bg-[#000]" : "bg-[#38c776]"
+                      } text-[#fff] h-min`}
+                    >
+                      <p>{msg?.text}</p>
+                    </div>
+                    <p className="text-[12px] text-[#000000d3] pt-1">
+                      {format(msg.createdAt)}
+                    </p>
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
+            );
+          })}
       </div>
       {/* send message inputs */}
       <form
@@ -337,7 +405,13 @@ function SellerInbox({
         onSubmit={sendMessageHandler}
       >
         <div className="w-[30px]">
-          <input type="file" name="" id="image" className="hidden" />
+          <input
+            type="file"
+            name=""
+            id="image"
+            className="hidden"
+            onChange={handleImageUpload}
+          />
           <label htmlFor="image">
             <TfiGallery className="cursor-pointer" size={20} />
           </label>

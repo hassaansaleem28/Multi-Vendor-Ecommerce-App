@@ -3,7 +3,7 @@ import { MdBorderClear } from "react-icons/md";
 import styles from "../../styles/styles";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { getAllOrdersShop } from "../../redux-toolkit/actions/orderActions";
 import { getAllProductsShop } from "../../redux-toolkit/actions/productActions";
 import Button from "@mui/material/Button";
@@ -14,24 +14,14 @@ function DashboardHero() {
   const { seller } = useSelector(state => state.seller);
   const { shopOrders } = useSelector(state => state.orders);
   const { product } = useSelector(state => state.product);
-  const [deliveredOrder, setDeliveredOrder] = useState(null);
-
+  const availableBalance = seller?.availableBalance.toFixed(2);
   useEffect(
     function () {
       dispatch(getAllOrdersShop(seller._id));
       dispatch(getAllProductsShop(seller._id));
-
-      const orderData =
-        shopOrders && shopOrders.filter(item => item.status === "Delivered");
-      setDeliveredOrder(orderData);
     },
     [dispatch]
   );
-  const totalEarningWithoutTax =
-    deliveredOrder &&
-    deliveredOrder.reduce((acc, order) => acc + order.totalPrice, 0);
-  const serviceCharges = totalEarningWithoutTax * 0.1;
-  const availableBalance = totalEarningWithoutTax - serviceCharges.toFixed(2);
 
   const columns = [
     {

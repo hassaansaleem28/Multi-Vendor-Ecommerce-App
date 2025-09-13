@@ -218,27 +218,37 @@ function Header({ activeHeading }) {
             </Link>
           </div>
           <div>
-            <div className="relative mr-[20px]">
-              <AiOutlineShoppingCart size={30} />
+            <div
+              className="relative mr-[20px] cursor-pointer"
+              onClick={() => setOpenCart(true)}
+            >
+              <AiOutlineShoppingCart size={30} className="cursor-pointer" />
               <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 top right p-0 m-0 text-white font-mono text-[12px] leading-tight text-center">
                 {cart && cart.length}
               </span>
             </div>
           </div>
+          {/* Cart popup */}
+          {openCart ? <Cart setOpenCart={setOpenCart} /> : null}
+          {/* Wishlist popup */}
+          {openWishList ? <WishList setOpenWishList={setOpenWishList} /> : null}
         </div>
         {/* Header sidebar */}
         {open && (
           <div className="fixed w-full bg-[#0000005f] z-20 h-full top-0 left-0 ">
-            <div className="fixed w-[60%] bg-[#fff] h-screen top-0 left-0 z-10 overflow-y-scroll">
+            <div className="fixed w-[70%] bg-[#fff] h-screen top-0 left-0 z-10 overflow-y-scroll">
               <div className="w-full justify-between flex pr-3">
                 <div>
-                  <div className="relative mr-[15px ]">
+                  <div
+                    className="relative mr-[15px] cursor-pointer"
+                    onClick={() => setOpenWishList(true) || setOpen(false)}
+                  >
                     <AiOutlineHeart
                       size={30}
                       className="mt-5 ml-3 cursor-pointer"
                     />
                     <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 top right p-0 m-0 text-white font-mono text-[12px] leading-tight text-center">
-                      0
+                      {wishlist && wishlist.length}
                     </span>
                   </div>
                 </div>
@@ -275,7 +285,7 @@ function Header({ activeHeading }) {
                 )}
               </div>
               <Navbar active={activeHeading} />
-              <div className={`${styles.button} ml-4 !rounded-[4px]`}>
+              <div className={`${styles.button} ml-4 !rounded-xl text-[20px]`}>
                 <Link to="/shop-create">
                   <h1 className="text-[#fff] flex font-bold items-center cursor-pointer">
                     {isSeller ? "Your Shop" : "Become Seller"}

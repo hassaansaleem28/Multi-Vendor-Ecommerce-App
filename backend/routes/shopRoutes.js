@@ -3,6 +3,7 @@ import {
   activateSeller,
   createShop,
   deleteSellerFromAdmin,
+  deleteWithdrawMethod,
   getAllSellers,
   getShopInfo,
   loadSeller,
@@ -10,6 +11,7 @@ import {
   logoutSeller,
   updateShopAvatar,
   updateShopProfile,
+  updateWithdrawMethods,
 } from "../controllers/shopController.js";
 import upload from "../multer.js";
 import { isAdmin, isAuthenticated, isSeller } from "../middleware/auth.js";
@@ -41,5 +43,7 @@ shopRouter.delete(
   isAdmin("Admin"),
   deleteSellerFromAdmin
 );
+shopRouter.put("/update-withdraw-method", isSeller, updateWithdrawMethods);
+shopRouter.delete("/delete-withdraw-method", isSeller, deleteWithdrawMethod);
 
 export default shopRouter;

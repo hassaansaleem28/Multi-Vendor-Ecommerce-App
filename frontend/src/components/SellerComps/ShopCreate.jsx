@@ -31,7 +31,7 @@ function ShopCreate() {
       formData.append("zipCode", zipCode);
       formData.append("address", address);
       formData.append("file", avatar);
-      const data = await axios.post(
+      const { data } = await axios.post(
         `${API_BASE_URL}/api/v2/seller/create-seller`,
         formData,
         {
@@ -40,7 +40,7 @@ function ShopCreate() {
           },
         }
       );
-      toast.success(data.data.message);
+      if (data?.success) toast.success(data?.message);
       setName("");
       setEmail("");
       setPassword("");

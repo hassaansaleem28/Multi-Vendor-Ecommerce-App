@@ -110,11 +110,11 @@ function AdminSidebar({ activeHeading }) {
             color={`${activeHeading === 7 ? "crimson" : "#555"}`}
           />
           <h5
-            className={`display-block-800px hidden pl-2 text-[18px] font-[400] ${
+            className={`display-block-800px hidden pl-2 text-[17px] font-[400] ${
               activeHeading === 7 ? "text-[crimson]" : "text-[#555]"
             }`}
           >
-            Withdraw Request
+            Withdraw Requests
           </h5>
         </Link>
       </div>

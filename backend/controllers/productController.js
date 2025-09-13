@@ -87,11 +87,11 @@ export async function createReviewForProduct(req, res) {
       productId,
     };
 
-    const isReviewed = product.reviews.find(
+    const isReviewed = product?.reviews?.find(
       review => review.user._id === req.user._id
     );
     if (isReviewed) {
-      product.reviews.forEach(review => {
+      product?.reviews?.forEach(review => {
         if (review.user._id === req.user._id) {
           (review.rating = rating),
             (review.comment = comment),
@@ -99,12 +99,12 @@ export async function createReviewForProduct(req, res) {
         }
       });
     } else {
-      product.reviews.push(review);
+      product?.reviews?.push(review);
     }
 
     let avg = 0;
-    product.reviews.forEach(review => (avg += review.rating));
-    product.ratings = avg / product.reviews.length;
+    product?.reviews?.forEach(review => (avg += review.rating));
+    product.ratings = avg / product?.reviews?.length;
 
     await product.save({ validateBeforeSave: false });
 

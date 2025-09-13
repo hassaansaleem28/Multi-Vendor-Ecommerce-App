@@ -25,6 +25,11 @@ function AdminDashboardMain() {
   );
   if (isLoading) return <Loader />;
   if (isSellersLoading) return <Loader />;
+
+  const totalAdminEarning =
+    adminOrders &&
+    adminOrders.reduce((acc, item) => acc + item.totalPrice * 0.1, 0);
+  const adminBalance = totalAdminEarning?.toFixed(2);
   const columns = [
     {
       field: "id",
@@ -80,7 +85,9 @@ function AdminDashboardMain() {
               Total Earning
             </h3>
           </div>
-          <h5 className="pt-2 pl-[36px] text-[22px] font-[500]">${120}</h5>
+          <h5 className="pt-2 pl-[36px] text-[22px] font-[500]">
+            ${adminBalance}
+          </h5>
         </div>
         <div className="w-full mb-4 width-800px-30 min-h-[20vh] bg-white shadow rounded px-2 py-5">
           <div className="flex items-center">

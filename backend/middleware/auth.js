@@ -42,7 +42,9 @@ export function isAdmin(...roles) {
   try {
     return function (req, res, next) {
       if (!roles.includes(req.user?.role)) {
-        console.error(`${req.user.role} don't have access to these resources!`);
+        console.error(
+          `${req.user?.role} don't have access to these resources!`
+        );
         return res
           .status(400)
           .json({ success: false, message: "Can't access this resources!" });

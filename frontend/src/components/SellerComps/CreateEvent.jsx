@@ -5,6 +5,7 @@ import { categoriesData } from "../../static/data";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { toast } from "react-toastify";
 import { createEvent } from "../../redux-toolkit/actions/eventActions";
+import { createProduct } from "../../redux-toolkit/actions/productActions";
 
 function CreateEvent() {
   const { seller } = useSelector(state => state.seller);
@@ -73,6 +74,7 @@ function CreateEvent() {
     newForm.append("finish_Date", endDate.toISOString());
 
     dispatch(createEvent(newForm));
+    dispatch(createProduct(newForm));
   }
   function handleAddImages(e) {
     e.preventDefault();
@@ -92,6 +94,7 @@ function CreateEvent() {
           </label>
           <input
             type="text"
+            required
             name="name"
             value={name}
             className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -124,6 +127,7 @@ function CreateEvent() {
           <select
             className="w-full mt-2 border border-gray-300 h-[35px] rounded-[5px]"
             value={category}
+            required
             onChange={e => setCategory(e.target.value)}
           >
             <option value="Choose a category">Choose a category</option>
@@ -142,6 +146,7 @@ function CreateEvent() {
             type="text"
             name="tags"
             value={tags}
+            required
             className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             onChange={e => setTags(e.target.value)}
             placeholder="Enter your event product tags"
@@ -152,6 +157,7 @@ function CreateEvent() {
           <label className="pb-2">Original Price</label>
           <input
             type="number"
+            required
             name="originalPrice"
             min={0}
             value={originalPrice}
@@ -181,6 +187,7 @@ function CreateEvent() {
           </label>
           <input
             type="number"
+            required
             name="stock"
             min={0}
             value={stock}
@@ -198,6 +205,7 @@ function CreateEvent() {
             type="date"
             id="start-date"
             name="startDate"
+            required
             value={startDate ? startDate.toISOString().slice(0, 10) : ""}
             className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             onChange={handleStartDateChange}
@@ -211,6 +219,7 @@ function CreateEvent() {
           </label>
           <input
             type="date"
+            required
             id="end-date"
             name="endDate"
             value={endDate ? endDate.toISOString().slice(0, 10) : ""}
@@ -227,6 +236,7 @@ function CreateEvent() {
           <input
             type="file"
             name="file"
+            required
             id="upload"
             className="hidden"
             multiple

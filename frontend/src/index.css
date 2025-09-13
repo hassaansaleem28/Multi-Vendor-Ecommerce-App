@@ -56,17 +56,32 @@
     .width-800px-95 {
       width: 95%;
     }
+    .width-800px-par {
+      width: 100px;
+    }
     .marigin-top-800px {
       margin-top: 0;
     }
+    .marigin-right-800px {
+      margin-right: 12px;
+    }
     .marigin-800px-unset {
       margin-top: unset;
+    }
+    .marigin-bottom-unset {
+      margin-bottom: unset;
+    }
+    .marigin-left-unset {
+      margin-left: unset;
     }
     .a800px-width-280px {
       width: 280px;
     }
     .text-unset-800px {
       font-size: unset;
+    }
+    .padding-top-800px {
+      padding-top: 3px;
     }
     .padding-nav-800px {
       padding-bottom: 0px;

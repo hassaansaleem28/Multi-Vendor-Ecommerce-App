@@ -9,7 +9,7 @@ const messagesRouter = express.Router();
 
 messagesRouter.post(
   "/create-new-message",
-  upload.array("images"),
+  upload.single("images"),
   createNewMessage
 );
 messagesRouter.get("/get-all-messages/:id", getAllMessagesId);

@@ -70,6 +70,7 @@ function CreateProduct() {
           <input
             type="text"
             name="name"
+            required
             value={name}
             className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             onChange={e => setName(e.target.value)}
@@ -101,6 +102,7 @@ function CreateProduct() {
           <select
             className="w-full mt-2 border border-gray-300 h-[35px] rounded-[5px]"
             value={category}
+            required
             onChange={e => setCategory(e.target.value)}
           >
             <option value="Choose a category">Choose a category</option>
@@ -117,6 +119,7 @@ function CreateProduct() {
           <label className="pb-2">Tags</label>
           <input
             type="text"
+            required
             name="tags"
             value={tags}
             className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -129,6 +132,7 @@ function CreateProduct() {
           <label className="pb-2">Original Price</label>
           <input
             type="number"
+            required
             name="originalPrice"
             min={0}
             value={originalPrice}
@@ -146,6 +150,7 @@ function CreateProduct() {
             type="text"
             name="discountPrice"
             value={discountPrice}
+            required
             className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             onChange={e => setDiscountPrice(e.target.value)}
             placeholder="Enter discounted price of product"
@@ -158,6 +163,7 @@ function CreateProduct() {
           </label>
           <input
             type="number"
+            required
             name="stock"
             min={0}
             value={stock}
@@ -174,6 +180,7 @@ function CreateProduct() {
           <input
             type="file"
             name="file"
+            required
             id="upload"
             className="hidden"
             multiple

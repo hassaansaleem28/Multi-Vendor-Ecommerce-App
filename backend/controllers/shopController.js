@@ -22,6 +22,10 @@ export async function createShop(req, res) {
       return res.status(400).json({ message: "User already exists" });
     }
     const fileName = req.file?.filename;
+    if (!fileName)
+      return res
+        .status(500)
+        .json({ success: false, message: "Please upload your Shop Image!" });
     const fileUrl = path?.join(fileName);
     const seller = {
       name,
@@ -207,6 +211,35 @@ export async function deleteSellerFromAdmin(req, res) {
     res
       .status(201)
       .json({ success: true, message: "Seller Deleted Successfully!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });
+  }
+}
+
+export async function updateWithdrawMethods(req, res) {
+  try {
+    const { withdrawMethod } = req.body;
+    const seller = await Shop.findByIdAndUpdate(req.seller._id, {
+      withdrawMethod,
+    });
+    res.status(201).json({ success: true, seller });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });
+  }
+}
+
+export async function deleteWithdrawMethod(req, res) {
+  try {
+    const seller = await Shop.findById(req.seller._id);
+    if (!seller)
+      return res
+        .status(404)
+        .json({ success: false, message: "Seller not found!" });
+    seller.withdrawMethod = null;
+    await seller.save();
+    res.status(201).json({ success: true, seller });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });

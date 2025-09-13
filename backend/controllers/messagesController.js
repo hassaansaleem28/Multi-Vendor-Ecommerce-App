@@ -1,18 +1,17 @@
 import Messages from "../models/messagesModel.js";
+import path from "path";
 
 export async function createNewMessage(req, res) {
   try {
     const messageData = req.body;
-    if (req.files) {
-      const files = req.files;
-      const imgUrls = files.map(file => `${file.fileName}`);
-
-      messageData.images = imgUrls;
-      messageData.conversationId = req.body.conversationId;
-      messageData.sender = req.body.sender;
-      messageData.text = req.body.text;
+    if (req.file) {
+      const filename = req.file.filename;
+      const fileUrl = path?.join(filename);
+      messageData.images = fileUrl;
     }
-
+    messageData.conversationId = req.body.conversationId;
+    messageData.sender = req.body.sender;
+    messageData.text = req.body.text;
     const message = new Messages({
       conversationId: messageData.conversationId,
       text: messageData.text,
