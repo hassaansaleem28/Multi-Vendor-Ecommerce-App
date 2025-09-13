@@ -17,9 +17,9 @@ function Events() {
             </h1>
           </div>
           <div className="w-full grid">
-            {allEvents.length !== 0 &&
+            {allEvents?.length !== 0 &&
               allEvents &&
-              allEvents.map((event, i) => (
+              allEvents?.map((event, i) => (
                 <EventCard
                   data={event}
                   key={i}
@@ -27,7 +27,7 @@ function Events() {
                   isLoading={isLoading}
                 />
               ))}
-            {allEvents.length === 0 && <h4>No Product Events Running!</h4>}
+            {allEvents?.length === 0 && <h4>No Product Events Running!</h4>}
           </div>
         </div>
       )}
