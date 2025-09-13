@@ -19,6 +19,8 @@ import {
 import { toast } from "react-toastify";
 import { addToCart } from "../../redux-toolkit/actions/cartActions";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 function ProductCard({ product, isEvent }) {
   const [click, setClick] = useState(false);
   const [open, setOpen] = useState(false);
@@ -69,7 +71,7 @@ function ProductCard({ product, isEvent }) {
           }`}
         >
           <img
-            src={product.images && product.images[0]}
+            src={`${API_BASE_URL}/${product.images && product.images[0]}`}
             alt="Image"
             className="w-full h-[170px] object-contain"
           />

@@ -71,7 +71,7 @@ function ProductDetails({ data }) {
             userId,
             sellerId,
           })
-          .then(res => navigate(`/inbox/${res.data.conversation._id}`));
+          .then(res => navigate(`/inbox?${res.data.conversation._id}`));
       } else {
         toast.error("Please login to create a conversation!");
       }
