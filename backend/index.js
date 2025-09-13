@@ -13,6 +13,7 @@ import orderRouter from "./routes/orderRoutes.js";
 import conversationRouter from "./routes/conversationRoutes.js";
 import messagesRouter from "./routes/messagesRoutes.js";
 import withdrawRouter from "./routes/withdrawRoutes.js";
+import path from "path";
 
 const app = express();
 app.use(express.json());
@@ -23,7 +24,7 @@ app.use(
     credentials: true,
   })
 );
-app.use("/", express.static("uploads"));
+app.use("/", express.static(path.join(__dirname, "./uploads")));
 connectDB();
 
 app.get("/", (req, res) => {
