@@ -11,7 +11,7 @@ export async function createShop(req, res) {
     const sellerEmail = await Shop.findOne({ email });
     if (sellerEmail) {
       const fileName = req.file?.filename;
-      const filePath = `uploads/${fileName}`;
+      const filePath = `./uploads/${fileName}`;
       fs.unlink(filePath, err => {
         if (err) {
           console.error("Error deleting file:", err);
