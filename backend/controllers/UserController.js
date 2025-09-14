@@ -11,7 +11,7 @@ export async function createUser(req, res) {
     const userEmail = await User.findOne({ email });
     if (userEmail) {
       const fileName = req.file?.filename;
-      const filePath = `uploads/${fileName}`;
+      const filePath = `./uploads/${fileName}`;
       fs.unlink(filePath, err => {
         if (err) {
           console.error("Error deleting file:", err);
