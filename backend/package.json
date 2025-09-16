@@ -10,7 +10,8 @@
     "node": "22.x"
   },
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "start": "node index.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
