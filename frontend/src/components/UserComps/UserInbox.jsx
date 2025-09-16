@@ -22,7 +22,7 @@ function UserInbox() {
   const [open, setOpen] = useState(false);
   const [arrivalMessage, setArrivalMessage] = useState(null);
   const [currentChat, setCurrentChat] = useState(null);
-  const [messages, setMessages] = useState(null);
+  const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [userData, setUserData] = useState(null);
   const [images, setImages] = useState(null);
@@ -32,7 +32,6 @@ function UserInbox() {
 
   useEffect(function () {
     socket.on("getMessage", data => {
-      console.log(data);
       setArrivalMessage({
         sender: data.senderId,
         text: data.text,
@@ -44,7 +43,7 @@ function UserInbox() {
   useEffect(
     function () {
       arrivalMessage &&
-        currentChat?.members.includes(arrivalMessage.sender) &&
+        currentChat?.memebers?.includes(arrivalMessage.sender) &&
         setMessages(prev => [...prev, arrivalMessage]);
     },
     [arrivalMessage, currentChat]
@@ -80,7 +79,7 @@ function UserInbox() {
     [user]
   );
   const onlineCheck = chat => {
-    const chatMembers = chat.memebers.find(member => member !== user._id);
+    const chatMembers = chat?.memebers.find(member => member !== user._id);
     const online = onlineUsers?.find(user => user.userId === chatMembers);
 
     return online ? true : false;
@@ -125,7 +124,7 @@ function UserInbox() {
       text: newMessage,
       conversationId: currentChat._id,
     };
-    const receiverId = currentChat?.members?.find(
+    const receiverId = currentChat?.memebers?.find(
       member => member !== user?._id
     );
     socket.emit("sendMessage", {
@@ -182,7 +181,7 @@ function UserInbox() {
   async function updateLastMessageForImage() {
     try {
       await axios.put(
-        `${API_BASE_URL}/api/v2/conversation/update-last-message/${currentChat._id}`,
+        `${API_BASE_URL}/api/v2/conversation/update-last-message/${currentChat?._id}`,
         {
           lastMessage: "PHOTO",
           lastMessageId: user?._id,
@@ -194,7 +193,7 @@ function UserInbox() {
   }
   useEffect(
     function () {
-      scrollRef.current?.scrollIntoView({ behaviour: "smooth" });
+      scrollRef.current?.scrollIntoView({ behavior: "smooth" });
     },
     [messages]
   );
@@ -261,12 +260,12 @@ function MessageList({
   useEffect(
     function () {
       setActiveStatus(online);
-      const userId = conversation?.memebers?.find(user => user !== userInfo);
-
+      const userId = conversation?.memebers?.find(use => use !== userInfo);
       async function getSeller() {
         try {
+          if (!userId) return;
           const res = await axios.get(
-            `${API_BASE_URL}/api/v2/seller/get-shop-info/${userId}`
+            `${API_BASE_URL}/api/v2/seller/get-shop-info/${userId && userId}`
           );
           setUser(res?.data?.shop);
         } catch (error) {
@@ -358,7 +357,7 @@ const SellerInbox = ({
       {/* messages */}
       <div className="px-3 h-[75vh] py-3 overflow-y-scroll">
         {messages &&
-          messages.map((item, index) => {
+          messages?.map((item, index) => {
             return (
               <div
                 className={`flex w-full my-2 ${
@@ -384,7 +383,7 @@ const SellerInbox = ({
                   <>
                     {item?.images[0]?.url && (
                       <img
-                        src={`${item.images.url}`}
+                        src={`${item.images[0].url}`}
                         className="w-[300px] h-[300px] object-cover rounded-[10px] ml-2 mb-2"
                       />
                     )}

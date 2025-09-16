@@ -136,7 +136,7 @@ function DashboardMessages() {
       text: newMessage,
       conversationId: currentChat._id,
     };
-    const receiverId = currentChat?.members?.find(
+    const receiverId = currentChat?.memebers?.find(
       member => member.id !== seller?._id
     );
     socket.emit("sendMessage", {
@@ -334,7 +334,6 @@ function SellerInbox({
   scrollRef,
   handleImageUpload,
 }) {
-  console.log(messages);
   return (
     <div className="w-full min-h-[87vh] flex flex-col justify-between">
       {/* message header */}
@@ -359,7 +358,7 @@ function SellerInbox({
       {/* messages */}
       <div className="px-3 h-[65vh] py-3 overflow-y-scroll">
         {messages &&
-          messages.map((msg, i) => {
+          messages?.map((msg, i) => {
             return (
               <div
                 key={i}
