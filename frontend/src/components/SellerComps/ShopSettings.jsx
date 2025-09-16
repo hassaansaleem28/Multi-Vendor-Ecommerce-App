@@ -67,7 +67,7 @@ function ShopSettings() {
               src={
                 avatar
                   ? URL.createObjectURL(avatar)
-                  : `${API_BASE_URL}/${seller?.avatar?.url}`
+                  : `${seller?.avatar?.url}`
               }
               alt=""
               className="w-[200px] h-[200px] rounded-full cursor-pointer"

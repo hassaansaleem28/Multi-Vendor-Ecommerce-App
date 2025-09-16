@@ -14,6 +14,7 @@ function AllProducts() {
   const { product, isLoading } = useSelector(state => state.product);
   const { seller } = useSelector(state => state.seller);
   const dispatch = useDispatch();
+  console.log(product);
 
   useEffect(
     function () {
@@ -47,11 +48,9 @@ function AllProducts() {
       minWidth: 100,
       flex: 0.8,
       renderCell: params => {
-        const data = params.row.name;
-        const product_name = data.replace(/\s+/g, "-");
         return (
           <>
-            <Link to={`/product/${product_name}`}>
+            <Link to={`/product/${params.id}`}>
               <Button>
                 <AiOutlineEye size={20} />
               </Button>

@@ -102,7 +102,7 @@ function ShopProfileData({ isOwner }) {
             allReviews?.map((data, i) => (
               <div className="w-full flex my-4">
                 <img
-                  src={`${API_BASE_URL}/${data.user.avatar.url}`}
+                  src={`${data.user.avatar.url}`}
                   alt=""
                   className="w-[50px] h-[50px] rounded-full object-cover"
                   key={i}

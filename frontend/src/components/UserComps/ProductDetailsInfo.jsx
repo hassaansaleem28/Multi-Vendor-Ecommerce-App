@@ -61,7 +61,7 @@ function ProductDetailsInfo({ data, product, totalReviewsLength, avgRating }) {
           {data?.reviews?.map((review, i) => (
             <div className="w-full flex my-2" key={i}>
               <img
-                src={`${API_BASE_URL}/${review?.user?.avatar?.url}`}
+                src={`${review?.user?.avatar?.url}`}
                 alt=""
                 className="w-[50px] h-[50px] rounded-full"
               />
@@ -87,7 +87,7 @@ function ProductDetailsInfo({ data, product, totalReviewsLength, avgRating }) {
               onClick={() => navigate(`/shop/preview/${data.shop._id}`)}
             >
               <img
-                src={`${API_BASE_URL}/${data.shop.avatar.url}`}
+                src={`${data.shop.avatar.url}`}
                 alt="Image"
                 className="w-[50px] h-[50px] rounded-full"
               />

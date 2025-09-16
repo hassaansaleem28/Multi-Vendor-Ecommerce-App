@@ -74,20 +74,20 @@ function ProductDetailCard({ setOpen, product }) {
             />
             <div className="block w-full flex-800px">
               <div className="w-full width-800px-50">
-                <img src={product.images[0]} alt="Product Image" />
+                <img src={product.images[0].url} alt="Product Image" />
                 <div className="flex">
                   <Link to={`/shop/preview/${product?.shop._id}`}>
                     <img
-                      src={product.shop.avatar.url}
+                      src={product?.shop?.avatar?.url}
                       alt="Image"
                       className="w-[50px] h-[50px] rounded-full mr-2"
                     />
                     <div>
                       <h3 className={`${styles.shop_name}`}>
-                        {product.shop.name}
+                        {product?.shop?.name}
                       </h3>
                       <h5 className="pb-3 text-[15px]">
-                        ({product.shop.ratings}) Ratings
+                        ({product?.shop?.ratings}) Ratings
                       </h5>
                     </div>
                   </Link>

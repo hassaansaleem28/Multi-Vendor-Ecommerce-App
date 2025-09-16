@@ -25,7 +25,6 @@ function ProductDetails({ data }) {
   const { cart } = useSelector(state => state.cart);
   const { product } = useSelector(state => state.product);
   const { user, isAuthenticated } = useSelector(state => state.user);
-
   const [count, setCount] = useState(1);
   const [click, setClick] = useState(false);
   const [select, setSelect] = useState(0);
@@ -110,7 +109,7 @@ function ProductDetails({ data }) {
             <div className="block w-full flex-800px">
               <div className="w-full width-800px-50">
                 <img
-                  src={`${API_BASE_URL}/${data?.images[select]}`}
+                  src={`${data?.images[select].url}`}
                   alt="Image"
                   className="w-[80%] cursor-pointer"
                 />
@@ -119,7 +118,7 @@ function ProductDetails({ data }) {
                     data?.images.map((img, i) => (
                       <div className={`cursor-pointer`} key={i}>
                         <img
-                          src={`${API_BASE_URL}/${img}`}
+                          src={`${img?.url}`}
                           alt="Images"
                           className="h-[200px] overflow-hidden mr-3 mt-3"
                           onClick={() => setSelect(i)}
@@ -188,14 +187,14 @@ function ProductDetails({ data }) {
                 </div>
                 <div className="flex items-center pt-8">
                   <img
-                    src={`${API_BASE_URL}/${data.shop.avatar.url}`}
+                    src={`${data?.shop?.avatar?.url}`}
                     alt="Image"
                     className="w-[50px] h-[50px] rounded-full mr-2 cursor-pointer"
-                    onClick={() => navigate(`/shop/preview/${data.shop._id}`)}
+                    onClick={() => navigate(`/shop/preview/${data?.shop?._id}`)}
                   />
                   <div
                     className="pr-8 cursor-pointer"
-                    onClick={() => navigate(`/shop/preview/${data.shop._id}`)}
+                    onClick={() => navigate(`/shop/preview/${data?.shop?._id}`)}
                   >
                     <h3 className={`${styles.shop_name} pb-1 pt-1`}>
                       {data.shop.name}

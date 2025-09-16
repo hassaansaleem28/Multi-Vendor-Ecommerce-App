@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 
 function CreateProduct() {
   const { seller } = useSelector(state => state.seller);
-  const { success, error, product } = useSelector(state => state.product);
+  const { success, error } = useSelector(state => state.product);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 

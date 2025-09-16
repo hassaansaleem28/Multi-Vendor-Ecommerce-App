@@ -43,7 +43,7 @@ function CartSingle({ item, quantityChangeHandler, removeFromCarthandler }) {
           </div>
         </div>
         <img
-          src={`${API_BASE_URL}/${item ? item && item?.images[0] : ""}`}
+          src={`${item ? item && item?.images[0] : ""}`}
           alt="Image"
           className="w-[130px] h-min ml-2 mr-2 rounded-[5px]"
         />

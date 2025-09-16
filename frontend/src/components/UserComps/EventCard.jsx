@@ -33,7 +33,7 @@ function EventCard({ active, data, isLoading }) {
       } lg:flex p-2`}
     >
       <div className="w-full lg:w-[50%] m-auto">
-        <img src={`${API_BASE_URL}/${data && data?.images[0]}`} alt="Image" />
+        <img src={`${data && data?.images[0]}`} alt="Image" />
       </div>
       <div className="w-full lg:[w-50%] flex flex-col justify-center">
         <h2 className={`${styles.productTitle}`}>{data.name}</h2>

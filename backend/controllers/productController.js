@@ -1,7 +1,7 @@
 import Shop from "../models/ShopModel.js";
 import order from "../models/orderModel.js";
 import Product from "../models/ProductModel.js";
-import fs from "fs";
+import cloudinary from "../config/cloudinary.js";
 
 export async function createProduct(req, res) {
   try {
@@ -10,17 +10,21 @@ export async function createProduct(req, res) {
     if (!shop) return res.status(400).json({ message: "ShopId is invalid!" });
     else {
       const files = req.files;
-      const imgUrls = files.map(file => `${file.filename}`);
-      const productData = req.body;
-      productData.images = imgUrls;
-      productData.shop = shop;
-
+      const imgData = files.map(file => ({
+        public_id: file.filename.split(".")[0],
+        url: file.path,
+      }));
+      const productData = {
+        ...req.body,
+        images: imgData,
+        shop,
+      };
       const product = await Product.create(productData);
       res.status(201).json({ success: true, product });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 }
 
@@ -41,22 +45,20 @@ export async function deleteProduct(req, res) {
   try {
     const productId = req.params.id;
     const productData = await Product.findById(productId);
-    productData.images.forEach(imgUrl => {
-      const filename = imgUrl;
-      const filePath = `uploads/${filename}`;
-      fs.unlink(filePath, error => {
-        if (error) {
-          console.log(error);
-        }
-      });
-    });
-    const product = await Product.findByIdAndDelete(productId);
-    if (!product)
+    if (!productData) {
       return res
-        .status(500)
+        .status(404)
         .json({ success: false, message: "Product not found with this id!" });
+    }
+    const deletionPromises = productData.images.map(img => {
+      const publicId = img.public_id;
+      return cloudinary.uploader.destroy(`ecommerce_uploads/${publicId}`);
+    });
 
-    res.status(201).json({
+    await Promise.all(deletionPromises);
+    await Product.findByIdAndDelete(productId);
+
+    res.status(200).json({
       success: true,
       message: "Product Deleted Successfully!",
     });

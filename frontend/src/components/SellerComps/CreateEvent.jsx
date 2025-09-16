@@ -5,7 +5,6 @@ import { categoriesData } from "../../static/data";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { toast } from "react-toastify";
 import { createEvent } from "../../redux-toolkit/actions/eventActions";
-import { createProduct } from "../../redux-toolkit/actions/productActions";
 
 function CreateEvent() {
   const { seller } = useSelector(state => state.seller);
@@ -74,7 +73,6 @@ function CreateEvent() {
     newForm.append("finish_Date", endDate.toISOString());
 
     dispatch(createEvent(newForm));
-    dispatch(createProduct(newForm));
   }
   function handleAddImages(e) {
     e.preventDefault();

@@ -58,7 +58,7 @@ function AdminHeader() {
             />
           </Link>
           <img
-            src={`${API_BASE_URL}/${user?.avatar?.url}`}
+            src={`${user?.avatar?.url}`}
             alt="Image"
             className="w-[50px] h-[50px] rounded-full object-cover"
           />

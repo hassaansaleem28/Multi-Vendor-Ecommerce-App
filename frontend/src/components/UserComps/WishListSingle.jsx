@@ -19,7 +19,7 @@ function WishListSingle({
           onClick={() => removeFromWishlistHandler(item)}
         />
         <img
-          src={`${API_BASE_URL}/${item && item?.images[0]}`}
+          src={`${item && item?.images[0]}`}
           alt="Image"
           className="w-[130px] h-min ml-2 mr-2 rounded-[5px]"
         />

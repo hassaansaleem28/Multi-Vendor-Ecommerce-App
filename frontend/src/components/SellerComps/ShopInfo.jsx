@@ -64,7 +64,7 @@ function ShopInfo({ isOwner }) {
           <div className="w-full py-5">
             <div className="w-full flex items-center justify-center">
               <img
-                src={`${API_BASE_URL}/${data?.avatar?.url}`}
+                src={`${data?.avatar?.url}`}
                 alt="Iamge"
                 className="w-[150px] h-[150px] object-cover rounded-full"
               />

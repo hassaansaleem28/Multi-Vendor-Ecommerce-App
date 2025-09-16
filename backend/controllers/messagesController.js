@@ -3,21 +3,22 @@ import path from "path";
 
 export async function createNewMessage(req, res) {
   try {
-    const messageData = req.body;
+    const { conversationId, sender, text } = req.body;
+
+    let imageData;
     if (req.file) {
-      const filename = req.file.filename;
-      const fileUrl = path?.join(filename);
-      messageData.images = fileUrl;
+      imageData = {
+        public_id: req.file.filename.split(".")[0],
+        url: req.file.path,
+      };
     }
-    messageData.conversationId = req.body.conversationId;
-    messageData.sender = req.body.sender;
-    messageData.text = req.body.text;
     const message = new Messages({
-      conversationId: messageData.conversationId,
-      text: messageData.text,
-      sender: messageData.sender,
-      images: messageData.images ? messageData.images : undefined,
+      conversationId,
+      sender,
+      text,
+      images: imageData ? imageData : undefined,
     });
+
     await message.save();
     res.status(201).json({ success: true, message });
   } catch (error) {

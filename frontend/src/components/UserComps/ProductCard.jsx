@@ -71,7 +71,7 @@ function ProductCard({ product, isEvent }) {
           }`}
         >
           <img
-            src={`${API_BASE_URL}/${product.images && product.images[0]}`}
+            src={`${product.images && product.images[0].url}`}
             alt="Image"
             className="w-full h-[170px] object-contain"
           />

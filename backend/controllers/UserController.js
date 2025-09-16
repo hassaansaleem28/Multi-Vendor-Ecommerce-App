@@ -1,38 +1,32 @@
 import User from "../models/UserModel.js";
-import path from "path";
-import fs from "fs";
 import jwt from "jsonwebtoken";
 import transporter from "../config/nodemailer.js";
 import { sendToken } from "../config/jwtToken.js";
+import cloudinary from "../config/cloudinary.js";
 
 export async function createUser(req, res) {
   try {
     const { fullName, email, password } = req.body;
     const userEmail = await User.findOne({ email });
     if (userEmail) {
-      const fileName = req.file?.filename;
-      const filePath = `./uploads/${fileName}`;
-      fs.unlink(filePath, err => {
-        if (err) {
-          console.error("Error deleting file:", err);
-          res.status(500).json({ message: "Error Deleting File!" });
-        }
-      });
+      if (req.file?.filename) {
+        const publicId = req.file.filename.split(".")[0];
+        await cloudinary.uploader.destroy(`ecommerce_uploads/${publicId}`);
+      }
       return res.status(400).json({ message: "User already exists" });
     }
-    const fileName = req.file?.filename;
-    if (!fileName)
+    if (!req.file?.path || !req.file?.filename) {
       return res
-        .status(500)
-        .json({ success: false, message: "Please upload a avatar!" });
-    const fileUrl = path?.join(fileName);
+        .status(400)
+        .json({ success: false, message: "Please upload an avatar!" });
+    }
     const user = {
       fullName,
       email,
       password,
       avatar: {
-        public_id: "325183974108470123hn1mbf3",
-        url: fileUrl,
+        public_id: req.file.filename.split(".")[0],
+        url: req.file.path,
       },
     };
     const activationToken = createActivationToken(user);
@@ -159,12 +153,22 @@ export async function updateUser(req, res) {
 export async function updateAvatar(req, res) {
   try {
     const existUser = await User.findById(req.user.id);
-    const existAvatarPath = `uploads/${existUser?.avatar?.url}`;
-    fs.unlinkSync(existAvatarPath);
-    const fileUrl = path.join(req.file.filename);
-    const user = await User.findByIdAndUpdate(req.user.id, {
-      avatar: { url: fileUrl },
-    });
+    const oldPublicId = existUser?.avatar?.public_id;
+    if (oldPublicId) {
+      await cloudinary.uploader.destroy(`ecommerce_uploads/${oldPublicId}`);
+    }
+    const newPublicId = req.file.filename.split(".")[0];
+    const newUrl = req.file.path;
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        avatar: {
+          public_id: newPublicId,
+          url: newUrl,
+        },
+      },
+      { new: true }
+    );
     res.status(201).json({ success: true, user });
   } catch (error) {
     res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });

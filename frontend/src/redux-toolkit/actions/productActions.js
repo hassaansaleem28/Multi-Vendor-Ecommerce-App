@@ -8,17 +8,12 @@ export const createProduct = createAsyncThunk(
     try {
       const { data } = await axios.post(
         `${API_BASE_URL}/api/v2/product/create-product`,
-        newForm,
-        {
-          headers: {
-            "Content-type": "mulitpart/form-data",
-          },
-        }
+        newForm
       );
       return data.product;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Failed to load product"
+        error.response?.data?.message || "Failed to create product"
       );
     }
   }

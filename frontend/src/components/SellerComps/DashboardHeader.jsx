@@ -59,7 +59,7 @@ function DashboardHeader() {
           </Link>
           <Link to={`/shop/${seller?._id}`}>
             <img
-              src={`${API_BASE_URL}/${seller?.avatar?.url}`}
+              src={`${seller?.avatar?.url}`}
               alt="Image"
               className="w-[50px] h-[50px] rounded-full object-cover"
             />

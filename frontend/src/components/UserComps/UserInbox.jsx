@@ -11,7 +11,7 @@ import styles from "../../styles/styles";
 import { TfiGallery } from "react-icons/tfi";
 import Loader from "../UserComps/Loader";
 
-const ENDPOINT = "http://localhost:5001/";
+const ENDPOINT = "https://socket-server-89h0.onrender.com/";
 const socket = io(ENDPOINT, { transports: ["websocket"] });
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -40,7 +40,6 @@ function UserInbox() {
       });
     });
   }, []);
-  console.log(arrivalMessage);
 
   useEffect(
     function () {
@@ -299,7 +298,7 @@ function MessageList({
     >
       <div className="relative">
         <img
-          src={`${API_BASE_URL}/${user?.avatar?.url}`}
+          src={`${user?.avatar?.url}`}
           alt="pfp"
           className="w-[50px] h-[50px] rounded-full"
         />
@@ -341,7 +340,7 @@ const SellerInbox = ({
       <div className="w-full flex p-3 items-center justify-between bg-slate-200">
         <div className="flex">
           <img
-            src={`${API_BASE_URL}/${userData?.avatar?.url}`}
+            src={`${userData?.avatar?.url}`}
             alt=""
             className="w-[60px] h-[60px] rounded-full"
           />
@@ -377,7 +376,7 @@ const SellerInbox = ({
                 )}
                 {item?.images && (
                   <img
-                    src={`${API_BASE_URL}/${item?.images}`}
+                    src={`${item?.images}`}
                     className="w-[300px] h-[300px] object-cover rounded-[10px] ml-2 mb-2"
                   />
                 )}
@@ -385,7 +384,7 @@ const SellerInbox = ({
                   <>
                     {item?.images && (
                       <img
-                        src={`${API_BASE_URL}/${item.images}`}
+                        src={`${item.images}`}
                         className="w-[300px] h-[300px] object-cover rounded-[10px] ml-2 mb-2"
                       />
                     )}

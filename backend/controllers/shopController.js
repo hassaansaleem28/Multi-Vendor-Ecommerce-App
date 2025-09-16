@@ -1,32 +1,25 @@
 import { sendShopToken } from "../config/jwtToken.js";
 import Shop from "../models/ShopModel.js";
-import path from "path";
 import jwt from "jsonwebtoken";
 import transporter from "../config/nodemailer.js";
-import fs from "fs";
+import cloudinary from "../config/cloudinary.js";
 
 export async function createShop(req, res) {
   try {
     const { name, phoneNumber, address, zipCode, email, password } = req.body;
     const sellerEmail = await Shop.findOne({ email });
     if (sellerEmail) {
-      const fileName = req.file?.filename;
-      const filePath = `./uploads/${fileName}`;
-      fs.unlink(filePath, err => {
-        if (err) {
-          console.error("Error deleting file:", err);
-          res.status(500).json({ message: "Error Deleting File!" });
-        }
-      });
-
-      return res.status(400).json({ message: "User already exists" });
+      if (req.file.filename) {
+        const publicId = req.file.filename.split(".")[0];
+        await cloudinary.uploader.destroy(`ecommerce_uploads/${publicId}`);
+      }
+      return res.status(400).json({ message: "User already exists!" });
     }
-    const fileName = req.file?.filename;
-    if (!fileName)
+    if (!req.file?.path || !req.file?.filename) {
       return res
-        .status(500)
-        .json({ success: false, message: "Please upload your Shop Image!" });
-    const fileUrl = path?.join(fileName);
+        .status(400)
+        .json({ success: false, message: "Please upload an avatar!" });
+    }
     const seller = {
       name,
       phoneNumber,
@@ -35,8 +28,8 @@ export async function createShop(req, res) {
       address,
       zipCode,
       avatar: {
-        public_id: "325183974108470123hn1mbf3",
-        url: fileUrl,
+        public_id: req.file.filename.split(".")[0],
+        url: req.file.path,
       },
     };
     const activationToken = createActivationToken(seller);
@@ -157,11 +150,16 @@ export async function getShopInfo(req, res) {
 export async function updateShopAvatar(req, res) {
   try {
     const existSeller = await Shop.findById(req.seller._id);
-    const existAvatarPath = `uploads/${existSeller?.avatar?.url}`;
-    fs.unlinkSync(existAvatarPath);
-    const fileUrl = path.join(req.file.filename);
+    const oldPublicId = existSeller?.avatar?.public_id;
+    if (oldPublicId)
+      await cloudinary.uploader.destroy(`ecommerce_uploads/${oldPublicId}`);
+    const newPublicId = req.file.filename.split(".")[0];
+    const newUrl = req.file.path;
     const seller = await Shop.findByIdAndUpdate(req.seller._id, {
-      avatar: { url: fileUrl },
+      avatar: {
+        public_id: newPublicId,
+        url: newUrl,
+      },
     });
     res.status(200).json({ success: true, seller });
   } catch (error) {

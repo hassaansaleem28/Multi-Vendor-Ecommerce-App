@@ -10,7 +10,7 @@ import styles from "../../styles/styles";
 import { io } from "socket.io-client";
 import Loader from "../UserComps/Loader";
 
-const ENDPOINT = "http://localhost:5001/";
+const ENDPOINT = "https://socket-server-89h0.onrender.com/";
 const socket = io(ENDPOINT, { transports: ["websocket"] });
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 

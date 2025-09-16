@@ -173,7 +173,7 @@ function Header({ activeHeading }) {
                 {isAuthenticated ? (
                   <Link to="/profile">
                     <img
-                      src={`${API_BASE_URL}/${user?.avatar?.url}`}
+                      src={`${user?.avatar?.url}`}
                       alt="Image "
                       className="w-[35px] rounded-full h-[35px]"
                     />

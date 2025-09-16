@@ -1,5 +1,4 @@
 function CartData({ orderData }) {
-  console.log(orderData);
   const shipping = orderData?.shipping?.toFixed(2);
 
   return (
