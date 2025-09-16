@@ -92,7 +92,7 @@ function OrderDetails() {
         data?.cart?.map((item, i) => (
           <div key={i} className="w-full flex items-start mb-5">
             <img
-              src={`${item?.images[0]}`}
+              src={`${item?.images[0].url}`}
               className="w-[80px] h-[80px] object-cover"
               alt=""
             />

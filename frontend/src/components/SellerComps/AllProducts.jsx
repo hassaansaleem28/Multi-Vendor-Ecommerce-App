@@ -14,7 +14,6 @@ function AllProducts() {
   const { product, isLoading } = useSelector(state => state.product);
   const { seller } = useSelector(state => state.seller);
   const dispatch = useDispatch();
-  console.log(product);
 
   useEffect(
     function () {

@@ -156,14 +156,14 @@ function UserInbox() {
   async function imageSendingHandler(e) {
     const formData = new FormData();
     formData.append("images", e);
-    formData.append("sender", user._id);
+    formData.append("sender", user?._id);
     formData.append("text", newMessage);
-    formData.append("conversationId", currentChat._id);
+    formData.append("conversationId", currentChat?._id);
     const receiverId = currentChat.memebers?.find(
-      member => member !== user._id
+      member => member !== user?._id
     );
     socket.emit("sendMessage", {
-      senderId: user._id,
+      senderId: user?._id,
       receiverId,
       images: e,
     });
@@ -185,7 +185,7 @@ function UserInbox() {
         `${API_BASE_URL}/api/v2/conversation/update-last-message/${currentChat._id}`,
         {
           lastMessage: "PHOTO",
-          lastMessageId: user._id,
+          lastMessageId: user?._id,
         }
       );
     } catch (error) {
@@ -369,22 +369,22 @@ const SellerInbox = ({
               >
                 {item.sender !== sellerId && (
                   <img
-                    src={`${API_BASE_URL}/${userData?.avatar?.url}`}
+                    src={`${userData?.avatar?.url}`}
                     className="w-[40px] h-[40px] rounded-full mr-3"
                     alt=""
                   />
                 )}
-                {item?.images && (
+                {item?.images[0]?.url && (
                   <img
-                    src={`${item?.images}`}
+                    src={`${item?.images[0]?.url}`}
                     className="w-[300px] h-[300px] object-cover rounded-[10px] ml-2 mb-2"
                   />
                 )}
                 {item.text !== "" && (
                   <>
-                    {item?.images && (
+                    {item?.images[0]?.url && (
                       <img
-                        src={`${item.images}`}
+                        src={`${item.images.url}`}
                         className="w-[300px] h-[300px] object-cover rounded-[10px] ml-2 mb-2"
                       />
                     )}
@@ -397,7 +397,6 @@ const SellerInbox = ({
                               : "bg-[#38c776]"
                           } text-[#fff] h-min`}
                         >
-                          {" "}
                           <p>{item?.text}</p>
                         </div>
                         <p className="text-[12px] text-[#000000d3] pt-1">

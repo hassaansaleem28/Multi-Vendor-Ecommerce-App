@@ -52,7 +52,7 @@ function DashboardMessages() {
       async function getConversations() {
         try {
           const { data } = await axios.get(
-            `${API_BASE_URL}/api/v2/conversation/get-all-seller-conversations/${seller._id}`,
+            `${API_BASE_URL}/api/v2/conversation/get-all-seller-conversations/${seller?._id}`,
             { withCredentials: true }
           );
           setConversations(data.conversations);
@@ -105,11 +105,11 @@ function DashboardMessages() {
     try {
       socket.emit("updateLastMessage", {
         lastMessage: newMessage,
-        lastMessageId: seller._id,
+        lastMessageId: seller?._id,
       });
       const { data } = await axios.put(
-        `${API_BASE_URL}/api/v2/conversation/update-last-message/${currentChat._id}`,
-        { lastMessage: newMessage, lastMessageId: seller._id }
+        `${API_BASE_URL}/api/v2/conversation/update-last-message/${currentChat?._id}`,
+        { lastMessage: newMessage, lastMessageId: seller?._id }
       );
       if (data) setNewMessage("");
     } catch (error) {
@@ -119,7 +119,7 @@ function DashboardMessages() {
   async function updateLastMessageForImage() {
     try {
       await axios.put(
-        `${API_BASE_URL}/api/v2/conversation/update-last-message/${currentChat._id}`,
+        `${API_BASE_URL}/api/v2/conversation/update-last-message/${currentChat?._id}`,
         {
           lastMessage: "PHOTO",
           lastMessageId: seller._id,
@@ -132,15 +132,15 @@ function DashboardMessages() {
   async function sendMessageHandler(e) {
     e.preventDefault();
     const message = {
-      sender: seller._id,
+      sender: seller?._id,
       text: newMessage,
       conversationId: currentChat._id,
     };
     const receiverId = currentChat?.members?.find(
-      member => member.id !== seller._id
+      member => member.id !== seller?._id
     );
     socket.emit("sendMessage", {
-      senderId: seller._id,
+      senderId: seller?._id,
       receiverId,
       text: newMessage,
     });
@@ -166,7 +166,7 @@ function DashboardMessages() {
   async function imageSendingHandler(e) {
     const formData = new FormData();
     formData.append("images", e);
-    formData.append("sender", seller._id);
+    formData.append("sender", seller?._id);
     formData.append("text", newMessage);
     formData.append("conversationId", currentChat._id);
     const receiverId = currentChat.memebers?.find(
@@ -294,7 +294,7 @@ function MessageList({
         <>
           <div className="relative">
             <img
-              src={`${API_BASE_URL}/${user?.avatar?.url}`}
+              src={`${user?.avatar?.url}`}
               alt="pfp"
               className="w-[50px] h-[50px] rounded-full"
             />
@@ -334,13 +334,14 @@ function SellerInbox({
   scrollRef,
   handleImageUpload,
 }) {
+  console.log(messages);
   return (
     <div className="w-full min-h-[87vh] flex flex-col justify-between">
       {/* message header */}
       <div className="w-full flex p-3 items-center justify-between bg-[#00000010]">
         <div className="flex">
           <img
-            src={`${API_BASE_URL}/${userData?.avatar?.url}`}
+            src={`${userData?.avatar?.url}`}
             alt="pfp"
             className="w-[60px] h-[60px] rounded-full"
           />
@@ -369,14 +370,14 @@ function SellerInbox({
               >
                 {msg.sender !== sellerId && (
                   <img
-                    src={`${API_BASE_URL}/${userData?.avatar?.url}`}
+                    src={`${userData?.avatar?.url}`}
                     alt="pfp"
                     className="w-[40px] h-[40px] mr-3 rounded-full"
                   />
                 )}
-                {msg?.images && (
+                {msg?.images[0]?.url && (
                   <img
-                    src={`${API_BASE_URL}/${msg.images}`}
+                    src={`${msg?.images[0]?.url}`}
                     className="w-[300px] h-[300px] object-cover rounded-[10px] mr-2"
                   />
                 )}

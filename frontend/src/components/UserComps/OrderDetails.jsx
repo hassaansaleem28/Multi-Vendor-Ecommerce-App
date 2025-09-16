@@ -107,7 +107,7 @@ function OrderDetails() {
         data?.cart?.map((item, i) => (
           <div key={i} className="w-full flex items-start mb-5">
             <img
-              src={`${item?.images[0]}`}
+              src={`${item?.images[0].url}`}
               className="w-[80px] h-[80px] object-cover"
               alt=""
             />
@@ -249,7 +249,7 @@ function OrderDetails() {
         </div>
       </div>
       <br />
-      <Link to={"/"}>
+      <Link to={"/inbox"}>
         {" "}
         <div
           className={`${styles.button} text-[1.1rem] rounded-[9px] font-[500] text-white`}

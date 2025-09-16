@@ -1,18 +1,21 @@
 import { useEffect, useState } from "react";
 import Header from "../components/Layouts/Header";
 import styles from "../styles/styles";
-import { productData } from "../static/data";
 import ProductCard from "../components/UserComps/ProductCard";
+import { useSelector } from "react-redux";
+import Loader from "../components/UserComps/Loader";
 
 function BestSellingPage() {
   const [data, setData] = useState();
+  const { allProducts, isLoading } = useSelector(state => state.product);
 
   useEffect(function () {
-    const data =
-      productData && productData.sort((a, b) => b.total_sell - a.total_sell);
-    setData(data);
+    const allProductsData = allProducts ? [...allProducts] : [];
+    const sortedData = allProductsData?.sort((a, b) => b.sold_out - a.sold_out);
+    setData(sortedData);
     window.scrollTo(0, 0);
   }, []);
+  if (isLoading) return <Loader />;
   return (
     <div>
       <Header activeHeading={2} />

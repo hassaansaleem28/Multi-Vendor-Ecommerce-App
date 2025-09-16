@@ -32,8 +32,12 @@ function EventCard({ active, data, isLoading }) {
         active ? "unset" : "mb-12"
       } lg:flex p-2`}
     >
-      <div className="w-full lg:w-[50%] m-auto">
-        <img src={`${data && data?.images[0]}`} alt="Image" />
+      <div className="w-full lg:w-[50%] m-auto mr-3">
+        <img
+          src={`${data && data?.images[0].url}`}
+          alt="Image"
+          className="rounded-2xl"
+        />
       </div>
       <div className="w-full lg:[w-50%] flex flex-col justify-center">
         <h2 className={`${styles.productTitle}`}>{data.name}</h2>
