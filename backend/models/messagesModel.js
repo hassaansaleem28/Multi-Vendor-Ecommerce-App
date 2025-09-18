@@ -11,12 +11,14 @@ const messagesSchema = new mongoose.Schema(
     text: {
       type: String,
     },
-    images: [
-      {
-        public_id: String,
-        url: String,
+    images: {
+      public_id: {
+        type: String,
       },
-    ],
+      url: {
+        type: String,
+      },
+    },
   },
   { timestamps: true }
 );
