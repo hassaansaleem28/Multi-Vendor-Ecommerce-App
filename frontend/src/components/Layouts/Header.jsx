@@ -76,10 +76,8 @@ function Header({ activeHeading }) {
             {searchData && searchData.length !== 0 ? (
               <div className="absolute min-h-[30vh] bg-slate-50 shadow-sm-2 z-[9] p-4">
                 {searchData.map((prod, i) => {
-                  const d = prod.name;
-                  const Product = d.replace(/\s+/g, "-");
                   return (
-                    <Link to={`/product/${Product}`} key={i}>
+                    <Link to={`/product/${prod._id}`} key={i}>
                       <div className="w-full flex items-start py-3">
                         <img
                           src={`${prod?.images[0]?.url}`}
@@ -287,7 +285,7 @@ function Header({ activeHeading }) {
               <Navbar active={activeHeading} />
               <div className={`${styles.button} ml-4 !rounded-xl text-[20px]`}>
                 <Link to="/shop-create">
-                  <h1 className="text-[#fff] flex font-bold items-center cursor-pointer">
+                  <h1 className="text-[#fff] text-[17px] flex font-bold items-center cursor-pointer">
                     {isSeller ? "Your Shop" : "Become Seller"}
                     <IoIosArrowForward className="ml-1 cursor-pointer" />
                   </h1>
