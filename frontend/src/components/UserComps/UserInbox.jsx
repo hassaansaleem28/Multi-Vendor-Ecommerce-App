@@ -373,7 +373,7 @@ const SellerInbox = ({
                     alt=""
                   />
                 )}
-                {item?.images[0]?.url && (
+                {item !== undefined && item?.images[0]?.url && (
                   <img
                     src={`${item?.images[0]?.url}`}
                     className="w-[300px] h-[300px] object-cover rounded-[10px] ml-2 mb-2"
