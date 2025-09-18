@@ -82,7 +82,7 @@ function Header({ activeHeading }) {
                     <Link to={`/product/${Product}`} key={i}>
                       <div className="w-full flex items-start py-3">
                         <img
-                          src={`${API_BASE_URL}/${prod.images[0]}`}
+                          src={`${prod?.images[0]?.url}`}
                           className="w-[40px] h-[40px] mr-[10px]"
                         />
                         <h1>{prod.name}</h1>
@@ -273,7 +273,7 @@ function Header({ activeHeading }) {
                         <Link to={`/product/${prod._id}`} key={i}>
                           <div className="flex items-center cursor-pointer">
                             <img
-                              src={prod.image_Url[0].url}
+                              src={prod?.images[0]?.url}
                               className="w-[50px] mr-2"
                             />
                             <h5>{prod.name}</h5>
@@ -316,7 +316,7 @@ function Header({ activeHeading }) {
                   <div>
                     <Link to={"/profile"}>
                       <img
-                        src={`${API_BASE_URL}/${user.avatar.url}`}
+                        src={`${user?.avatar?.url}`}
                         alt="Image "
                         className="w-[60px] rounded-full h-[60px] border-[3px] border-[#14febc] cursor-pointer"
                       />
