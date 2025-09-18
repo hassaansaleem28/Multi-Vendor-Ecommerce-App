@@ -98,16 +98,22 @@ export async function loginUser(req, res) {
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
-export async function logoutUser(req, res) {
+export async function logoutUser() {
   try {
-    res.cookie("token", null, {
-      expires: new Date(Date.now()),
-      httpOnly: true,
+    setIsLoading(true);
+    const res = await axios.get(`${API_BASE_URL}/api/v2/seller/logout-seller`, {
+      withCredentials: true,
     });
-    res.status(201).json({ success: true, message: "Logout Successful!" });
+
+    if (res.data.success) {
+      window.location.href = "/shop-create";
+    } else {
+      console.error("Logout failed:", res.data.message);
+    }
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    console.error("Logout error:", error);
+  } finally {
+    setIsLoading(false);
   }
 }
 
