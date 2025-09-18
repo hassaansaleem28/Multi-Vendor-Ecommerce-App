@@ -48,12 +48,25 @@ function ShopInfo({ isOwner }) {
   );
 
   async function logoutHandler() {
-    setIsLoading(true);
-    axios.get(`${API_BASE_URL}/api/v2/seller/logout-seller`, {
-      withCredentials: true,
-    });
-    setIsLoading(false);
-    window.location.reload();
+    try {
+      setIsLoading(true);
+      const res = await axios.get(
+        `${API_BASE_URL}/api/v2/seller/logout-seller`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (res.data.success) {
+        window.location.href = "/shop-create";
+      } else {
+        console.error("Logout failed:", res.data.message);
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      setIsLoading(false);
+    }
   }
   return (
     <>
