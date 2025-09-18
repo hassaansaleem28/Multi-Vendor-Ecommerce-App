@@ -8,7 +8,7 @@ function FeaturedProducts() {
     <div className="">
       <div className={`${styles.section}`}>
         <div className={`${styles.heading}`}>
-          <h1 className="font-[800] text-[2rem] font-[Roboto]">
+          <h1 className="font-[800] text-[2rem] font-[Roboto] mb-5">
             Featured Products
           </h1>
         </div>

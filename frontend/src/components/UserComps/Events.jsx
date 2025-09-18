@@ -16,7 +16,7 @@ function Events() {
               Popular Events
             </h1>
           </div>
-          <div className="w-full grid">
+          <div className="w-full grid mb-14">
             {allEvents?.length !== 0 &&
               allEvents &&
               allEvents?.map((event, i) => (

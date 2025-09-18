@@ -11,6 +11,7 @@ function WishListSingle({
 }) {
   const [val, setVal] = useState(1);
   const totalPrice = item.discountPrice * val;
+  console.log(item);
   return (
     <div className="border-b p-4">
       <div className="w-full flex items-center">
@@ -19,7 +20,7 @@ function WishListSingle({
           onClick={() => removeFromWishlistHandler(item)}
         />
         <img
-          src={`${item && item?.images[0]}`}
+          src={`${item && item?.images[0]?.url}`}
           alt="Image"
           className="w-[130px] h-min ml-2 mr-2 rounded-[5px]"
         />
