@@ -568,21 +568,21 @@ sequenceDiagram
 ## Best Practices
 
 ### Authentication & Security
-- Secure authentication with **JWT tokens stored in HTTP-only cookies** (prevents XSS attacks).  
-- **Password hashing with bcrypt** to protect user credentials.  
-- **Sensitive fields (like passwords)** excluded from queries by default.  
-- **Role-based authorization** ensures admin-only operations are properly restricted.  
+o- Secure authentication with **JWT tokens stored in HTTP-only cookies** (prevents XSS attacks).  
+o- **Password hashing with bcrypt** to protect user credentials.  
+o- **Sensitive fields (like passwords)** excluded from queries by default.  
+o- **Role-based authorization** ensures admin-only operations are properly restricted.  
 
 ### Component Architecture
-- **Separation of concerns** with modular React components for maintainability.  
-- **Clean state management** for predictable behavior across Customer, Seller, and Admin flows.  
-- **Protected routes** to enforce proper access control for different user roles.  
+o- **Separation of concerns** with modular React components for maintainability.  
+o- **Clean state management** for predictable behavior across Customer, Seller, and Admin flows.  
+o- **Protected routes** to enforce proper access control for different user roles.  
 
 ### Error Handling & User Experience
-- **Graceful error handling** for cart and product operations.  
-- **Stock validation** prevents adding unavailable products.  
-- **Toast notifications** provide immediate user feedback for actions.  
-- **Duplicate prevention** in cart ensures smoother shopping experience.  
+o- **Graceful error handling** for cart and product operations.  
+o- **Stock validation** prevents adding unavailable products.  
+o- **Toast notifications** provide immediate user feedback for actions.  
+o- **Duplicate prevention** in cart ensures smoother shopping experience.  
 
 ---
 
