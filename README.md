@@ -129,46 +129,46 @@ The **Multi-Vendor E-commerce Platform** offers comprehensive functionality acro
 
 ### Multi-Role User System
 The platform supports three distinct user roles with dedicated interfaces and protected routing:
-- **Customer Interface**: Shopping, cart management, order tracking, and messaging  
-- **Seller Dashboard**: Product management, order processing, and shop analytics  
-- **Admin Panel**: User management, order oversight, and platform administration  
+o- **Customer Interface**: Shopping, cart management, order tracking, and messaging  
+o- **Seller Dashboard**: Product management, order processing, and shop analytics  
+o- **Admin Panel**: User management, order oversight, and platform administration  
 
 ### Product Management & Shopping
 Comprehensive product catalog functionality with search and categorization:
-- **Product Search**: Real-time search with dropdown results  
-- **Category Navigation**: Grid-based category browsing with visual icons  
-- **Shopping Cart**: Add to cart functionality with stock validation  
-- **Wishlist Management**: Save and remove products from wishlist  
+o- **Product Search**: Real-time search with dropdown results  
+o- **Category Navigation**: Grid-based category browsing with visual icons  
+o- **Shopping Cart**: Add to cart functionality with stock validation  
+o- **Wishlist Management**: Save and remove products from wishlist  
 
 ### Payment Processing
-- Secure payment integration through **Stripe Elements** with conditional rendering based on API key availability  
+o- Secure payment integration through **Stripe Elements** with conditional rendering based on API key availability  
 
 ### Real-Time Messaging
-- Built-in messaging system for **customer-seller communication**  
-- Supports **images** and **real-time updates**  
+o- Built-in messaging system for **customer-seller communication**  
+o- Supports **images** and **real-time updates**  
 
 ### Seller Dashboard Features
 Powerful tools for sellers to manage their shops:
-- **Account Balance Tracking**: Revenue monitoring with service charge calculations  
-- **Order Management**: View and process all shop orders  
-- **Product Analytics**: Track total products and performance metrics  
-- **Coupon Management**: Create and manage discount codes  
+o- **Account Balance Tracking**: Revenue monitoring with service charge calculations  
+o- **Order Management**: View and process all shop orders  
+o- **Product Analytics**: Track total products and performance metrics  
+o- **Coupon Management**: Create and manage discount codes  
 
 ### API Architecture
 Organized **RESTful API** with endpoints for different business domains:
-- User authentication and profiles: `/api/v2/user/*`  
-- Shop and seller management: `/api/v2/seller/*`  
-- Product catalog operations: `/api/v2/product/*`  
-- Order processing: `/api/v2/order/*`  
-- Payment integration: `/api/v2/payment/*`  
-- Messaging system: `/api/v2/conversation/*`, `/api/v2/messages/*`  
+o- User authentication and profiles: `/api/v2/user/*`  
+o- Shop and seller management: `/api/v2/seller/*`  
+o- Product catalog operations: `/api/v2/product/*`  
+o- Order processing: `/api/v2/order/*`  
+o- Payment integration: `/api/v2/payment/*`  
+o- Messaging system: `/api/v2/conversation/*`, `/api/v2/messages/*`  
 
 ### Brand Value Propositions
 The platform emphasizes customer-focused benefits:
-- Free shipping on orders over $100  
-- Daily surprise offers with up to 25% savings  
-- Factory-direct affordable pricing  
-- 100% secure payment protection  
+o- Free shipping on orders over $100  
+o- Daily surprise offers with up to 25% savings  
+o- Factory-direct affordable pricing  
+o- 100% secure payment protection  
 
 --- 
 
