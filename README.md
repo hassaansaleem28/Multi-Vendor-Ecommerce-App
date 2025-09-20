@@ -1,6 +1,6 @@
-# 🛍️ Complete Case Study - Multi-Vendor E-commerce Platform
+# Complete Case Study - Multi-Vendor E-commerce Platform
 
-## 📖 Overview
+## Overview
 
 The **Multi-Vendor E-commerce Platform** is a comprehensive marketplace solution designed to connect customers, sellers, and administrators in a seamless ecosystem.
 
@@ -16,7 +16,7 @@ The platform integrates **real-time communication**, **secure payment processing
 
 ---
 
-## 🎯 Goals of the Project
+## Goals of the Project
 
 The **Multi-Vendor E-commerce Platform** is designed to provide a complete, scalable, and engaging online marketplace that empowers both sellers and customers.
 
@@ -29,7 +29,7 @@ o- **Real-time communication** – Integrated chat functionality enables direct 
 ---
 
 
-## 🏗️ System Architecture Overview
+## System Architecture Overview
 
 The platform is built using a modern **full-stack JavaScript architecture** with the following core technologies:
 
@@ -50,7 +50,7 @@ The platform is built using a modern **full-stack JavaScript architecture** with
 
 ---
 
-## 🏗️ System Architecture Diagram
+## System Architecture Diagram
 
 ```mermaid
 graph TD
@@ -123,38 +123,38 @@ graph TD
 
 ---
 
-## ✨ Key Features
+## Key Features
 
 The **Multi-Vendor E-commerce Platform** offers comprehensive functionality across three main user interfaces: **customer shopping**, **seller management**, and **admin oversight**.
 
-### 🔑 Multi-Role User System
+### Multi-Role User System
 The platform supports three distinct user roles with dedicated interfaces and protected routing:
 - **Customer Interface**: Shopping, cart management, order tracking, and messaging  
 - **Seller Dashboard**: Product management, order processing, and shop analytics  
 - **Admin Panel**: User management, order oversight, and platform administration  
 
-### 🛒 Product Management & Shopping
+### Product Management & Shopping
 Comprehensive product catalog functionality with search and categorization:
 - **Product Search**: Real-time search with dropdown results  
 - **Category Navigation**: Grid-based category browsing with visual icons  
 - **Shopping Cart**: Add to cart functionality with stock validation  
 - **Wishlist Management**: Save and remove products from wishlist  
 
-### 💳 Payment Processing
+### Payment Processing
 - Secure payment integration through **Stripe Elements** with conditional rendering based on API key availability  
 
-### 💬 Real-Time Messaging
+### Real-Time Messaging
 - Built-in messaging system for **customer-seller communication**  
 - Supports **images** and **real-time updates**  
 
-### 📊 Seller Dashboard Features
+### Seller Dashboard Features
 Powerful tools for sellers to manage their shops:
 - **Account Balance Tracking**: Revenue monitoring with service charge calculations  
 - **Order Management**: View and process all shop orders  
 - **Product Analytics**: Track total products and performance metrics  
 - **Coupon Management**: Create and manage discount codes  
 
-### ⚙️ API Architecture
+### API Architecture
 Organized **RESTful API** with endpoints for different business domains:
 - User authentication and profiles: `/api/v2/user/*`  
 - Shop and seller management: `/api/v2/seller/*`  
@@ -163,54 +163,54 @@ Organized **RESTful API** with endpoints for different business domains:
 - Payment integration: `/api/v2/payment/*`  
 - Messaging system: `/api/v2/conversation/*`, `/api/v2/messages/*`  
 
-### 🌟 Brand Value Propositions
+### Brand Value Propositions
 The platform emphasizes customer-focused benefits:
-- 🚚 Free shipping on orders over $100  
-- 🎁 Daily surprise offers with up to 25% savings  
-- 🏭 Factory-direct affordable pricing  
-- 🔒 100% secure payment protection  
+- Free shipping on orders over $100  
+- Daily surprise offers with up to 25% savings  
+- Factory-direct affordable pricing  
+- 100% secure payment protection  
 
 --- 
 
-## 💻 Tech Stack
+## Tech Stack
 
 **Backend:**  
 
-⚡ **Node.js** – JavaScript runtime for building fast and scalable server-side apps  
-🚀 **Express.js** – Minimal and flexible Node.js web framework  
-🗄️ **MongoDB** – NoSQL database for flexible and scalable data storage  
-📦 **Mongoose** – Elegant MongoDB object modeling for Node.js  
-🔒 **JWT** – Secure user authentication and authorization  
-🛡️ **bcrypt** – Password hashing for secure authentication  
-📧 **Nodemailer** – Email handling and notifications  
-💳 **Stripe** – Payment gateway integration  
+**Node.js** – JavaScript runtime for building fast and scalable server-side apps  
+**Express.js** – Minimal and flexible Node.js web framework  
+**MongoDB** – NoSQL database for flexible and scalable data storage  
+**Mongoose** – Elegant MongoDB object modeling for Node.js  
+**JWT** – Secure user authentication and authorization  
+**bcrypt** – Password hashing for secure authentication  
+**Nodemailer** – Email handling and notifications  
+**Stripe** – Payment gateway integration  
 
 **Frontend:**  
 
-⚛️ **React** – Library for building interactive user interfaces  
-⚡ **Vite** – Lightning-fast frontend build tool and dev server  
-🗂️ **Redux Toolkit** – Efficient state management for React apps  
+**React** – Library for building interactive user interfaces  
+**Vite** – Lightning-fast frontend build tool and dev server  
+**Redux Toolkit** – Efficient state management for React apps  
 
 **File & Media Handling:**  
 
-📁 **Multer** – Middleware for handling file uploads  
-☁️ **Cloudinary** – Cloud-based media management and storage  
+**Multer** – Middleware for handling file uploads  
+**Cloudinary** – Cloud-based media management and storage  
 
 **Real-time Communication:**  
 
-🔄 **Socket.io** – Real-time bi-directional communication for chat & notifications  
+**Socket.io** – Real-time bi-directional communication for chat & notifications  
 
 **Development & Deployment Tools:**  
 
-🔄 **Nodemon** – Automatically restarts server on file changes  
-🌿 **dotenv** – Environment variable management  
-☁️ **Vercel** – Easy deployment and hosting platform  
+**Nodemon** – Automatically restarts server on file changes  
+**dotenv** – Environment variable management  
+**Vercel** – Easy deployment and hosting platform  
 
 
 --- 
 
 
-## ⚡ Challenges & Solutions
+## Challenges & Solutions
 
 | Challenge | Solution |
 |-----------|---------|
@@ -226,7 +226,7 @@ The platform emphasizes customer-focused benefits:
 
 ---
 
-## 🗄️ Database Design
+## Database Design
 
 
 ```mermaid
@@ -343,7 +343,7 @@ erDiagram
 
 ---
 
-## 🌐 Application Flow Diagram
+## Application Flow Diagram
 
 
 ```mermaid
@@ -565,28 +565,28 @@ sequenceDiagram
 ```
 ---
 
-## ✅ Best Practices
+## Best Practices
 
-### 🔒 Authentication & Security
-- ✅ Secure authentication with **JWT tokens stored in HTTP-only cookies** (prevents XSS attacks).  
-- ✅ **Password hashing with bcrypt** to protect user credentials.  
-- ✅ **Sensitive fields (like passwords)** excluded from queries by default.  
-- ✅ **Role-based authorization** ensures admin-only operations are properly restricted.  
+### Authentication & Security
+- Secure authentication with **JWT tokens stored in HTTP-only cookies** (prevents XSS attacks).  
+- **Password hashing with bcrypt** to protect user credentials.  
+- **Sensitive fields (like passwords)** excluded from queries by default.  
+- **Role-based authorization** ensures admin-only operations are properly restricted.  
 
-### 🧩 Component Architecture
-- ✅ **Separation of concerns** with modular React components for maintainability.  
-- ✅ **Clean state management** for predictable behavior across Customer, Seller, and Admin flows.  
-- ✅ **Protected routes** to enforce proper access control for different user roles.  
+### Component Architecture
+- **Separation of concerns** with modular React components for maintainability.  
+- **Clean state management** for predictable behavior across Customer, Seller, and Admin flows.  
+- **Protected routes** to enforce proper access control for different user roles.  
 
-### 🎯 Error Handling & User Experience
-- ✅ **Graceful error handling** for cart and product operations.  
-- ✅ **Stock validation** prevents adding unavailable products.  
-- ✅ **Toast notifications** provide immediate user feedback for actions.  
-- ✅ **Duplicate prevention** in cart ensures smoother shopping experience.  
+### Error Handling & User Experience
+- **Graceful error handling** for cart and product operations.  
+- **Stock validation** prevents adding unavailable products.  
+- **Toast notifications** provide immediate user feedback for actions.  
+- **Duplicate prevention** in cart ensures smoother shopping experience.  
 
 ---
 
-## 🏁 Conclusion
+## Conclusion
 
 The Multi-Vendor E-commerce Platform stands out as a complete, scalable, and production-ready solution.  
 It combines **technical excellence**, **feature richness**, and **business value** by uniting customers, sellers, and administrators in one ecosystem.  
