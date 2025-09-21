@@ -129,6 +129,7 @@ The **Multi-Vendor E-commerce Platform** offers comprehensive functionality acro
 
 ### Multi-Role User System
 The platform supports three distinct user roles with dedicated interfaces and protected routing:
+
 o- **Customer Interface**: Shopping, cart management, order tracking, and messaging  
 o- **Seller Dashboard**: Product management, order processing, and shop analytics  
 o- **Admin Panel**: User management, order oversight, and platform administration  
