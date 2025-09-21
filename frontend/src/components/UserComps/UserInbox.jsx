@@ -358,7 +358,7 @@ const SellerInbox = ({
       <div className="px-3 h-[75vh] py-3 overflow-y-scroll">
         {messages &&
           messages?.map((item, index) => {
-            console.log(item?.images);
+            console.log(item);
             return (
               <div
                 className={`flex w-full my-2 ${
@@ -376,7 +376,7 @@ const SellerInbox = ({
                 )}
                 {item?.images && (
                   <img
-                    src={`${item?.images[0]?.url}`}
+                    src={`${item?.images?.url}`}
                     className="w-[300px] h-[300px] object-cover rounded-[10px] ml-2 mb-2"
                   />
                 )}

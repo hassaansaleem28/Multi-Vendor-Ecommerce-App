@@ -376,7 +376,7 @@ function SellerInbox({
                 )}
                 {msg?.images && (
                   <img
-                    src={`${msg?.images[0]?.url}`}
+                    src={`${msg?.images?.url}`}
                     className="w-[300px] h-[300px] object-cover rounded-[10px] mr-2"
                   />
                 )}
