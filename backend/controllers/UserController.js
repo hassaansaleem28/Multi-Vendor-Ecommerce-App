@@ -103,7 +103,7 @@ export async function logoutUser(req, res) {
     res.cookie("token", "", {
       expires: new Date(0),
       httpOnly: true,
-      sameSite: "None",
+      sameSite: "none",
       secure: true,
     });
     res.status(201).json({ success: true, message: "Logout Successful!" });
