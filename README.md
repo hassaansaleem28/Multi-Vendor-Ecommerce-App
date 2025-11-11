@@ -128,6 +128,7 @@ graph TD
 The **Multi-Vendor E-commerce Platform** offers comprehensive functionality across three main user interfaces: **customer shopping**, **seller management**, and **admin oversight**.
 
 ### Multi-Role User System
+
 The platform supports three distinct user roles with dedicated interfaces and protected routing:
 
 o- **Customer Interface**: Shopping, cart management, order tracking, and messaging  
@@ -135,6 +136,7 @@ o- **Seller Dashboard**: Product management, order processing, and shop analytic
 o- **Admin Panel**: User management, order oversight, and platform administration  
 
 ### Product Management & Shopping
+
 Comprehensive product catalog functionality with search and categorization:
 
 o- **Product Search**: Real-time search with dropdown results  
@@ -143,21 +145,27 @@ o- **Shopping Cart**: Add to cart functionality with stock validation
 o- **Wishlist Management**: Save and remove products from wishlist  
 
 ### Payment Processing
+
 o- Secure payment integration through **Stripe Elements** with conditional rendering based on API key availability  
 
 ### Real-Time Messaging
+
 o- Built-in messaging system for **customer-seller communication**  
 o- Supports **images** and **real-time updates**  
 
 ### Seller Dashboard Features
+
 Powerful tools for sellers to manage their shops:
+
 o- **Account Balance Tracking**: Revenue monitoring with service charge calculations  
 o- **Order Management**: View and process all shop orders  
 o- **Product Analytics**: Track total products and performance metrics  
 o- **Coupon Management**: Create and manage discount codes  
 
 ### API Architecture
+
 Organized **RESTful API** with endpoints for different business domains:
+
 o- User authentication and profiles: `/api/v2/user/*`  
 o- Shop and seller management: `/api/v2/seller/*`  
 o- Product catalog operations: `/api/v2/product/*`  
@@ -166,7 +174,9 @@ o- Payment integration: `/api/v2/payment/*`
 o- Messaging system: `/api/v2/conversation/*`, `/api/v2/messages/*`  
 
 ### Brand Value Propositions
+
 The platform emphasizes customer-focused benefits:
+
 o- Free shipping on orders over $100  
 o- Daily surprise offers with up to 25% savings  
 o- Factory-direct affordable pricing  
