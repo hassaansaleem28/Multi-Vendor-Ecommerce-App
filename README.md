@@ -1,8 +1,8 @@
-# Complete Case Study - Multi-Vendor E-commerce Platform
+# Complete Case Study - Multi-Vendor E-commerce Platform - [Live App](https://multi-vendor-frontend-blond.vercel.app)
 
 ## Overview
 
-The **Multi-Vendor E-commerce Platform** is a comprehensive marketplace solution designed to connect customers, sellers, and administrators in a seamless ecosystem.
+The **Multi-Vendor E-commerce Platform** is a comprehensive marketplace solution that connects customers, sellers, and administrators in a seamless ecosystem.
 
 o- **Customers** can browse products, participate in promotional events, place orders, and communicate directly with sellers. 
 
