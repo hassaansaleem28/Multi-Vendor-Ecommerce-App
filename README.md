@@ -1,4 +1,4 @@
-# Complete Case Study - MultiVendor Ecommerce Platform - [Live App](https://multi-vendor-frontend-blond.vercel.app)
+# Complete Case Study - MultiVendor Ecommerce Platform ([Live App](https://multi-vendor-frontend-blond.vercel.app))
 
 ## Overview
 
