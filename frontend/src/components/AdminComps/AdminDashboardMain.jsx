@@ -1,14 +1,16 @@
-import { AiOutlineArrowRight, AiOutlineMoneyCollect } from "react-icons/ai";
-import styles from "../../styles/styles";
+import { AiOutlineMoneyCollect } from "react-icons/ai";
 import { MdBorderClear } from "react-icons/md";
-import { Link } from "react-router-dom";
-import { DataGrid } from "@mui/x-data-grid";
-import Button from "@mui/material/Button";
+import { GrWorkshop } from "react-icons/gr";
+import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getAllOrdersAdmin } from "../../redux-toolkit/actions/orderActions";
 import Loader from "../UserComps/Loader";
 import { getAllSellers } from "../../redux-toolkit/actions/sellerActions";
+import DataTable from "../ui/DataTable";
+import StatCard from "../ui/StatCard";
+import StatusPill from "../ui/StatusPill";
+import { easeOutSoft } from "../../lib/motion";
 
 function AdminDashboardMain() {
   const { adminOrders, isLoading } = useSelector(state => state.orders);
@@ -16,6 +18,7 @@ function AdminDashboardMain() {
     state => state.seller
   );
   const dispatch = useDispatch();
+
   useEffect(
     function () {
       dispatch(getAllOrdersAdmin());
@@ -23,27 +26,20 @@ function AdminDashboardMain() {
     },
     [dispatch]
   );
-  if (isLoading) return <Loader />;
-  if (isSellersLoading) return <Loader />;
 
   const totalAdminEarning =
     adminOrders &&
     adminOrders.reduce((acc, item) => acc + item.totalPrice * 0.1, 0);
   const adminBalance = totalAdminEarning?.toFixed(2);
+
   const columns = [
-    {
-      field: "id",
-      headerName: "Order ID",
-      minWidth: 150,
-      flex: 0.7,
-    },
+    { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
     {
       field: "status",
       headerName: "Status",
-      minWidth: 130,
+      minWidth: 170,
       flex: 0.7,
-      cellClassName: params =>
-        params.row.status === "Delivered" ? "greenColor" : "redColor",
+      renderCell: params => <StatusPill status={params.row.status} />,
     },
     {
       field: "itemsQty",
@@ -60,6 +56,7 @@ function AdminDashboardMain() {
       flex: 0.8,
     },
   ];
+
   const row = [];
   adminOrders &&
     adminOrders.forEach(item => {
@@ -72,68 +69,66 @@ function AdminDashboardMain() {
       });
     });
 
+  if (isLoading) return <Loader label="Loading dashboard" />;
+  if (isSellersLoading) return <Loader label="Loading sellers" />;
+
   return (
-    <div className="w-full p-8">
-      <h3 className="text-[22px] font-[Poppins] pb-2">Overview</h3>
-      <div className="w-full block flex-800px items-center justify-between">
-        <div className="w-full mb-4 width-800px-30 min-h-[20vh] bg-white shadow rounded px-2 py-5">
-          <div className="flex items-center">
-            <AiOutlineMoneyCollect size={30} className="mr-2" fill="00000085" />
-            <h3
-              className={`${styles.productTitle} !text-[18px] leading-5 !font-[400] text-[#00000085]`}
-            >
-              Total Earning
-            </h3>
-          </div>
-          <h5 className="pt-2 pl-[36px] text-[22px] font-[500]">
-            ${adminBalance}
-          </h5>
-        </div>
-        <div className="w-full mb-4 width-800px-30 min-h-[20vh] bg-white shadow rounded px-2 py-5">
-          <div className="flex items-center">
-            <MdBorderClear size={30} className="mr-2" fill="00000085" />
-            <h3
-              className={`${styles.productTitle} !text-[18px] leading-5 !font-[400] text-[#00000085]`}
-            >
-              All Sellers
-            </h3>
-          </div>
-          <h5 className="pt-2 pl-[36px] text-[22px] font-[500]">
-            {sellers && sellers.length}
-          </h5>
-          <Link to={"/admin-sellers"}>
-            <h5 className="pt-4 pl-2 text-[#077f9c]">View Sellers</h5>
-          </Link>
-        </div>
-        <div className="w-full mb-4 width-800px-30 min-h-[20vh] bg-white shadow rounded px-2 py-5">
-          <div className="flex items-center">
-            <AiOutlineMoneyCollect size={30} className="mr-2" fill="00000085" />
-            <h3
-              className={`${styles.productTitle} !text-[18px] leading-5 !font-[400] text-[#00000085]`}
-            >
-              All Orders
-            </h3>
-          </div>
-          <h5 className="pt-2 pl-[36px] text-[22px] font-[500]">
-            {adminOrders && adminOrders.length}
-          </h5>
-          <Link to={"/dashboard-products"}>
-            <h5 className="pt-4 pl-2 text-[#077f9c]">View Orders</h5>
-          </Link>
-        </div>
+    <div>
+      <motion.div
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, ease: easeOutSoft }}
+        className="mb-7"
+      >
+        <h1 className="font-display text-[26px] font-bold tracking-tight text-ink-900">
+          Marketplace overview
+        </h1>
+        <p className="mt-1 text-[14px] text-ink-500">
+          Platform-wide earnings, sellers and orders at a glance.
+        </p>
+      </motion.div>
+
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <StatCard
+          index={0}
+          icon={AiOutlineMoneyCollect}
+          tone="success"
+          label="Total earnings"
+          hint="10% platform fee on all orders"
+          value={`$${adminBalance}`}
+        />
+
+        <StatCard
+          index={1}
+          icon={GrWorkshop}
+          tone="brand"
+          label="All sellers"
+          hint="Shops on the marketplace"
+          value={(sellers && sellers.length) || 0}
+          to="/admin-sellers"
+          linkLabel="View sellers"
+        />
+
+        <StatCard
+          index={2}
+          icon={MdBorderClear}
+          tone="accent"
+          label="All orders"
+          hint="Orders across every shop"
+          value={(adminOrders && adminOrders.length) || 0}
+          to="/admin-orders"
+          linkLabel="View orders"
+        />
       </div>
-      <br />
-      <h3 className="text-[22px] font-[Poppins] pb-2">Latest Orders</h3>
-      <div className="pt-1 flex flex-col  min-h-[200px] max-h-[600px]">
-        <DataGrid
+
+      <div className="mt-8">
+        <DataTable
+          title="Latest orders"
+          subtitle="The most recent activity across the marketplace."
           rows={row}
           columns={columns}
-          pageSizeOptions={[10]}
-          initialState={{
-            pagination: { paginationModel: { pageSize: 5, page: 0 } },
-          }}
-          disableRowSelectionOnClick
-          sx={{ flexGrow: 1 }}
+          pageSize={5}
+          height={480}
         />
       </div>
     </div>

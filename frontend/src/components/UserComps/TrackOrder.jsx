@@ -1,10 +1,10 @@
-import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
-import { DataGrid } from "@mui/x-data-grid";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllOrdersUser } from "../../redux-toolkit/actions/orderActions";
 import { MdTrackChanges } from "react-icons/md";
+import DataTable from "../ui/DataTable";
+import StatusPill from "../ui/StatusPill";
 
 function TrackOrder() {
   const { orders } = useSelector(state => state.orders);
@@ -25,10 +25,9 @@ function TrackOrder() {
     {
       field: "status",
       headerName: "Status",
-      minWidth: 130,
+      minWidth: 170,
       flex: 0.7,
-      cellClassName: params =>
-        params.row.status === "Delivered" ? "greenColor" : "redColor",
+      renderCell: params => <StatusPill status={params.row.status} />,
     },
     {
       field: "itemsQty",
@@ -48,17 +47,20 @@ function TrackOrder() {
       field: "actions",
       headerName: "",
       sortable: false,
-      minWidth: 150,
+      minWidth: 130,
       flex: 1,
       renderCell: params => (
-        <Link to={`/user/track-order/${params.id}`}>
-          <Button>
-            <MdTrackChanges size={20} />
-          </Button>
+        <Link
+          to={`/user/track-order/${params.id}`}
+          className="inline-flex h-8 items-center gap-1.5 rounded-lg px-3 text-[13px] font-semibold text-brand-600 transition-colors hover:bg-brand-50"
+        >
+          <MdTrackChanges size={16} />
+          Track
         </Link>
       ),
     },
   ];
+
   const row = [];
 
   orders &&
@@ -72,18 +74,12 @@ function TrackOrder() {
     });
 
   return (
-    <div className="pl-8 pt-1 flex flex-col  min-h-[200px] max-h-[600px]">
-      <DataGrid
-        rows={row}
-        columns={columns}
-        pageSizeOptions={[10]}
-        initialState={{
-          pagination: { paginationModel: { pageSize: 10, page: 0 } },
-        }}
-        disableRowSelectionOnClick
-        sx={{ flexGrow: 1 }}
-      />
-    </div>
+    <DataTable
+      title="Track your orders"
+      subtitle="Follow each order from the seller's door to yours."
+      rows={row}
+      columns={columns}
+    />
   );
 }
 

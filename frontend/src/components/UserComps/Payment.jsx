@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import styles from "../../styles/styles";
 import {
   CardNumberElement,
   CardCvcElement,
@@ -13,8 +12,29 @@ import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { RxCross1 } from "react-icons/rx";
+import { AnimatePresence, motion } from "framer-motion";
+import { HiOutlineCreditCard, HiOutlineCash } from "react-icons/hi";
+import { FaPaypal } from "react-icons/fa";
+import styles from "../../styles/styles";
+import { backdrop, modal, easeOutSoft } from "../../lib/motion";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+const stripeElementStyle = {
+  style: {
+    base: {
+      fontSize: "16px",
+      lineHeight: "24px",
+      color: "#111a2e",
+      fontFamily: "Inter, system-ui, sans-serif",
+      "::placeholder": { color: "#94a1bc" },
+    },
+    invalid: { color: "#dc2626" },
+  },
+};
+
+const stripeFieldClass =
+  "w-full rounded-xl border border-ink-200 bg-ink-50/60 px-4 py-3 transition-all duration-200 focus-within:border-brand-500 focus-within:bg-white focus-within:ring-4 focus-within:ring-brand-500/10";
 
 function Payment() {
   const [orderData, setOrderData] = useState([]);
@@ -59,6 +79,7 @@ function Payment() {
       })
       .then(orderId => orderId);
   }
+
   async function onApprove(data, actions) {
     return actions.order.capture().then(details => {
       const { payer } = details;
@@ -67,6 +88,7 @@ function Payment() {
       if (paymentInfo !== undefined) paypalPaymentHandler(paymentInfo);
     });
   }
+
   async function paypalPaymentHandler(paymentInfo) {
     const config = {
       headers: {
@@ -90,6 +112,7 @@ function Payment() {
         window.location.reload();
       });
   }
+
   async function paymentHandler(e) {
     e.preventDefault();
     try {
@@ -144,6 +167,7 @@ function Payment() {
       toast.error(error);
     }
   }
+
   async function cashOnDeliveryHandler(e) {
     e.preventDefault();
 
@@ -166,25 +190,94 @@ function Payment() {
         window.location.reload();
       });
   }
+
   return (
-    <div className="w-full flex flex-col items-center py-8">
-      <div className="w-[90%] width-1000px block flex-800px">
-        <div className="w-full width-800px">
-          <PaymentInfo
-            user={user}
-            open={open}
-            isLoading={isLoading}
-            setOpen={setOpen}
-            onApprove={onApprove}
-            createOrder={createOrder}
-            paymentHandler={paymentHandler}
-            cashOnDeliveryHandler={cashOnDeliveryHandler}
-          />
-        </div>
-        <div className="w-full width-800px-35 marigin-top-800px mt-8">
+    <div className={`${styles.section} pb-12`}>
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+        <PaymentInfo
+          user={user}
+          open={open}
+          isLoading={isLoading}
+          setOpen={setOpen}
+          onApprove={onApprove}
+          createOrder={createOrder}
+          paymentHandler={paymentHandler}
+          cashOnDeliveryHandler={cashOnDeliveryHandler}
+        />
+
+        <div className="lg:sticky lg:top-24 lg:self-start">
           <CartData orderData={orderData} />
         </div>
       </div>
+    </div>
+  );
+}
+
+/** One selectable payment method with an expanding body. */
+function MethodCard({ icon: Icon, title, subtitle, selected, onSelect, children }) {
+  return (
+    <div
+      className={`overflow-hidden rounded-2xl border transition-all duration-300 ${
+        selected
+          ? "border-brand-300 bg-brand-50/30 shadow-card"
+          : "border-ink-200 bg-white hover:border-ink-300"
+      }`}
+    >
+      <button
+        type="button"
+        onClick={onSelect}
+        className="flex w-full cursor-pointer items-center gap-4 p-5 text-left"
+      >
+        {/* radio */}
+        <span
+          className={`grid h-5 w-5 shrink-0 place-items-center rounded-full border-2 transition-colors duration-200 ${
+            selected ? "border-brand-600" : "border-ink-300"
+          }`}
+        >
+          <AnimatePresence>
+            {selected && (
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0 }}
+                transition={{ duration: 0.18 }}
+                className="h-2.5 w-2.5 rounded-full bg-brand-600"
+              />
+            )}
+          </AnimatePresence>
+        </span>
+
+        <span
+          className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl transition-colors duration-300 ${
+            selected ? "bg-brand-600 text-white" : "bg-ink-50 text-ink-500"
+          }`}
+        >
+          <Icon size={20} />
+        </span>
+
+        <span className="min-w-0 flex-1">
+          <span className="block font-display text-[15px] font-bold text-ink-900">
+            {title}
+          </span>
+          <span className="block text-[13px] text-ink-500">{subtitle}</span>
+        </span>
+      </button>
+
+      <AnimatePresence initial={false}>
+        {selected && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.32, ease: easeOutSoft }}
+            className="overflow-hidden"
+          >
+            <div className="border-t border-ink-100 bg-white p-5">
+              {children}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -202,230 +295,224 @@ function PaymentInfo({
   const [select, setSelect] = useState(1);
 
   return (
-    <div className="w-full 800px:w-[95%] bg-[#fff] rounded-md p-5 pb-8">
-      {/* select buttons */}
-      <div>
-        <div className="flex w-full pb-5 border-b mb-2">
-          <div
-            className="w-[25px] h-[25px] rounded-full bg-transparent border-[3px] border-[#1d1a1ab4] relative flex items-center justify-center"
-            onClick={() => setSelect(1)}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: easeOutSoft }}
+      className="space-y-4"
+    >
+      {/* ---- Card ------------------------------------------------- */}
+      <MethodCard
+        icon={HiOutlineCreditCard}
+        title="Debit / credit card"
+        subtitle="Visa, Mastercard, Amex — processed by Stripe"
+        selected={select === 1}
+        onSelect={() => setSelect(1)}
+      >
+        <form onSubmit={paymentHandler} className="grid gap-4 sm:grid-cols-2">
+          <div className="sm:col-span-2">
+            <label className="mb-1.5 block text-[13px] font-semibold text-ink-700">
+              Name on card
+            </label>
+            <input
+              required
+              readOnly
+              placeholder={user && user.name}
+              value={(user && user.name) || ""}
+              className="w-full cursor-not-allowed rounded-xl border border-ink-200 bg-ink-50/60 px-4 py-3 text-[15px] text-ink-700 opacity-80"
+            />
+          </div>
+
+          <div className="sm:col-span-2">
+            <label className="mb-1.5 block text-[13px] font-semibold text-ink-700">
+              Card number
+            </label>
+            <CardNumberElement
+              className={stripeFieldClass}
+              options={stripeElementStyle}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-[13px] font-semibold text-ink-700">
+              Expiry date
+            </label>
+            <CardExpiryElement
+              className={stripeFieldClass}
+              options={stripeElementStyle}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-[13px] font-semibold text-ink-700">
+              CVC
+            </label>
+            <CardCvcElement
+              className={stripeFieldClass}
+              options={stripeElementStyle}
+            />
+          </div>
+
+          <motion.button
+            type="submit"
+            disabled={isLoading}
+            whileHover={isLoading ? undefined : { scale: 1.01 }}
+            whileTap={isLoading ? undefined : { scale: 0.99 }}
+            className="mt-1 flex h-[50px] w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-brand-600 font-display text-[16px] font-bold text-white shadow-card transition-colors duration-300 hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-70 sm:col-span-2"
           >
-            {select === 1 ? (
-              <div className="w-[13px] h-[13px] bg-[#1d1a1acb] rounded-full" />
-            ) : null}
-          </div>
-          <h4 className="text-[18px] pl-2 font-[600] text-[#000000b1]">
-            Pay with Debit/credit card
-          </h4>
-        </div>
-
-        {/* pay with card */}
-        {select === 1 ? (
-          <div className="w-full flex border-b">
-            <form className="w-full" onSubmit={paymentHandler}>
-              <div className="w-full flex pb-3">
-                <div className="w-[50%]">
-                  <label className="block pb-2">Name On Card</label>
-                  <input
-                    required
-                    placeholder={user && user.name}
-                    className={`${styles.input} !w-[95%] text-[#444]`}
-                    value={user && user.name}
-                  />
-                </div>
-                <div className="w-[50%]">
-                  <label className="block pb-2">Exp Date</label>
-                  <CardExpiryElement
-                    className={`${styles.input}`}
-                    options={{
-                      style: {
-                        base: {
-                          fontSize: "19px",
-                          lineHeight: 1.5,
-                          color: "#444",
-                        },
-                        empty: {
-                          color: "#3a120a",
-                          backgroundColor: "transparent",
-                          "::placeholder": {
-                            color: "#444",
-                          },
-                        },
-                      },
-                    }}
-                  />
-                </div>
-              </div>
-
-              <div className="w-full flex pb-3">
-                <div className="w-[50%]">
-                  <label className="block pb-2">Card Number</label>
-                  <CardNumberElement
-                    className={`${styles.input} !h-[35px] !w-[95%]`}
-                    options={{
-                      style: {
-                        base: {
-                          fontSize: "19px",
-                          lineHeight: 1.5,
-                          color: "#444",
-                        },
-                        empty: {
-                          color: "#3a120a",
-                          backgroundColor: "transparent",
-                          "::placeholder": {
-                            color: "#444",
-                          },
-                        },
-                      },
-                    }}
-                  />
-                </div>
-                <div className="w-[50%]">
-                  <label className="block pb-2">CVV</label>
-                  <CardCvcElement
-                    className={`${styles.input} !h-[35px]`}
-                    options={{
-                      style: {
-                        base: {
-                          fontSize: "19px",
-                          lineHeight: 1.5,
-                          color: "#444",
-                        },
-                        empty: {
-                          color: "#3a120a",
-                          backgroundColor: "transparent",
-                          "::placeholder": {
-                            color: "#444",
-                          },
-                        },
-                      },
-                    }}
-                  />
-                </div>
-              </div>
-              <input
-                type="submit"
-                value={isLoading ? "Processing..." : "Submit"}
-                className={`${styles.button} !bg-[#f63b60] text-[#fff] h-[45px] rounded-[5px] cursor-pointer text-[18px] font-[600]`}
-              />
-            </form>
-          </div>
-        ) : null}
-      </div>
-
-      <br />
-      {/* paypal payment */}
-      <div>
-        <div className="flex w-full pb-5 border-b mb-2">
-          <div
-            className="w-[25px] h-[25px] rounded-full bg-transparent border-[3px] border-[#1d1a1ab4] relative flex items-center justify-center"
-            onClick={() => setSelect(2)}
-          >
-            {select === 2 ? (
-              <div className="w-[13px] h-[13px] bg-[#1d1a1acb] rounded-full" />
-            ) : null}
-          </div>
-          <h4 className="text-[18px] pl-2 font-[600] text-[#000000b1]">
-            Pay with Paypal
-          </h4>
-        </div>
-
-        {/* pay with payement */}
-        {select === 2 ? (
-          <div className="w-full flex border-b">
-            <div
-              className={`${styles.button} !bg-[#f63b60] text-white h-[45px] rounded-[5px] cursor-pointer text-[18px] font-[600]`}
-              onClick={() => setOpen(true)}
-            >
-              Pay Now
-            </div>
-            {open && (
-              <div className="w-full fixed top-0 left-0 bg-[#00000039] h-screen flex items-center justify-center z-[99999]">
-                <div className="w-full width-800px-40 h-screen height-at-800px bg-white rounded-[5px] shadow flex flex-col justify-center p-8 relative overflow-y-scroll">
-                  <div className="w-full flex justify-end p-3">
-                    <RxCross1
-                      size={30}
-                      className="cursor-pointer absolute top-3 right-3"
-                      onClick={() => setOpen(false)}
-                    />
-                  </div>
-                  <PayPalScriptProvider
-                    options={{
-                      "client-id":
-                        "Aczac4Ry9_QA1t4c7TKH9UusH3RTe6onyICPoCToHG10kjlNdI-qwobbW9JAHzaRQwFMn2-k660853jn",
-                    }}
-                  >
-                    <PayPalButtons
-                      style={{ layout: "vertical" }}
-                      onApprove={onApprove}
-                      createOrder={createOrder}
-                    />
-                  </PayPalScriptProvider>
-                </div>
-              </div>
+            {isLoading && (
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
             )}
-          </div>
-        ) : null}
-      </div>
+            {isLoading ? "Processing…" : "Pay now"}
+          </motion.button>
+        </form>
+      </MethodCard>
 
-      <br />
-      {/* cash on delivery */}
-      <div>
-        <div className="flex w-full pb-5 border-b mb-2">
-          <div
-            className="w-[25px] h-[25px] rounded-full bg-transparent border-[3px] border-[#1d1a1ab4] relative flex items-center justify-center"
-            onClick={() => setSelect(3)}
+      {/* ---- PayPal ----------------------------------------------- */}
+      <MethodCard
+        icon={FaPaypal}
+        title="PayPal"
+        subtitle="Pay with your PayPal balance or linked card"
+        selected={select === 2}
+        onSelect={() => setSelect(2)}
+      >
+        <motion.button
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.99 }}
+          onClick={() => setOpen(true)}
+          className="flex h-[50px] w-full cursor-pointer items-center justify-center rounded-xl bg-brand-600 font-display text-[16px] font-bold text-white shadow-card transition-colors duration-300 hover:bg-brand-700"
+        >
+          Continue with PayPal
+        </motion.button>
+
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              variants={backdrop}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              onClick={() => setOpen(false)}
+              className="fixed inset-0 z-[99999] flex items-center justify-center bg-ink-950/50 p-4 backdrop-blur-sm"
+            >
+              <motion.div
+                variants={modal}
+                onClick={e => e.stopPropagation()}
+                className="relative max-h-[85vh] w-full max-w-[440px] overflow-y-auto rounded-2xl bg-white p-7 shadow-panel"
+              >
+                <button
+                  onClick={() => setOpen(false)}
+                  aria-label="Close PayPal"
+                  className="absolute right-4 top-4 grid h-9 w-9 cursor-pointer place-items-center rounded-full text-ink-500 transition-colors hover:bg-ink-100 hover:text-ink-900"
+                >
+                  <RxCross1 size={16} />
+                </button>
+
+                <h3 className="mb-6 font-display text-[19px] font-bold text-ink-900">
+                  Pay with PayPal
+                </h3>
+
+                <PayPalScriptProvider
+                  options={{
+                    "client-id":
+                      "Aczac4Ry9_QA1t4c7TKH9UusH3RTe6onyICPoCToHG10kjlNdI-qwobbW9JAHzaRQwFMn2-k660853jn",
+                  }}
+                >
+                  <PayPalButtons
+                    style={{ layout: "vertical" }}
+                    onApprove={onApprove}
+                    createOrder={createOrder}
+                  />
+                </PayPalScriptProvider>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </MethodCard>
+
+      {/* ---- Cash on delivery ------------------------------------- */}
+      <MethodCard
+        icon={HiOutlineCash}
+        title="Cash on delivery"
+        subtitle="Pay the courier when your order arrives"
+        selected={select === 3}
+        onSelect={() => setSelect(3)}
+      >
+        <form onSubmit={cashOnDeliveryHandler}>
+          <motion.button
+            type="submit"
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
+            className="flex h-[50px] w-full cursor-pointer items-center justify-center rounded-xl bg-brand-600 font-display text-[16px] font-bold text-white shadow-card transition-colors duration-300 hover:bg-brand-700"
           >
-            {select === 3 ? (
-              <div className="w-[13px] h-[13px] bg-[#1d1a1acb] rounded-full" />
-            ) : null}
-          </div>
-          <h4 className="text-[18px] pl-2 font-[600] text-[#000000b1]">
-            Cash on Delivery
-          </h4>
-        </div>
-
-        {/* cash on delivery */}
-        {select === 3 ? (
-          <div className="w-full flex">
-            <form className="w-full" onSubmit={cashOnDeliveryHandler}>
-              <input
-                type="submit"
-                value="Confirm"
-                className={`${styles.button} !bg-[#f63b60] text-[#fff] h-[45px] rounded-[5px] cursor-pointer text-[18px] font-[600]`}
-              />
-            </form>
-          </div>
-        ) : null}
-      </div>
-    </div>
+            Confirm order
+          </motion.button>
+        </form>
+      </MethodCard>
+    </motion.div>
   );
 }
+
 function CartData({ orderData }) {
   const shipping = orderData?.shipping?.toFixed(2);
+
   return (
-    <div className="w-full bg-[#fff] rounded-md p-5 pb-8">
-      <div className="flex justify-between">
-        <h3 className="text-[16px] font-[400] text-[#000000a4]">subtotal:</h3>
-        <h5 className="text-[18px] font-[600]">${orderData?.subTotalPrice}</h5>
-      </div>
-      <br />
-      <div className="flex justify-between">
-        <h3 className="text-[16px] font-[400] text-[#000000a4]">shipping:</h3>
-        <h5 className="text-[18px] font-[600]">${shipping}</h5>
-      </div>
-      <br />
-      <div className="flex justify-between border-b pb-3">
-        <h3 className="text-[16px] font-[400] text-[#000000a4]">Discount:</h3>
-        <h5 className="text-[18px] font-[600]">
-          {orderData?.discountPrice ? "$" + orderData.discountPrice : "-"}
-        </h5>
-      </div>
-      <h5 className="text-[18px] font-[600] text-end pt-3">
-        ${orderData?.totalPrice}
-      </h5>
-      <br />
-    </div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: easeOutSoft, delay: 0.1 }}
+      className="rounded-2xl border border-ink-100 bg-white p-6"
+    >
+      <h3 className="font-display text-[18px] font-bold text-ink-900">
+        Order summary
+      </h3>
+      <p className="mt-0.5 text-[13px] text-ink-500">
+        {orderData?.cart?.length || 0} item
+        {orderData?.cart?.length === 1 ? "" : "s"}
+      </p>
+
+      <dl className="mt-6 space-y-3.5">
+        <div className="flex items-center justify-between">
+          <dt className="text-[14px] text-ink-500">Subtotal</dt>
+          <dd className="font-display text-[15px] font-semibold text-ink-900">
+            ${orderData?.subTotalPrice}
+          </dd>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <dt className="text-[14px] text-ink-500">Shipping</dt>
+          <dd className="font-display text-[15px] font-semibold text-ink-900">
+            ${shipping}
+          </dd>
+        </div>
+
+        <div className="flex items-center justify-between border-b border-ink-100 pb-4">
+          <dt className="text-[14px] text-ink-500">Discount</dt>
+          <dd
+            className={`font-display text-[15px] font-semibold ${
+              orderData?.discountPrice ? "text-success-600" : "text-ink-400"
+            }`}
+          >
+            {orderData?.discountPrice
+              ? `−$${orderData.discountPrice}`
+              : "—"}
+          </dd>
+        </div>
+
+        <div className="flex items-center justify-between pt-1">
+          <dt className="font-display text-[16px] font-bold text-ink-900">
+            Total
+          </dt>
+          <dd className="font-display text-[26px] font-extrabold text-ink-900">
+            ${orderData?.totalPrice}
+          </dd>
+        </div>
+      </dl>
+
+      <p className="mt-5 text-center text-[12px] text-ink-400">
+        Secure checkout · Your details are encrypted
+      </p>
+    </motion.div>
   );
 }
 

@@ -1,10 +1,14 @@
 import { useNavigate } from "react-router-dom";
-import styles from "../../styles/styles";
 import { useSelector } from "react-redux";
 import ShippingInfo from "./ShippingInfo";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { motion } from "framer-motion";
+import { IoIosArrowForward } from "react-icons/io";
+import { HiOutlineTicket } from "react-icons/hi";
+import styles from "../../styles/styles";
+import { easeOutSoft } from "../../lib/motion";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -54,6 +58,7 @@ function Checkout() {
       navigate("/payment");
     }
   }
+
   const subTotalPrice = cart.reduce(
     (acc, item) => acc + item.qty * item.discountPrice,
     0
@@ -100,26 +105,25 @@ function Checkout() {
     : (subTotalPrice + shipping).toFixed(2);
 
   return (
-    <div className="w-full flex flex-col items-center py-8">
-      <div className="w-[90%] flex-800px block width-1000px">
-        <div className="w-full width-800px">
-          <ShippingInfo
-            user={user}
-            country={country}
-            setCountry={setCountry}
-            city={city}
-            setCity={setCity}
-            userInfo={userInfo}
-            setUserInfo={setUserInfo}
-            address1={address1}
-            setAddress1={setAddress1}
-            address2={address2}
-            setAddress2={setAddress2}
-            zipCode={zipCode}
-            setZipCode={setZipCode}
-          />
-        </div>
-        <div className="w-full width-800px-35 mt-8 marigin-top-800px">
+    <div className={`${styles.section} pb-12`}>
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+        <ShippingInfo
+          user={user}
+          country={country}
+          setCountry={setCountry}
+          city={city}
+          setCity={setCity}
+          userInfo={userInfo}
+          setUserInfo={setUserInfo}
+          address1={address1}
+          setAddress1={setAddress1}
+          address2={address2}
+          setAddress2={setAddress2}
+          zipCode={zipCode}
+          setZipCode={setZipCode}
+        />
+
+        <div className="lg:sticky lg:top-24 lg:self-start">
           <CartData
             handleSubmit={handleSubmit}
             totalPrice={totalPrice}
@@ -128,14 +132,10 @@ function Checkout() {
             couponCode={couponCode}
             setCouponCode={setCouponCode}
             discountPercentenge={discountPercentenge}
+            itemCount={cart?.length || 0}
+            onSubmitPayment={submitPayment}
           />
         </div>
-      </div>
-      <div
-        className={`${styles.button} w-[150px] a800px-width-280px mt-10 rounded-md text-[1.25rem] font-[500] cursor-pointer`}
-        onClick={submitPayment}
-      >
-        <h5 className="text-white cursor-pointer">Go to Payment</h5>
       </div>
     </div>
   );
@@ -149,44 +149,112 @@ function CartData({
   couponCode,
   setCouponCode,
   discountPercentenge,
+  itemCount,
+  onSubmitPayment,
 }) {
   return (
-    <div className="w-full bg-[#fff] rounded-md p-5 pb-8">
-      <div className="flex justify-between">
-        <h3 className="text-[16px] font-[400] text-[#000000a4]">subtotal:</h3>
-        <h5 className="text-[18px] font-[600]">${subTotalPrice}</h5>
-      </div>
-      <br />
-      <div className="flex justify-between">
-        <h3 className="text-[16px] font-[400] text-[#000000a4]">shipping:</h3>
-        <h5 className="text-[18px] font-[600]">${shipping.toFixed(2)}</h5>
-      </div>
-      <br />
-      <div className="flex justify-between border-b pb-3">
-        <h3 className="text-[16px] font-[400] text-[#000000a4]">Discount:</h3>
-        <h5 className="text-[18px] font-[600]">
-          - {discountPercentenge ? "$" + discountPercentenge.toString() : null}
-        </h5>
-      </div>
-      <h5 className="text-[18px] font-[600] text-end pt-3">${totalPrice}</h5>
-      <br />
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          className={`${styles.input} h-[40px] pl-2`}
-          placeholder="Coupoun code"
-          value={couponCode}
-          onChange={e => setCouponCode(e.target.value)}
-          required
-        />
-        <input
-          className={`w-full h-[40px] border border-[#f63b60] text-center text-[#f63b60] rounded-[3px] mt-8 cursor-pointer`}
-          required
-          value="Apply code"
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: easeOutSoft, delay: 0.1 }}
+      className="rounded-2xl border border-ink-100 bg-white p-6"
+    >
+      <h3 className="font-display text-[18px] font-bold text-ink-900">
+        Order summary
+      </h3>
+      <p className="mt-0.5 text-[13px] text-ink-500">
+        {itemCount} item{itemCount === 1 ? "" : "s"} in your cart
+      </p>
+
+      <dl className="mt-6 space-y-3.5">
+        <div className="flex items-center justify-between">
+          <dt className="text-[14px] text-ink-500">Subtotal</dt>
+          <dd className="font-display text-[15px] font-semibold text-ink-900">
+            ${subTotalPrice.toFixed(2)}
+          </dd>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <dt className="text-[14px] text-ink-500">Shipping</dt>
+          <dd className="font-display text-[15px] font-semibold text-ink-900">
+            ${shipping.toFixed(2)}
+          </dd>
+        </div>
+
+        <div className="flex items-center justify-between border-b border-ink-100 pb-4">
+          <dt className="text-[14px] text-ink-500">Discount</dt>
+          <dd
+            className={`font-display text-[15px] font-semibold ${
+              discountPercentenge ? "text-success-600" : "text-ink-400"
+            }`}
+          >
+            {discountPercentenge
+              ? `−$${Number(discountPercentenge).toFixed(2)}`
+              : "—"}
+          </dd>
+        </div>
+
+        <div className="flex items-center justify-between pt-1">
+          <dt className="font-display text-[16px] font-bold text-ink-900">
+            Total
+          </dt>
+          <motion.dd
+            key={totalPrice}
+            initial={{ scale: 1.1, opacity: 0.7 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            className="font-display text-[26px] font-extrabold text-ink-900"
+          >
+            ${totalPrice}
+          </motion.dd>
+        </div>
+      </dl>
+
+      {/* coupon */}
+      <form onSubmit={handleSubmit} className="mt-6">
+        <label className="mb-1.5 block text-[13px] font-semibold text-ink-700">
+          Coupon code
+        </label>
+        <div className="relative">
+          <HiOutlineTicket
+            size={18}
+            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-400"
+          />
+          <input
+            type="text"
+            className="w-full rounded-xl border border-ink-200 bg-ink-50/60 py-2.5 pl-11 pr-4 text-[15px] uppercase text-ink-900 placeholder:normal-case placeholder:text-ink-400 transition-all duration-200 focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-500/10"
+            placeholder="Enter coupon code"
+            value={couponCode}
+            onChange={e => setCouponCode(e.target.value)}
+            required
+          />
+        </div>
+
+        <motion.button
           type="submit"
-        />
+          whileHover={{ scale: 1.015 }}
+          whileTap={{ scale: 0.985 }}
+          className="mt-3 h-[44px] w-full cursor-pointer rounded-xl border border-brand-200 bg-brand-50 font-semibold text-brand-700 transition-colors duration-300 hover:border-brand-300 hover:bg-brand-100"
+        >
+          Apply code
+        </motion.button>
       </form>
-    </div>
+
+      {/* pay */}
+      <motion.button
+        onClick={onSubmitPayment}
+        whileHover={{ scale: 1.015 }}
+        whileTap={{ scale: 0.985 }}
+        className="group mt-6 flex h-[52px] w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-brand-600 font-display text-[16px] font-bold text-white shadow-card transition-colors duration-300 hover:bg-brand-700"
+      >
+        Go to payment
+        <IoIosArrowForward className="transition-transform duration-300 group-hover:translate-x-1" />
+      </motion.button>
+
+      <p className="mt-3 text-center text-[12px] text-ink-400">
+        Secure checkout · Your details are encrypted
+      </p>
+    </motion.div>
   );
 }
 

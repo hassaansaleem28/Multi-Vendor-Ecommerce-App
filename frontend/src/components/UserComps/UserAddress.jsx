@@ -1,14 +1,32 @@
-import { AiOutlineDelete } from "react-icons/ai";
-import styles from "../../styles/styles";
+import { AiOutlineDelete, AiOutlinePlus } from "react-icons/ai";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { RxCross1 } from "react-icons/rx";
 import { Country, State } from "country-state-city";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  HiOutlineLocationMarker,
+  HiChevronDown,
+  HiOutlineHome,
+  HiOutlineOfficeBuilding,
+  HiOutlineStar,
+} from "react-icons/hi";
 import {
   deleteAddress,
   updateAddresses,
 } from "../../redux-toolkit/actions/userActions";
+import { backdrop, modal, easeOutSoft } from "../../lib/motion";
+
+const inputClass =
+  "w-full rounded-xl border border-ink-200 bg-ink-50/60 px-4 py-2.5 text-[15px] text-ink-900 placeholder:text-ink-400 transition-all duration-200 focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-500/10";
+const labelClass = "mb-1.5 block text-[13px] font-semibold text-ink-700";
+
+const TYPE_ICONS = {
+  Default: HiOutlineStar,
+  Home: HiOutlineHome,
+  Office: HiOutlineOfficeBuilding,
+};
 
 function UserAddress() {
   const [open, setOpen] = useState(false);
@@ -26,6 +44,7 @@ function UserAddress() {
     { name: "Home" },
     { name: "Office" },
   ];
+
   function handleSubmit(e) {
     e.preventDefault();
 
@@ -51,190 +70,255 @@ function UserAddress() {
       setAddressType("");
     }
   }
+
   function handleDelete(address) {
     dispatch(deleteAddress(address._id));
   }
 
   return (
-    <div className="w-full px-5">
-      {open && (
-        <div className="fixed w-full h-screen bg-[#0000004b] top-0 left-0 flex items-center justify-center">
-          <div className="w-[35%] h-[80vh] bg-white rounded shadow relative overflow-y-scroll">
-            <div className="flex w-full justify-end p-3">
-              <RxCross1
-                size={30}
-                className="cursor-pointer"
-                onClick={() => setOpen(false)}
-              />
-            </div>
-            <h1 className="text-center text-[25px] font-[Poppins]">
-              Add New Address
-            </h1>
-            <div className="w-full">
-              <form aria-required onSubmit={handleSubmit}>
-                <div className="w-full block p-4">
-                  <div className="w-full pb-2">
-                    <label className="block pb-2">Your Country</label>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, ease: easeOutSoft }}
+      className="rounded-2xl border border-ink-100 bg-white p-6 shadow-card md:p-8"
+    >
+      {/* ---- Header --------------------------------------------- */}
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 className="font-display text-[19px] font-bold text-ink-900">
+            Saved addresses
+          </h2>
+          <p className="mt-0.5 text-[13px] text-ink-500">
+            {user?.addresses?.length || 0} address
+            {user?.addresses?.length === 1 ? "" : "es"} on file
+          </p>
+        </div>
+
+        <motion.button
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.96 }}
+          onClick={() => setOpen(true)}
+          className="inline-flex h-[44px] cursor-pointer items-center gap-2 rounded-xl bg-brand-600 px-5 font-semibold text-white shadow-card transition-colors duration-300 hover:bg-brand-700"
+        >
+          <AiOutlinePlus size={17} />
+          Add new
+        </motion.button>
+      </div>
+
+      {/* ---- List ----------------------------------------------- */}
+      <div className="mt-7 space-y-3">
+        <AnimatePresence initial={false}>
+          {user &&
+            user?.addresses.map((item, i) => {
+              const Icon = TYPE_ICONS[item.addressType] || HiOutlineLocationMarker;
+              return (
+                <motion.div
+                  key={item._id || i}
+                  layout
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, x: -20, height: 0 }}
+                  transition={{ duration: 0.3, ease: easeOutSoft }}
+                  className="group flex items-center gap-4 rounded-xl border border-ink-100 bg-white p-4 transition-all duration-300 hover:border-brand-200 hover:shadow-card"
+                >
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-600">
+                    <Icon size={20} />
+                  </span>
+
+                  <div className="min-w-0 flex-1">
+                    <p className="font-display text-[15px] font-bold text-ink-900">
+                      {item.addressType}
+                    </p>
+                    <p className="truncate text-[13px] text-ink-500">
+                      {item.address1} {item.address2}
+                    </p>
+                  </div>
+
+                  <span className="hidden shrink-0 text-[13px] text-ink-400 sm:block">
+                    {user && user.phoneNumber}
+                  </span>
+
+                  <motion.button
+                    whileHover={{ scale: 1.12 }}
+                    whileTap={{ scale: 0.88 }}
+                    onClick={() => handleDelete(item)}
+                    aria-label={`Delete ${item.addressType} address`}
+                    className="grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-full text-ink-400 transition-colors hover:bg-danger-50 hover:text-danger-500"
+                  >
+                    <AiOutlineDelete size={19} />
+                  </motion.button>
+                </motion.div>
+              );
+            })}
+        </AnimatePresence>
+
+        {user && user.addresses.length === 0 && (
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-ink-200 px-6 py-14 text-center">
+            <span className="grid h-14 w-14 place-items-center rounded-full bg-ink-50 text-ink-300">
+              <HiOutlineLocationMarker size={26} />
+            </span>
+            <h3 className="mt-4 font-display text-[17px] font-bold text-ink-900">
+              No saved addresses
+            </h3>
+            <p className="mt-1 text-[14px] text-ink-500">
+              Add one to speed up your next checkout.
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* ---- Modal ---------------------------------------------- */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            variants={backdrop}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            onClick={() => setOpen(false)}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-ink-950/50 p-4 backdrop-blur-sm"
+          >
+            <motion.div
+              variants={modal}
+              onClick={e => e.stopPropagation()}
+              className="relative max-h-[88vh] w-full max-w-[480px] overflow-y-auto rounded-2xl bg-white shadow-panel"
+            >
+              <header className="sticky top-0 z-10 flex items-center justify-between border-b border-ink-100 bg-white px-6 py-5">
+                <h3 className="font-display text-[18px] font-bold text-ink-900">
+                  Add new address
+                </h3>
+                <button
+                  onClick={() => setOpen(false)}
+                  aria-label="Close"
+                  className="grid h-9 w-9 cursor-pointer place-items-center rounded-full text-ink-500 transition-colors hover:bg-ink-100 hover:text-ink-900"
+                >
+                  <RxCross1 size={16} />
+                </button>
+              </header>
+
+              <form aria-required onSubmit={handleSubmit} className="space-y-5 p-6">
+                <div>
+                  <label className={labelClass}>Country</label>
+                  <div className="relative">
                     <select
-                      name=""
-                      id=""
                       value={country}
-                      className="w-[95%] border h-[40px] rounded-[5px]"
+                      className={`${inputClass} cursor-pointer appearance-none pr-10`}
                       onChange={e => setCountry(e.target.value)}
                     >
-                      <option value="" className="block border pb-2">
-                        Choose your country
-                      </option>
+                      <option value="">Choose your country</option>
                       {Country &&
                         Country.getAllCountries().map(item => (
-                          <option
-                            className="block pb-2"
-                            key={item.isoCode}
-                            value={item.isoCode}
-                          >
+                          <option key={item.isoCode} value={item.isoCode}>
                             {item.name}
                           </option>
                         ))}
                     </select>
+                    <HiChevronDown
+                      size={18}
+                      className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-400"
+                    />
                   </div>
-                  <div className="w-full pb-2">
-                    <label className="block pb-2">Your City</label>
+                </div>
+
+                <div>
+                  <label className={labelClass}>City / State</label>
+                  <div className="relative">
                     <select
-                      name=""
-                      id=""
                       value={city}
-                      className="w-[95%] border h-[40px] rounded-[5px]"
+                      disabled={!country}
+                      className={`${inputClass} cursor-pointer appearance-none pr-10 disabled:opacity-60`}
                       onChange={e => setCity(e.target.value)}
                     >
-                      <option value="" className="block border pb-2">
-                        Choose your city
+                      <option value="">
+                        {country ? "Choose your city" : "Select a country first"}
                       </option>
                       {State &&
                         State.getStatesOfCountry(country).map(item => (
-                          <option
-                            className="block pb-2"
-                            key={item.isoCode}
-                            value={item.isoCode}
-                          >
+                          <option key={item.isoCode} value={item.isoCode}>
                             {item.name}
                           </option>
                         ))}
                     </select>
-                  </div>
-                  <div className="w-full pb-2">
-                    <label className="block pb-2">Address 1</label>
-                    <input
-                      type="address"
-                      className={`${styles.input}`}
-                      required
-                      value={address1}
-                      onChange={e => setAddress1(e.target.value)}
+                    <HiChevronDown
+                      size={18}
+                      className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-400"
                     />
-                    <div className="w-full pb-2">
-                      <label className="block pb-2">Address 2</label>
-                      <input
-                        type="address"
-                        className={`${styles.input}`}
-                        required
-                        value={address2}
-                        onChange={e => setAddress2(e.target.value)}
-                      />
-                    </div>
-                    <div className="w-full pb-2">
-                      <label className="block pb-2">Zip Code</label>
-                      <input
-                        type="number"
-                        className={`${styles.input}`}
-                        required
-                        value={zipCode}
-                        onChange={e => setZipCode(e.target.value)}
-                      />
-                    </div>
-                    <div className="w-full pb-2">
-                      <label className="block pb-2">Address Type</label>
-                      <select
-                        name=""
-                        id=""
-                        value={addressType}
-                        className="w-[95%] border h-[40px] rounded-[5px]"
-                        onChange={e => setAddressType(e.target.value)}
-                      >
-                        <option value="" className="block border pb-2">
-                          Select address type
-                        </option>
-                        {addressTypeData &&
-                          addressTypeData.map((item, i) => (
-                            <option
-                              className="block pb-2"
-                              key={i}
-                              value={item.name}
-                            >
-                              {item.name}
-                            </option>
-                          ))}
-                      </select>
-                    </div>
-                    <div className="w-full pb-2">
-                      <input
-                        type="submit"
-                        className={`${styles.input} mt-5 cursor-pointer`}
-                        required
-                        readOnly
-                      />
-                    </div>
                   </div>
                 </div>
+
+                <div>
+                  <label className={labelClass}>Address line 1</label>
+                  <input
+                    type="address"
+                    className={inputClass}
+                    required
+                    placeholder="Street address"
+                    value={address1}
+                    onChange={e => setAddress1(e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className={labelClass}>Address line 2</label>
+                  <input
+                    type="address"
+                    className={inputClass}
+                    required
+                    placeholder="Apartment, suite, unit"
+                    value={address2}
+                    onChange={e => setAddress2(e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className={labelClass}>Zip code</label>
+                  <input
+                    type="number"
+                    className={inputClass}
+                    required
+                    placeholder="54000"
+                    value={zipCode ?? ""}
+                    onChange={e => setZipCode(e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className={labelClass}>Address type</label>
+                  <div className="relative">
+                    <select
+                      value={addressType}
+                      className={`${inputClass} cursor-pointer appearance-none pr-10`}
+                      onChange={e => setAddressType(e.target.value)}
+                    >
+                      <option value="">Select address type</option>
+                      {addressTypeData &&
+                        addressTypeData.map((item, i) => (
+                          <option key={i} value={item.name}>
+                            {item.name}
+                          </option>
+                        ))}
+                    </select>
+                    <HiChevronDown
+                      size={18}
+                      className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-400"
+                    />
+                  </div>
+                </div>
+
+                <motion.button
+                  type="submit"
+                  whileHover={{ scale: 1.015 }}
+                  whileTap={{ scale: 0.985 }}
+                  className="mt-2 flex h-[48px] w-full cursor-pointer items-center justify-center rounded-xl bg-brand-600 font-semibold text-white shadow-card transition-colors duration-300 hover:bg-brand-700"
+                >
+                  Save address
+                </motion.button>
               </form>
-            </div>
-          </div>
-        </div>
-      )}
-      <div className="flex w-full items-center justify-between">
-        <h1 className="text-[25px] font-[600] font-[Roboto] text-[#000000ba] pb-2">
-          My addresses
-        </h1>
-        <div
-          className={`${styles.button} rounded-md cursor-pointer`}
-          onClick={() => setOpen(true)}
-        >
-          <span className="text-[#fff] font-[500] cursor-pointer">Add New</span>
-        </div>
-      </div>
-      <br />
-      {user &&
-        user?.addresses.map((item, i) => (
-          <div
-            key={i}
-            className="w-full bg-white h-[70px] rounded-[4px] flex items-center px-3 shadow justify-between pr-10"
-          >
-            <div className="flex items-center">
-              <h5 className="pl-5 font-[600]">{item.addressType}</h5>
-            </div>
-            <div className="pl-8 flex items-center">
-              <h6 className="text-[12px] text-unset-800px">
-                {item.address1} {item.address2}
-              </h6>
-            </div>
-            <div className="pl-8 flex items-center">
-              <h6 className="text-[12px] text-unset-800px">
-                {user && user.phoneNumber}
-              </h6>
-            </div>
-            <div className="min-w-[10%] flex items-center justify-between pl-8">
-              <AiOutlineDelete
-                size={25}
-                className="cursor-pointer"
-                onClick={() => handleDelete(item)}
-              />
-            </div>
-          </div>
-        ))}
-      {user && user.addresses.length === 0 && (
-        <h5 className="text-center pt-8 text-[18px]">
-          You don' t have any saved addresses
-        </h5>
-      )}
-    </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }
 

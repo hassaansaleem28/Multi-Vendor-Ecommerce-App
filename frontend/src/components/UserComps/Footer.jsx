@@ -4,118 +4,168 @@ import {
   AiFillYoutube,
   AiOutlineTwitter,
 } from "react-icons/ai";
-
+import { IoIosArrowForward } from "react-icons/io";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   footerSupportLinks,
   footercompanyLinks,
   footerProductLinks,
 } from "../../static/data";
+import Logo from "../ui/Logo";
+import { staggerContainer, listItem, viewportAny } from "../../lib/motion";
+
+const socials = [
+  { Icon: AiFillFacebook, label: "Facebook" },
+  { Icon: AiOutlineTwitter, label: "Twitter" },
+  { Icon: AiFillInstagram, label: "Instagram" },
+  { Icon: AiFillYoutube, label: "YouTube" },
+];
+
+function LinkColumn({ title, links }) {
+  return (
+    <div>
+      <h3 className="mb-4 font-display text-[15px] font-bold text-white">
+        {title}
+      </h3>
+      <ul className="space-y-2.5">
+        {links.map((link, i) => (
+          <li key={i}>
+            <Link
+              to={link.link}
+              className="text-[14px] text-white/50 transition-colors duration-200 hover:text-accent-400"
+            >
+              {link.name}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 function Footer() {
   return (
-    <div className="bg-[#000] text-white">
-      <div className="md:flex md:justify-between md:items-center sm:px-12 px-4 bg-[#342ac8] py-7">
-        <h1 className="lg:text-4xl text-3xl md:mb-0 mb-6 lg:leading-normal font-semibold md:w-2/5">
-          <span className="text-[#56d879]">Subscribe</span> us to get news{" "}
-          <br />
-          events and offers
-        </h1>
-        <div>
-          <input
-            type="email"
-            required
-            placeholder="Your Email"
-            className="text-gray-800 bg-white sm:w-72 w-full sm:mr-5 mr-1 lg:mb-0 mb-4 py-2.5 rounded px-2 focus:outline-none"
+    <footer className="bg-ink-950 text-white">
+      {/* ---- Newsletter ------------------------------------------- */}
+      <div className="relative overflow-hidden border-b border-white/10">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="animate-float-slow absolute -left-20 top-0 h-[320px] w-[320px] rounded-full bg-brand-600/25 blur-[100px]" />
+          <div
+            className="animate-float-slow absolute -bottom-24 right-10 h-[280px] w-[280px] rounded-full bg-accent-500/15 blur-[100px]"
+            style={{ animationDelay: "2s" }}
           />
-          <button className="bg-[#56d879] hover:bg-teal-500 duration-300 px-5 py-2.5 rounded-md text-white md:w-auto w-full">
-            Submit
-          </button>
         </div>
-      </div>
-      <footer className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 sm:px-8 px-5 py-16 sm:text-center">
-        <ul className="px-5 text-center sm:text-start flex sm:block flex-col items-center">
-          <img
-            src="https://shopo.quomodothemes.website/assets/images/logo.svg"
-            alt=""
-            style={{
-              filter: "brightness(0) invert(1)",
-            }}
-          />
-          <br />
-          <p>The home and elements needed to create beautiful products.</p>
-          <div className="flex items-center mt-[15px]">
-            <AiFillFacebook
-              size={25}
-              style={{ marginLeft: "15px", cursor: "pointer" }}
-            />
-            <AiOutlineTwitter
-              size={25}
-              style={{ marginLeft: "15px", cursor: "pointer" }}
-            />
-            <AiFillInstagram
-              size={25}
-              style={{ marginLeft: "15px", cursor: "pointer" }}
-            />
-            <AiFillYoutube
-              size={25}
-              style={{ marginLeft: "15px", cursor: "pointer" }}
-            />
+
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={viewportAny}
+          transition={{ duration: 0.55 }}
+          className="relative z-10 mx-auto flex w-11/12 max-w-[1480px] flex-col items-start justify-between gap-8 py-14 lg:flex-row lg:items-center"
+        >
+          <div>
+            <h2 className="max-w-md font-display text-[26px] font-bold leading-tight tracking-tight text-white lg:text-[32px]">
+              Get news, events and{" "}
+              <span className="bg-gradient-to-r from-accent-300 to-accent-500 bg-clip-text text-transparent">
+                exclusive offers
+              </span>
+            </h2>
+            <p className="mt-2 text-[15px] text-white/50">
+              One email a week. No spam, unsubscribe any time.
+            </p>
           </div>
-        </ul>
-        <ul className="text-center sm:text-start">
-          <h1 className="mb-1 font-semibold">Company</h1>
-          {footerProductLinks.map((link, i) => (
-            <li key={i}>
-              <Link
-                className="text-gray-400 hover:text-teal-400 duration-300 text-sm cursor-pointer leading-6"
-                to={link.link}
+
+          <form
+            onSubmit={e => e.preventDefault()}
+            className="flex w-full max-w-md flex-col gap-3 sm:flex-row"
+          >
+            <input
+              type="email"
+              required
+              placeholder="you@example.com"
+              className="h-[50px] flex-1 rounded-xl border border-white/15 bg-white/10 px-4 text-[15px] text-white backdrop-blur transition-all duration-300 placeholder:text-white/40 focus:border-accent-400 focus:bg-white/15 focus:ring-4 focus:ring-accent-400/15"
+            />
+            <motion.button
+              type="submit"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="group flex h-[50px] cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-accent-400 px-7 font-semibold text-ink-900 shadow-card transition-colors duration-300 hover:bg-accent-300"
+            >
+              Subscribe
+              <IoIosArrowForward className="transition-transform duration-300 group-hover:translate-x-1" />
+            </motion.button>
+          </form>
+        </motion.div>
+      </div>
+
+      {/* ---- Link columns ----------------------------------------- */}
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={viewportAny}
+        className="mx-auto grid w-11/12 max-w-[1480px] grid-cols-2 gap-10 py-16 lg:grid-cols-4"
+      >
+        <motion.div variants={listItem} className="col-span-2 lg:col-span-1">
+          <Logo variant="light" />
+          <p className="mt-5 max-w-xs text-[14px] leading-relaxed text-white/50">
+            The home and elements needed to create beautiful products — from
+            hundreds of independent sellers.
+          </p>
+
+          <div className="mt-6 flex items-center gap-3">
+            {socials.map(({ Icon, label }) => (
+              <motion.a
+                key={label}
+                href="#"
+                aria-label={label}
+                whileHover={{ y: -3, scale: 1.1 }}
+                whileTap={{ scale: 0.92 }}
+                className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/5 text-white/70 transition-colors duration-300 hover:border-accent-400/40 hover:bg-accent-400/15 hover:text-accent-400"
               >
-                {link.name}
-              </Link>
-            </li>
-          ))}
-        </ul>
-        <ul className="text-center sm:text-start">
-          <h1 className="mb-1 font-semibold">Shop</h1>
-          {footercompanyLinks.map((link, i) => (
-            <li key={i}>
-              <Link
-                className="text-gray-400 hover:text-teal-400 duration-300 text-sm cursor-pointer leading-6"
-                to={link.link}
-              >
-                {link.name}
-              </Link>
-            </li>
-          ))}
-        </ul>
-        <ul className="text-center sm:text-start">
-          <h1 className="mb-1 font-semibold">Support</h1>
-          {footerSupportLinks.map((link, i) => (
-            <li key={i}>
-              <Link
-                className="text-gray-400 hover:text-teal-400 duration-300 text-sm cursor-pointer leading-6"
-                to={link.link}
-              >
-                {link.name}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </footer>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 text-center pt-2 text-gray-400 text-md pb-8">
-        <span>
-          &copy; {new Date().getFullYear()} ShopO. All rights reserved.
-        </span>
-        <span>Terms . Private Policy</span>
-        <div className="sm:block flex items-center justify-center w-full">
+                <Icon size={19} />
+              </motion.a>
+            ))}
+          </div>
+        </motion.div>
+
+        <motion.div variants={listItem}>
+          <LinkColumn title="Company" links={footerProductLinks} />
+        </motion.div>
+        <motion.div variants={listItem}>
+          <LinkColumn title="Shop" links={footercompanyLinks} />
+        </motion.div>
+        <motion.div variants={listItem}>
+          <LinkColumn title="Support" links={footerSupportLinks} />
+        </motion.div>
+      </motion.div>
+
+      {/* ---- Legal bar -------------------------------------------- */}
+      <div className="border-t border-white/10">
+        <div className="mx-auto flex w-11/12 max-w-[1480px] flex-col items-center justify-between gap-5 py-7 text-center sm:flex-row sm:text-left">
+          <span className="text-[13px] text-white/40">
+            &copy; {new Date().getFullYear()} ShopO. All rights reserved.
+          </span>
+
+          <div className="flex items-center gap-5 text-[13px] text-white/40">
+            <a href="#" className="transition-colors hover:text-white/70">
+              Terms
+            </a>
+            <a href="#" className="transition-colors hover:text-white/70">
+              Privacy Policy
+            </a>
+          </div>
+
           <img
             src="https://hamart-shop.vercel.app/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Ffooter-payment.a37c49ac.png&w=640&q=75"
-            alt="Payment Options"
+            alt="Accepted payment methods"
+            loading="lazy"
+            className="h-6 opacity-60 transition-opacity duration-300 hover:opacity-100"
           />
         </div>
       </div>
-    </div>
+    </footer>
   );
 }
 

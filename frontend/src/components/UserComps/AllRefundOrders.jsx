@@ -1,10 +1,10 @@
-import Button from "@mui/material/Button";
-import { DataGrid } from "@mui/x-data-grid";
 import { useEffect } from "react";
 import { AiOutlineArrowRight } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { getAllOrdersUser } from "../../redux-toolkit/actions/orderActions";
 import { useDispatch, useSelector } from "react-redux";
+import DataTable from "../ui/DataTable";
+import StatusPill from "../ui/StatusPill";
 
 function AllRefundOrders() {
   const { orders } = useSelector(state => state.orders);
@@ -17,6 +17,7 @@ function AllRefundOrders() {
 
   const eligibleOrders =
     orders && orders.filter(item => item.status === "Processing refund");
+
   const columns = [
     {
       field: "id",
@@ -27,10 +28,9 @@ function AllRefundOrders() {
     {
       field: "status",
       headerName: "Status",
-      minWidth: 130,
+      minWidth: 170,
       flex: 0.7,
-      cellClassName: params =>
-        params.row.status === "Delivered" ? "greenColor" : "redColor",
+      renderCell: params => <StatusPill status={params.row.status} />,
     },
     {
       field: "itemsQty",
@@ -50,13 +50,15 @@ function AllRefundOrders() {
       field: "actions",
       headerName: "",
       sortable: false,
-      minWidth: 150,
+      minWidth: 120,
       flex: 1,
       renderCell: params => (
-        <Link to={`/user/order/${params.id}`}>
-          <Button>
-            <AiOutlineArrowRight size={20} />
-          </Button>
+        <Link
+          to={`/user/order/${params.id}`}
+          className="inline-flex h-8 items-center gap-1.5 rounded-lg px-3 text-[13px] font-semibold text-brand-600 transition-colors hover:bg-brand-50"
+        >
+          View
+          <AiOutlineArrowRight size={15} />
         </Link>
       ),
     },
@@ -75,18 +77,12 @@ function AllRefundOrders() {
     });
 
   return (
-    <div className="pl-8 pt-1 flex flex-col  min-h-[200px] max-h-[600px]">
-      <DataGrid
-        rows={row}
-        columns={columns}
-        pageSizeOptions={[10]}
-        initialState={{
-          pagination: { paginationModel: { pageSize: 10, page: 0 } },
-        }}
-        disableRowSelectionOnClick
-        sx={{ flexGrow: 1 }}
-      />
-    </div>
+    <DataTable
+      title="Refunds"
+      subtitle={`${row.length} refund${row.length === 1 ? "" : "s"} in progress`}
+      rows={row}
+      columns={columns}
+    />
   );
 }
 

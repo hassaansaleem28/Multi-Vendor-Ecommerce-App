@@ -1,18 +1,24 @@
 import styles from "../../styles/styles";
 import ShopProfileData from "./ShopProfileData";
 import ShopInfo from "./ShopInfo";
+import Header from "../Layouts/Header";
+import Footer from "../UserComps/Footer";
 
 function ShopPreviewPage() {
   return (
-    <div className={`${styles.section} bg-[#f5f5f5]`}>
-      <div className="w-full flex-800px py-10 justify-between">
-        <div className="width-800px-25 bg-[#fff] rounded-[4px] shadow-sm overflow-scroll-800 height-800px-90 position-800px top-10 left-0 z-10">
-          <ShopInfo isOwner={false} />
-        </div>
-        <div className="width-800px-75per mt-5 marigin-800px-unset rounded-[4px]">
+    <div className="flex min-h-screen flex-col bg-ink-50">
+      <Header />
+
+      <main className={`${styles.section} flex-1 py-10`}>
+        <div className="grid gap-8 lg:grid-cols-[320px_minmax(0,1fr)]">
+          <aside className="lg:sticky lg:top-8 lg:self-start">
+            <ShopInfo isOwner={false} />
+          </aside>
           <ShopProfileData isOwner={false} />
         </div>
-      </div>
+      </main>
+
+      <Footer />
     </div>
   );
 }

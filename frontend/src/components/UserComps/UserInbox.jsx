@@ -6,10 +6,14 @@ import { io } from "socket.io-client";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { AiOutlineArrowRight, AiOutlineSend } from "react-icons/ai";
-import styles from "../../styles/styles";
+import { AiOutlineArrowLeft, AiOutlineSend } from "react-icons/ai";
+import { HiOutlineChatAlt2 } from "react-icons/hi";
 import { TfiGallery } from "react-icons/tfi";
+import { motion } from "framer-motion";
+import styles from "../../styles/styles";
 import Loader from "../UserComps/Loader";
+import PageHero from "../ui/PageHero";
+import { easeOutSoft } from "../../lib/motion";
 
 const ENDPOINT = "https://socket-server-89h0.onrender.com/";
 const socket = io(ENDPOINT, { transports: ["websocket"] });
@@ -48,6 +52,7 @@ function UserInbox() {
     },
     [arrivalMessage, currentChat]
   );
+
   useEffect(
     function () {
       async function getConversations() {
@@ -66,6 +71,7 @@ function UserInbox() {
     },
     [user, messages]
   );
+
   useEffect(
     function () {
       if (user) {
@@ -78,12 +84,14 @@ function UserInbox() {
     },
     [user]
   );
+
   const onlineCheck = chat => {
     const chatMembers = chat?.memebers.find(member => member !== user._id);
     const online = onlineUsers?.find(user => user.userId === chatMembers);
 
     return online ? true : false;
   };
+
   // get messages
   useEffect(
     function () {
@@ -101,6 +109,7 @@ function UserInbox() {
     },
     [currentChat?._id]
   );
+
   // create new messages
   async function updateLastMessage() {
     try {
@@ -117,6 +126,7 @@ function UserInbox() {
       console.error(error);
     }
   }
+
   async function sendMessageHandler(e) {
     e.preventDefault();
     const message = {
@@ -152,6 +162,7 @@ function UserInbox() {
     setImages(file);
     imageSendingHandler(file);
   }
+
   async function imageSendingHandler(e) {
     const formData = new FormData();
     formData.append("images", e);
@@ -178,6 +189,7 @@ function UserInbox() {
       console.error(error);
     }
   }
+
   async function updateLastMessageForImage() {
     try {
       await axios.put(
@@ -191,6 +203,7 @@ function UserInbox() {
       console.error(error);
     }
   }
+
   useEffect(
     function () {
       scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -198,33 +211,57 @@ function UserInbox() {
     [messages]
   );
 
-  if (loading) return <Loader />;
+  if (loading) return <Loader label="Loading your inbox" />;
 
   return (
-    <div className="w-full">
+    <div className="flex min-h-screen flex-col bg-ink-50">
       {!open && (
         <>
           <Header />
-          <h1 className="text-center text-[30px] py-3 font-[Poppins]">
-            All Messages
-          </h1>
-          {conversations &&
-            conversations.map((conversation, i) => (
-              <MessageList
-                key={i}
-                conversation={conversation}
-                i={i}
-                setOpen={setOpen}
-                setCurrentChat={setCurrentChat}
-                setActiveStatus={setActiveStatus}
-                userInfo={user._id}
-                userData={userData}
-                setUserData={setUserData}
-                online={onlineCheck(conversation)}
-              />
-            ))}
+
+          <PageHero
+            eyebrow="Messages"
+            title="Your inbox"
+            subtitle="Conversations with the shops you've bought from."
+            crumbs={[{ label: "Home", to: "/" }, { label: "Inbox" }]}
+          />
+
+          <main className={`${styles.section} flex-1 py-10`}>
+            <div className="overflow-hidden rounded-2xl border border-ink-100 bg-white shadow-card">
+              {conversations && conversations.length > 0 ? (
+                conversations.map((conversation, i) => (
+                  <MessageList
+                    key={conversation?._id || i}
+                    conversation={conversation}
+                    i={i}
+                    setOpen={setOpen}
+                    setCurrentChat={setCurrentChat}
+                    setActiveStatus={setActiveStatus}
+                    userInfo={user._id}
+                    userData={userData}
+                    setUserData={setUserData}
+                    online={onlineCheck(conversation)}
+                  />
+                ))
+              ) : (
+                <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
+                  <span className="grid h-16 w-16 place-items-center rounded-full bg-ink-50 text-ink-300">
+                    <HiOutlineChatAlt2 size={30} />
+                  </span>
+                  <h3 className="mt-5 font-display text-[19px] font-bold text-ink-900">
+                    No conversations yet
+                  </h3>
+                  <p className="mt-1.5 max-w-sm text-[14px] text-ink-500">
+                    Message a seller from any product page and the thread will
+                    show up here.
+                  </p>
+                </div>
+              )}
+            </div>
+          </main>
         </>
       )}
+
       {open && (
         <SellerInbox
           setOpen={setOpen}
@@ -257,6 +294,7 @@ function MessageList({
   const [active, setActive] = useState(0);
   const [user, setUser] = useState([]);
   const navigate = useNavigate();
+
   useEffect(
     function () {
       setActiveStatus(online);
@@ -283,10 +321,10 @@ function MessageList({
   }
 
   return (
-    <div
-      className={`w-full flex p-3 px-3 ${
-        active === i ? "bg-[#00000010]" : "bg-transparent"
-      } cursor-pointer`}
+    <motion.button
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: easeOutSoft, delay: i * 0.05 }}
       onClick={() =>
         setActive(i) ||
         handleClick(conversation._id) ||
@@ -294,30 +332,44 @@ function MessageList({
         setUserData(user) ||
         setActiveStatus(online)
       }
+      className={`flex w-full cursor-pointer items-center gap-4 border-b border-ink-100 px-5 py-4 text-left transition-colors duration-200 last:border-0 hover:bg-ink-50 ${
+        active === i ? "bg-brand-50/50" : ""
+      }`}
     >
-      <div className="relative">
+      <div className="relative shrink-0">
         <img
           src={`${user?.avatar?.url}`}
-          alt="pfp"
-          className="w-[50px] h-[50px] rounded-full"
+          alt={user?.name}
+          className="h-[52px] w-[52px] rounded-full object-cover ring-2 ring-ink-100"
         />
-        {/* online */}
-        {online ? (
-          <div className="w-[12px] h-[12px] bg-green-400 rounded-full absolute top-[2px] right-[2px]" />
-        ) : (
-          <div className="w-[12px] h-[12px] bg-[#c7b9b9] rounded-full absolute top-[2px] right-[2px]" />
-        )}
+        <span
+          className={`absolute bottom-0.5 right-0.5 h-[13px] w-[13px] rounded-full ring-2 ring-white ${
+            online ? "bg-success-500" : "bg-ink-300"
+          }`}
+        />
       </div>
-      <div className="pl-3">
-        <h1 className="text-[18px]">{user?.fullName}</h1>
-        <p className="text-[16px] text-[#000c]">
-          {conversation?.lastMessageId !== userData?._id
-            ? "You: "
-            : user && user?.name?.split(" ")[0] + ": "}
+
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2">
+          <h3 className="truncate font-display text-[15px] font-bold text-ink-900">
+            {user?.name || user?.fullName}
+          </h3>
+          {online && (
+            <span className="shrink-0 rounded-full bg-success-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-success-700">
+              Online
+            </span>
+          )}
+        </div>
+        <p className="mt-0.5 truncate text-[13px] text-ink-500">
+          <span className="font-medium text-ink-600">
+            {conversation?.lastMessageId !== userData?._id
+              ? "You: "
+              : user && user?.name?.split(" ")[0] + ": "}
+          </span>
           {conversation?.lastMessage}
         </p>
       </div>
-    </div>
+    </motion.button>
   );
 }
 
@@ -334,105 +386,142 @@ const SellerInbox = ({
   handleImageUpload,
 }) => {
   return (
-    <div className="w-[full] min-h-full flex flex-col justify-between p-5">
-      {/* message header */}
-      <div className="w-full flex p-3 items-center justify-between bg-slate-200">
-        <div className="flex">
+    <div className="flex h-screen w-full flex-col bg-white">
+      {/* ---- Chat header ---------------------------------------- */}
+      <header className="flex shrink-0 items-center gap-4 border-b border-ink-100 bg-white px-5 py-4">
+        <button
+          onClick={() => setOpen(false)}
+          aria-label="Back to conversations"
+          className="grid h-10 w-10 cursor-pointer place-items-center rounded-full text-ink-600 transition-colors hover:bg-ink-100 hover:text-ink-900"
+        >
+          <AiOutlineArrowLeft size={20} />
+        </button>
+
+        <div className="relative shrink-0">
           <img
             src={`${userData?.avatar?.url}`}
-            alt=""
-            className="w-[60px] h-[60px] rounded-full"
+            alt={userData?.name}
+            className="h-[48px] w-[48px] rounded-full object-cover ring-2 ring-ink-100"
           />
-          <div className="pl-3">
-            <h1 className="text-[18px] font-[600]">{userData?.name}</h1>
-            <h1>{activeStatus ? "Active Now" : ""}</h1>
-          </div>
+          {activeStatus && (
+            <span className="absolute bottom-0 right-0 h-[13px] w-[13px] rounded-full bg-success-500 ring-2 ring-white" />
+          )}
         </div>
-        <AiOutlineArrowRight
-          size={20}
-          className="cursor-pointer"
-          onClick={() => setOpen(false)}
-        />
-      </div>
-      {/* messages */}
-      <div className="px-3 h-[75vh] py-3 overflow-y-scroll">
+
+        <div className="min-w-0">
+          <h1 className="truncate font-display text-[17px] font-bold text-ink-900">
+            {userData?.name}
+          </h1>
+          <p
+            className={`text-[13px] ${
+              activeStatus ? "text-success-600" : "text-ink-400"
+            }`}
+          >
+            {activeStatus ? "Active now" : "Offline"}
+          </p>
+        </div>
+      </header>
+
+      {/* ---- Messages -------------------------------------------- */}
+      <div className="flex-1 space-y-3 overflow-y-auto bg-ink-50 px-4 py-6 sm:px-6">
         {messages &&
           messages?.map((item, index) => {
-            console.log(item);
+            const isMine = item.sender === sellerId;
+
             return (
-              <div
-                className={`flex w-full my-2 ${
-                  item.sender === sellerId ? "justify-end" : "justify-start"
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.25, ease: easeOutSoft }}
+                className={`flex w-full items-end gap-2.5 ${
+                  isMine ? "justify-end" : "justify-start"
                 }`}
                 ref={scrollRef}
                 key={index}
               >
-                {item.sender !== sellerId && (
+                {!isMine && (
                   <img
                     src={`${userData?.avatar?.url}`}
-                    className="w-[40px] h-[40px] rounded-full mr-3"
-                    alt=""
+                    className="h-8 w-8 shrink-0 rounded-full object-cover"
+                    alt={userData?.name}
                   />
                 )}
-                {item?.images && (
-                  <img
-                    src={`${item?.images?.url}`}
-                    className="w-[300px] h-[300px] object-cover rounded-[10px] ml-2 mb-2"
-                  />
-                )}
-                {item.text !== "" && (
-                  <div>
+
+                <div
+                  className={`flex max-w-[75%] flex-col ${
+                    isMine ? "items-end" : "items-start"
+                  }`}
+                >
+                  {item?.images && (
+                    <img
+                      src={`${item?.images?.url}`}
+                      alt="Attachment"
+                      className="mb-1.5 max-h-[300px] w-full max-w-[280px] rounded-2xl object-cover shadow-card"
+                    />
+                  )}
+
+                  {item.text !== "" && (
                     <div
-                      className={`w-max p-2 rounded ${
-                        item.sender === sellerId ? "bg-[#000]" : "bg-[#38c776]"
-                      } text-[#fff] h-min`}
+                      className={`w-fit px-4 py-2.5 text-[14px] leading-relaxed shadow-sm ${
+                        isMine
+                          ? "rounded-2xl rounded-br-md bg-brand-600 text-white"
+                          : "rounded-2xl rounded-bl-md border border-ink-100 bg-white text-ink-800"
+                      }`}
                     >
-                      <p>{item?.text}</p>
+                      <p className="whitespace-pre-wrap break-words">
+                        {item?.text}
+                      </p>
                     </div>
-                    <p className="text-[12px] text-[#000000d3] pt-1">
-                      {format(item.createdAt)}
-                    </p>
-                  </div>
-                )}
-              </div>
+                  )}
+
+                  <span className="mt-1 px-1 text-[11px] text-ink-400">
+                    {format(item.createdAt)}
+                  </span>
+                </div>
+              </motion.div>
             );
           })}
       </div>
 
-      {/* send message input */}
+      {/* ---- Composer -------------------------------------------- */}
       <form
         aria-required={true}
-        className="p-3 relative w-full flex justify-between items-center"
+        className="flex shrink-0 items-center gap-3 border-t border-ink-100 bg-white px-4 py-4 sm:px-6"
         onSubmit={sendMessageHandler}
       >
-        <div className="w-[30px]">
-          <input
-            type="file"
-            name=""
-            id="image"
-            className="hidden"
-            onChange={handleImageUpload}
-          />
-          <label htmlFor="image">
-            <TfiGallery className="cursor-pointer" size={20} />
-          </label>
-        </div>
-        <div className="w-full">
+        <input
+          type="file"
+          id="image"
+          className="hidden"
+          onChange={handleImageUpload}
+        />
+        <label
+          htmlFor="image"
+          title="Attach an image"
+          className="grid h-11 w-11 shrink-0 cursor-pointer place-items-center rounded-full text-ink-500 transition-colors hover:bg-ink-100 hover:text-brand-600"
+        >
+          <TfiGallery size={19} />
+        </label>
+
+        <div className="relative flex-1">
           <input
             type="text"
             required
-            placeholder="Enter your message..."
+            placeholder="Write a message…"
             value={newMessage}
             onChange={e => setNewMessage(e.target.value)}
-            className={`${styles.input}`}
+            className="h-[48px] w-full rounded-full border border-ink-200 bg-ink-50 pl-5 pr-14 text-[15px] text-ink-900 placeholder:text-ink-400 transition-all duration-200 focus:border-brand-400 focus:bg-white focus:ring-4 focus:ring-brand-500/10"
           />
           <input type="submit" value="Send" className="hidden" id="send" />
-          <label htmlFor="send">
-            <AiOutlineSend
-              size={20}
-              className="absolute right-4 top-5 cursor-pointer"
-            />
-          </label>
+          <motion.label
+            htmlFor="send"
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.9 }}
+            title="Send"
+            className="absolute right-1.5 top-1/2 grid h-9 w-9 -translate-y-1/2 cursor-pointer place-items-center rounded-full bg-brand-600 text-white transition-colors hover:bg-brand-700"
+          >
+            <AiOutlineSend size={17} />
+          </motion.label>
         </div>
       </form>
     </div>

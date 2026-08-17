@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import styles from "../../styles/styles";
-import ProductCard from "./ProductCard";
 import { useSelector } from "react-redux";
+import SectionHeading from "../ui/SectionHeading";
+import ProductGrid from "../ui/ProductGrid";
 
 function BestDeals() {
   const [dataa, setDataa] = useState([]);
-  const { allProducts } = useSelector(state => state.product);
+  const { allProducts, isLoading } = useSelector(state => state.product);
+
   useEffect(
     function () {
       const sortedData =
@@ -14,22 +16,26 @@ function BestDeals() {
       const firstFive = sortedData && sortedData.slice(0, 5);
       setDataa(firstFive);
     },
-    [allProducts]
+    [allProducts],
   );
+
   return (
-    <div>
-      <div className={`${styles.section}`}>
-        <div className={`${styles.heading}`}>
-          <h1 className="font-[800] text-[2rem] font-[Roboto]">Best Deals</h1>
-        </div>
-        <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[25px] lg:grid-cols-4 lg:gap-[25px] xl:grid-cols-5 xl:gap-[30px] mb-12 border-0">
-          {dataa &&
-            dataa.length !== 0 &&
-            dataa &&
-            dataa.map((prod, i) => <ProductCard product={prod} key={i} />)}
-        </div>
-      </div>
-    </div>
+    <section className={`${styles.section} mb-16`}>
+      <SectionHeading
+        eyebrow="Trending now"
+        title="Best deals"
+        subtitle="The pieces our shoppers can't stop buying this week."
+        actionLabel="See best sellers"
+        actionTo="/best-selling"
+      />
+
+      <ProductGrid
+        products={dataa}
+        loading={isLoading && (!dataa || dataa.length === 0)}
+        emptyTitle="No deals right now"
+        emptyMessage="New offers land every week — check back shortly."
+      />
+    </section>
   );
 }
 

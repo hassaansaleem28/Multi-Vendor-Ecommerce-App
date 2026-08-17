@@ -4,7 +4,8 @@ import SignupPage from "./pages/SignupPage";
 import ActivationPage from "./pages/ActivationPage";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Bounce } from "react-toastify";
+import { Slide } from "react-toastify";
+import ScrollToTop from "./components/ui/ScrollToTop";
 import { useEffect, useState } from "react";
 import { loadUser } from "./redux-toolkit/actions/userActions";
 import { useDispatch } from "react-redux";
@@ -85,6 +86,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       {stripeApiKey && (
         <Elements stripe={loadStripe(stripeApiKey)}>
           <Routes>
@@ -320,17 +322,19 @@ function App() {
         />
       </Routes>
       <ToastContainer
-        position="top-center"
-        autoClose={5000}
+        position="top-right"
+        autoClose={4000}
         hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick={false}
+        newestOnTop
+        closeOnClick
         rtl={false}
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="dark"
-        transition={Bounce}
+        theme="light"
+        transition={Slide}
+        toastClassName="!rounded-xl !border !border-ink-100 !shadow-panel !font-sans"
+        progressClassName="!bg-brand-600"
       />
     </BrowserRouter>
   );

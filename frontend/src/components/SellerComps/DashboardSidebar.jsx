@@ -7,186 +7,91 @@ import { RxDashboard } from "react-icons/rx";
 import { Link } from "react-router-dom";
 import { BiMessageSquareDetail } from "react-icons/bi";
 import { HiOutlineReceiptRefund } from "react-icons/hi";
+import { motion } from "framer-motion";
+
+const NAV = [
+  { id: 1, to: "/dashboard", label: "Dashboard", Icon: RxDashboard },
+  { id: 2, to: "/dashboard-orders", label: "All Orders", Icon: FiShoppingBag },
+  { id: 3, to: "/dashboard-products", label: "All Products", Icon: FiPackage },
+  {
+    id: 4,
+    to: "/dashboard-create-product",
+    label: "Create Product",
+    Icon: AiOutlineFolderAdd,
+  },
+  {
+    id: 5,
+    to: "/dashboard-events",
+    label: "All Events",
+    Icon: MdOutlineLocalOffer,
+  },
+  {
+    id: 6,
+    to: "/dashboard-create-event",
+    label: "Create Event",
+    Icon: VscNewFile,
+  },
+  {
+    id: 7,
+    to: "/dashboard-withdraw-money",
+    label: "Withdraw Money",
+    Icon: CiMoneyBill,
+  },
+  {
+    id: 8,
+    to: "/dashboard-messages",
+    label: "Shop Inbox",
+    Icon: BiMessageSquareDetail,
+  },
+  {
+    id: 9,
+    to: "/dashboard-coupons",
+    label: "Discount Codes",
+    Icon: AiOutlineGift,
+  },
+  {
+    id: 10,
+    to: "/dashboard-refunds",
+    label: "Refunds",
+    Icon: HiOutlineReceiptRefund,
+  },
+  { id: 11, to: "/dashboard-settings", label: "Settings", Icon: CiSettings },
+];
 
 function DashboardSidebar({ activeHeading }) {
   return (
-    <div className="w-full h-[100vh] bg-white shadow-sm sticky top-0 left-0 z-10">
-      {/* single item */}
-      <div className="w-full flex items-center p-4">
-        <Link to={"/dashboard"} className="w-full flex items-center">
-          <RxDashboard
-            size={30}
-            color={`${activeHeading === 1 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`display-block-800px hidden  pl-2 text-[18px] font-[400] ${
-              activeHeading === 1 ? "text-[crimson]" : "text-[#555]"
-            }`}
-          >
-            Dashboard
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link to={"/dashboard-orders"} className="w-full flex items-center">
-          <FiShoppingBag
-            size={30}
-            color={`${activeHeading === 2 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`display-block-800px hidden pl-2 text-[18px] font-[400] ${
-              activeHeading === 2 ? "text-[crimson]" : "text-[#555]"
-            }`}
-          >
-            All Orders
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link to={"/dashboard-products"} className="w-full flex items-center">
-          <FiPackage
-            size={30}
-            color={`${activeHeading === 3 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`display-block-800px hidden pl-2 text-[18px] font-[400] ${
-              activeHeading === 3 ? "text-[crimson]" : "text-[#555]"
-            }`}
-          >
-            All Products
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link
-          to={"/dashboard-create-product"}
-          className="w-full flex items-center"
-        >
-          <AiOutlineFolderAdd
-            size={30}
-            color={`${activeHeading === 4 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`display-block-800px hidden pl-2 text-[18px] font-[400] ${
-              activeHeading === 4 ? "text-[crimson]" : "text-[#555]"
-            }`}
-          >
-            Create Product
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link to={"/dashboard-events"} className="w-full flex items-center">
-          <MdOutlineLocalOffer
-            size={30}
-            color={`${activeHeading === 5 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`display-block-800px hidden pl-2 text-[18px] font-[400] ${
-              activeHeading === 5 ? "text-[crimson]" : "text-[#555]"
-            }`}
-          >
-            All events
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link
-          to={"/dashboard-create-event"}
-          className="w-full flex items-center"
-        >
-          <VscNewFile
-            size={30}
-            color={`${activeHeading === 6 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`display-block-800px hidden pl-2 text-[18px] font-[400] ${
-              activeHeading === 6 ? "text-[crimson]" : "text-[#555]"
-            }`}
-          >
-            Create Events
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link
-          to={"/dashboard-withdraw-money"}
-          className="w-full flex items-center"
-        >
-          <CiMoneyBill
-            size={30}
-            color={`${activeHeading === 7 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`display-block-800px hidden pl-2 text-[18px] font-[400] ${
-              activeHeading === 7 ? "text-[crimson]" : "text-[#555]"
-            }`}
-          >
-            Withdraw Money
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link to={"/dashboard-messages"} className="w-full flex items-center">
-          <BiMessageSquareDetail
-            size={30}
-            color={`${activeHeading === 8 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`display-block-800px hidden pl-2 text-[18px] font-[400] ${
-              activeHeading === 8 ? "text-[crimson]" : "text-[#555]"
-            }`}
-          >
-            Shop Inbox
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link to={"/dashboard-coupons"} className="w-full flex items-center">
-          <AiOutlineGift
-            size={30}
-            color={`${activeHeading === 9 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`display-block-800px hidden pl-2 text-[18px] font-[400] ${
-              activeHeading === 9 ? "text-[crimson]" : "text-[#555]"
-            }`}
-          >
-            Discount Codes
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link to={"/dashboard-refunds"} className="w-full flex items-center">
-          <HiOutlineReceiptRefund
-            size={30}
-            color={`${activeHeading === 10 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`display-block-800px hidden pl-2 text-[18px] font-[400] ${
-              activeHeading === 10 ? "text-[crimson]" : "text-[#555]"
-            }`}
-          >
-            Refunds
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link to={"/dashboard-settings"} className="w-full flex items-center">
-          <CiSettings
-            size={30}
-            color={`${activeHeading === 11 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`display-block-800px hidden pl-2 text-[18px] font-[400] ${
-              activeHeading === 11 ? "text-[crimson]" : "text-[#555]"
-            }`}
-          >
-            Settings
-          </h5>
-        </Link>
-      </div>
-    </div>
+    <nav className="sticky left-0 top-[72px] z-10 h-[calc(100vh-72px)] w-full overflow-y-auto border-r border-ink-100 bg-white p-3">
+      <ul className="space-y-1">
+        {NAV.map(({ id, to, label, Icon }) => {
+          const isActive = activeHeading === id;
+          return (
+            <li key={id}>
+              <Link
+                to={to}
+                title={label}
+                className={`relative flex items-center gap-3 rounded-xl px-3 py-3 transition-colors duration-200 ${
+                  isActive
+                    ? "text-brand-700"
+                    : "text-ink-500 hover:bg-ink-50 hover:text-ink-900"
+                }`}
+              >
+                {isActive && (
+                  <motion.span
+                    layoutId="seller-nav-active"
+                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                    className="absolute inset-0 rounded-xl bg-brand-50"
+                  />
+                )}
+                <Icon size={22} className="relative z-10 shrink-0" />
+                <span className="relative z-10 hidden whitespace-nowrap text-[14px] font-medium display-block-800px">
+                  {label}
+                </span>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
   );
 }
 

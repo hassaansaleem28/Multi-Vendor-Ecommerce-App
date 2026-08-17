@@ -4,12 +4,12 @@ import styles from "../styles/styles";
 
 function ShopHomePage() {
   return (
-    <div className={`${styles.section} bg-[#f5f5f5]`}>
-      <div className="w-full flex-800px py-10 justify-between">
-        <div className="width-800px-25 bg-[#fff] rounded-[4px] shadow-sm overflow-scroll-800 height-800px-90 position-800px top-10 left-0 z-10">
-          <ShopInfo isOwner={true} />
-        </div>
-        <div className="width-800px-75per mt-5 marigin-800px-unset rounded-[4px]">
+    <div className="min-h-screen bg-ink-50">
+      <div className={`${styles.section} py-10`}>
+        <div className="grid gap-8 lg:grid-cols-[320px_minmax(0,1fr)]">
+          <aside className="lg:sticky lg:top-8 lg:self-start">
+            <ShopInfo isOwner={true} />
+          </aside>
           <ShopProfileData isOwner={true} />
         </div>
       </div>

@@ -4,9 +4,11 @@ import OrderDetails from "./OrderDetails";
 
 function ShopOrderDetails() {
   return (
-    <div>
+    <div className="flex min-h-screen flex-col bg-ink-50">
       <DashboardHeader />
-      <OrderDetails />
+      <main className="flex-1">
+        <OrderDetails />
+      </main>
       <Footer />
     </div>
   );

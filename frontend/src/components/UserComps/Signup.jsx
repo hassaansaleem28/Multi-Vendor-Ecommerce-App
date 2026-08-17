@@ -1,10 +1,15 @@
 import { useState } from "react";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { RxAvatar } from "react-icons/rx";
-import styles from "../../styles/styles";
+import { HiOutlineMail, HiOutlineLockClosed, HiOutlineUser } from "react-icons/hi";
+import { FiUploadCloud } from "react-icons/fi";
+import { IoIosArrowForward } from "react-icons/io";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { motion } from "framer-motion";
+import AuthShell from "../ui/AuthShell";
+import Field from "../ui/Field";
+import SubmitButton from "../ui/SubmitButton";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -12,7 +17,6 @@ function Signup() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [avatar, setAvatar] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -47,145 +51,139 @@ function Signup() {
       console.error("Error during signup:", error);
     }
   }
+
   function handleFileInputChange(e) {
     const file = e.target.files[0];
     setAvatar(file);
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg-px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Sign up for an account
-        </h2>
-      </div>
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            <div>
-              <label
-                htmlFor="fullName"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Full Name
-              </label>
-              <div className="mt-1">
-                <input
-                  type="text"
-                  name="text"
-                  autoComplete="fullName"
-                  required
-                  placeholder="Full Name"
-                  value={fullName}
-                  onChange={e => setFullName(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+    <AuthShell
+      badge="Get started"
+      title="Create your account"
+      subtitle="One account, every shop on ShopO."
+      highlights={[
+        { value: "Free", label: "To join" },
+        { value: "2 min", label: "Setup" },
+        { value: "Secure", label: "Checkout" },
+      ]}
+    >
+      <form className="space-y-5" onSubmit={handleSubmit}>
+        <Field
+          label="Full name"
+          icon={HiOutlineUser}
+          type="text"
+          name="fullName"
+          autoComplete="name"
+          required
+          placeholder="Jane Doe"
+          value={fullName}
+          onChange={e => setFullName(e.target.value)}
+        />
+
+        <Field
+          label="Email address"
+          icon={HiOutlineMail}
+          type="email"
+          name="email"
+          autoComplete="email"
+          required
+          placeholder="you@example.com"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+        />
+
+        <Field
+          label="Password"
+          icon={HiOutlineLockClosed}
+          type="password"
+          name="password"
+          autoComplete="new-password"
+          required
+          placeholder="Create a password"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          hint="Use at least 8 characters."
+        />
+
+        {/* Avatar ------------------------------------------------- */}
+        <div>
+          <span className="mb-1.5 block text-[13px] font-semibold text-ink-700">
+            Profile photo
+          </span>
+          <div className="flex items-center gap-4 rounded-xl border border-dashed border-ink-200 bg-ink-50/60 p-3 transition-colors duration-200 hover:border-brand-300 hover:bg-brand-50/40">
+            <motion.span
+              key={avatar ? "has-avatar" : "no-avatar"}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 380, damping: 22 }}
+              className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-full bg-white ring-2 ring-ink-100"
+            >
+              {avatar ? (
+                <img
+                  src={URL.createObjectURL(avatar)}
+                  alt="user profile"
+                  className="h-full w-full rounded-full object-cover"
                 />
-              </div>
-            </div>
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Email address
-              </label>
-              <div className="mt-1">
-                <input
-                  type="email"
-                  name="email"
-                  autoComplete="email"
-                  required
-                  placeholder="Email address"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
-            </div>
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Password
-              </label>
-              <div className="mt-1 relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  autoComplete="current-password"
-                  required
-                  placeholder="Your Password"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-                {showPassword ? (
-                  <AiOutlineEye
-                    className="absolute right-2 top-2 cursor-pointer"
-                    size={25}
-                    onClick={() => setShowPassword(!showPassword)}
-                  />
-                ) : (
-                  <AiOutlineEyeInvisible
-                    className="absolute right-2 top-2 cursor-pointer"
-                    size={25}
-                    onClick={() => setShowPassword(!showPassword)}
-                  />
-                )}
-              </div>
-            </div>
-            <div>
-              <label
-                htmlFor="avatar"
-                className="block text-sm font-medium text-gray-700"
-              ></label>
-              <div className="mt-2 flex items-center">
-                <span className="inline-block h-8 w-8 rounded-full overflow-hidden">
-                  {avatar ? (
-                    <img
-                      src={URL.createObjectURL(avatar)}
-                      alt="user profile image"
-                      className="h-full w-full object-cover rounded-full"
-                    />
-                  ) : (
-                    <RxAvatar className="h-8 w-8" />
-                  )}
-                </span>
-                <label
-                  htmlFor="file"
-                  className="ml-5 flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer"
-                >
-                  <span>Upload a File</span>
-                  <input
-                    id="file"
-                    type="file"
-                    name="file"
-                    accept=".jpg,.jpeg,.png"
-                    onChange={handleFileInputChange}
-                    className="sr-only"
-                  />
-                </label>
-              </div>
-            </div>
-            <div>
-              <button
-                type="submit"
-                className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 text-md cursor-pointer"
-              >
-                {isLoading ? "Loading..." : "Sign up"}
-              </button>
-            </div>
-            <div className={`${styles.normalFlex} w-full`}>
-              <h4>Already have an account?</h4>
-              <Link to="/login" className="text-blue-600 pl-2">
-                Sign in
-              </Link>
-            </div>
-          </form>
+              ) : (
+                <RxAvatar className="h-7 w-7 text-ink-300" />
+              )}
+            </motion.span>
+
+            <label
+              htmlFor="file"
+              className="flex cursor-pointer items-center gap-2 rounded-lg border border-ink-200 bg-white px-3.5 py-2 text-[13px] font-semibold text-ink-700 shadow-sm transition-all duration-200 hover:border-brand-400 hover:text-brand-700 active:scale-95"
+            >
+              <FiUploadCloud size={16} />
+              <span>{avatar ? "Change photo" : "Upload photo"}</span>
+              <input
+                id="file"
+                type="file"
+                name="file"
+                accept=".jpg,.jpeg,.png"
+                onChange={handleFileInputChange}
+                className="sr-only"
+              />
+            </label>
+
+            {avatar && (
+              <span className="truncate text-[12px] text-ink-400">
+                {avatar.name}
+              </span>
+            )}
+          </div>
         </div>
-      </div>
-    </div>
+
+        <SubmitButton loading={isLoading} loadingText="Creating account…">
+          Create account
+          <IoIosArrowForward />
+        </SubmitButton>
+
+        <p className="text-center text-[12px] leading-relaxed text-ink-400">
+          By signing up you agree to ShopO&apos;s Terms of Service and Privacy
+          Policy.
+        </p>
+
+        <div className="relative py-1">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-ink-100" />
+          </div>
+          <div className="relative flex justify-center">
+            <span className="bg-white px-3 text-[12px] text-ink-400">or</span>
+          </div>
+        </div>
+
+        <p className="text-center text-[14px] text-ink-500">
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="font-semibold text-brand-600 transition-colors hover:text-brand-700"
+          >
+            Sign in
+          </Link>
+        </p>
+      </form>
+    </AuthShell>
   );
 }
 

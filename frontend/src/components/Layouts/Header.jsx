@@ -10,14 +10,37 @@ import {
 } from "react-icons/ai";
 import { CgProfile } from "react-icons/cg";
 import { BiMenuAltLeft } from "react-icons/bi";
+import { RxCross1 } from "react-icons/rx";
+import { AnimatePresence, motion } from "framer-motion";
 import Dropdown from "./Dropdown";
 import Navbar from "./Navbar";
 import { useSelector } from "react-redux";
 import WishList from "../UserComps/WishList";
-import { RxCross1 } from "react-icons/rx";
 import Cart from "../UserComps/Cart";
+import Logo from "../ui/Logo";
+import { dropdownVariants, drawer, backdrop, springy } from "../../lib/motion";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+/** Cart / wishlist count bubble that pops whenever the number changes. */
+function CountBadge({ count = 0, tone = "accent" }) {
+  return (
+    <AnimatePresence mode="popLayout">
+      <motion.span
+        key={count}
+        initial={{ scale: 0.4, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.4, opacity: 0 }}
+        transition={springy}
+        className={`absolute -right-1.5 -top-1.5 grid h-[18px] min-w-[18px] place-items-center rounded-full px-1 text-[11px] font-bold leading-none ring-2 ring-ink-900 ${
+          tone === "accent"
+            ? "bg-accent-400 text-ink-900"
+            : "bg-brand-500 text-white"
+        }`}
+      >
+        {count}
+      </motion.span>
+    </AnimatePresence>
+  );
+}
 
 function Header({ activeHeading }) {
   const { isAuthenticated, user } = useSelector(state => state.user);
@@ -37,295 +60,449 @@ function Header({ activeHeading }) {
     const term = e.target.value;
     setSearchTerm(term);
 
+    if (!term.trim()) {
+      setSearchData(null);
+      return;
+    }
+
     const filteredProducts = allProducts.filter(product =>
       product.name.toLowerCase().includes(term.toLowerCase())
     );
     setSearchData(filteredProducts);
   }
+
+  function clearSearch() {
+    setSearchTerm("");
+    setSearchData(null);
+  }
+
   useEffect(function () {
-    window.addEventListener("scroll", () => {
-      if (window.scrollY > 70) setActive(true);
-      else setActive(false);
-    });
+    function onScroll() {
+      setActive(window.scrollY > 70);
+    }
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Lock body scroll while the mobile drawer is open
+  useEffect(
+    function () {
+      document.body.style.overflow = open ? "hidden" : "";
+      return () => {
+        document.body.style.overflow = "";
+      };
+    },
+    [open]
+  );
+
+  const searchResults = (searchData || []).slice(0, 6);
 
   return (
     <>
+      {/* ================= Top utility bar (desktop) ================= */}
       <div className={`${styles.section}`}>
         <div className="hidden h-800px-50 my-800px-20 flex-800px items-center justify-between">
-          <div>
-            <Link to="/">
-              <img
-                src="https://shopo.quomodothemes.website/assets/images/logo.svg"
-                alt="Logo"
+          <Link to="/">
+            <Logo />
+          </Link>
+
+          {/* ---- Search ------------------------------------------- */}
+          <div className="relative w-[50%]">
+            <div className="group relative">
+              <AiOutlineSearch
+                size={20}
+                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-ink-400 transition-colors duration-200 group-focus-within:text-brand-600"
               />
-            </Link>
-          </div>
-          <div className="w-[50%] relative">
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-              className="w-full h-[40px] px-2 border-[2px] border-[#3597db] rounded-md"
-            />
-            <AiOutlineSearch
-              size={30}
-              className="absolute right-2 top-1.5 cursor-pointer"
-            />
-            {searchData && searchData.length !== 0 ? (
-              <div className="absolute min-h-[30vh] bg-slate-50 shadow-sm-2 z-[9] p-4">
-                {searchData.map((prod, i) => {
-                  return (
-                    <Link to={`/product/${prod._id}`} key={i}>
-                      <div className="w-full flex items-start py-3">
-                        <img
-                          src={`${prod?.images[0]?.url}`}
-                          className="w-[40px] h-[40px] mr-[10px]"
-                        />
-                        <h1>{prod.name}</h1>
+              <input
+                type="text"
+                placeholder="Search for products, brands and categories…"
+                value={searchTerm}
+                onChange={handleSearchChange}
+                className="h-[46px] w-full rounded-full border border-ink-200 bg-white pl-12 pr-11 text-[14px] text-ink-900 shadow-sm transition-all duration-300 placeholder:text-ink-400 focus:border-brand-400 focus:shadow-card focus:ring-4 focus:ring-brand-500/10"
+              />
+              <AnimatePresence>
+                {searchTerm && (
+                  <motion.button
+                    initial={{ opacity: 0, scale: 0.7 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.7 }}
+                    onClick={clearSearch}
+                    aria-label="Clear search"
+                    className="absolute right-3 top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-full text-ink-400 transition-colors hover:bg-ink-100 hover:text-ink-700"
+                  >
+                    <RxCross1 size={13} />
+                  </motion.button>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <AnimatePresence>
+              {searchData !== null && searchTerm.trim() && (
+                <motion.div
+                  variants={dropdownVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  className="absolute left-0 top-[54px] z-30 w-full overflow-hidden rounded-2xl border border-ink-100 bg-white shadow-panel"
+                >
+                  {searchResults.length === 0 ? (
+                    <div className="px-5 py-8 text-center">
+                      <p className="text-[15px] font-semibold text-ink-800">
+                        No matches for “{searchTerm}”
+                      </p>
+                      <p className="mt-1 text-[13px] text-ink-400">
+                        Try a different keyword or browse all products.
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="border-b border-ink-100 px-5 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-ink-400">
+                        {searchData.length} result
+                        {searchData.length === 1 ? "" : "s"}
+                      </p>
+                      <div className="max-h-[340px] overflow-y-auto p-2">
+                        {searchResults.map((prod, i) => (
+                          <motion.div
+                            key={prod._id || i}
+                            initial={{ opacity: 0, x: -8 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: i * 0.04, duration: 0.25 }}
+                          >
+                            <Link
+                              to={`/product/${prod._id}`}
+                              onClick={clearSearch}
+                              className="flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors duration-200 hover:bg-ink-50"
+                            >
+                              <img
+                                src={`${prod?.images[0]?.url}`}
+                                alt={prod.name}
+                                className="h-11 w-11 shrink-0 rounded-lg border border-ink-100 bg-white object-contain p-1"
+                              />
+                              <div className="min-w-0 flex-1">
+                                <p className="truncate text-[14px] font-medium text-ink-800">
+                                  {prod.name}
+                                </p>
+                                <p className="text-[12px] text-ink-400">
+                                  {prod.shop?.name}
+                                </p>
+                              </div>
+                              <span className="shrink-0 font-display text-[14px] font-bold text-ink-900">
+                                ${prod.discountPrice}
+                              </span>
+                            </Link>
+                          </motion.div>
+                        ))}
                       </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            ) : null}
+                    </>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-          <div className={`${styles.button} rounded-xl`}>
-            <Link to={`${isSeller ? "/dashboard" : "/shop-create"}`}>
-              <h1 className="text-[#fff] flex font-bold items-center ">
-                {isSeller ? "Your Shop" : "Become Seller"}
-                <IoIosArrowForward className="ml-1" />
-              </h1>
+
+          {/* ---- Seller CTA --------------------------------------- */}
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
+            <Link
+              to={`${isSeller ? "/dashboard" : "/shop-create"}`}
+              className="group flex h-[46px] w-[180px] items-center justify-center gap-1 rounded-full bg-ink-900 font-semibold text-white shadow-card transition-all duration-300 hover:bg-ink-800 hover:shadow-card-hover"
+            >
+              {isSeller ? "Your Shop" : "Become Seller"}
+              <IoIosArrowForward className="transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
-          </div>
+          </motion.div>
         </div>
       </div>
+
+      {/* ================= Primary nav (desktop) ==================== */}
       <div
-        className={`${
-          active === true ? "shadow-sm fixed top-0 left-0 z-10" : null
-        } transiton hidden flex-800px items-center justify-between w-full h-[70px] bg-[#3321c8]`}
+        className={`hidden flex-800px w-full items-center justify-between bg-ink-900 transition-shadow duration-300 ${
+          active
+            ? "fixed left-0 top-0 z-40 h-[64px] shadow-panel"
+            : "relative h-[70px]"
+        }`}
       >
         <div
           className={`${styles.section} relative ${styles.normalFlex} justify-between`}
         >
           {/* Categories */}
-          <div>
-            <div className="relative h-[60px] mt-[10px] w-[270px] hidden m1000px-block">
-              <div
-                onClick={() => setDropdown(!dropdown)}
-                className="flex items-center justify-center"
+          <div className="relative mt-[10px] hidden h-[60px] w-[270px] m1000px-block">
+            <button
+              onClick={() => setDropdown(!dropdown)}
+              className="relative flex h-[52px] w-full cursor-pointer select-none items-center justify-between rounded-t-xl bg-white pl-11 pr-4 text-[15px] font-semibold text-ink-800 transition-colors duration-200 hover:bg-ink-50"
+            >
+              <BiMenuAltLeft
+                size={24}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-600"
+              />
+              All Categories
+              <motion.span
+                animate={{ rotate: dropdown ? 180 : 0 }}
+                transition={{ duration: 0.25 }}
+                className="text-ink-500"
               >
-                <BiMenuAltLeft size={30} className="absolute top-3 left-2" />
-                <button
-                  className={`h-full w-full flex justify-between items-center pl-10 bg-white font-sans py-[1rem] cursor-pointer text-lg font-500 select-none rounded-t-md font-medium`}
-                >
-                  All Categories
-                </button>
-                <IoIosArrowDown
-                  size={20}
-                  className="absolute right-2 top-4 cursor-pointer"
-                />
-              </div>
-              {dropdown ? (
+                <IoIosArrowDown size={18} />
+              </motion.span>
+            </button>
+
+            <AnimatePresence>
+              {dropdown && (
                 <Dropdown
                   categoriesData={categoriesData}
                   setDropdown={setDropdown}
                 />
-              ) : null}
-            </div>
+              )}
+            </AnimatePresence>
           </div>
-          {/* NavItems */}
+
+          {/* Nav items */}
           <div className={`${styles.normalFlex}`}>
             <Navbar active={activeHeading} />
           </div>
-          <div className="flex">
-            <div className={`${styles.normalFlex}`}>
-              <div
-                className="relative cursor-pointer mr-[15px]"
-                onClick={() => setOpenWishList(true)}
-              >
-                <AiOutlineHeart size={30} color="rgb(255 255 255 / 83%)" />
-                <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 top right p-0 m-0 text-white font-mono text-[12px] leading-tight text-center">
-                  {wishlist && wishlist.length}
-                </span>
-              </div>
-            </div>
-            <div className={`${styles.normalFlex}`}>
-              <div
-                className="relative cursor-pointer mr-[15px]"
-                onClick={() => setOpenCart(true)}
-              >
-                <AiOutlineShoppingCart
-                  className="cursor-pointer"
-                  size={30}
-                  color="rgb(255 255 255 / 83%)"
-                />
-                <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 top right p-0 m-0 text-white font-mono text-[12px] leading-tight text-center">
-                  {cart && cart.length}
-                </span>
-              </div>
-            </div>
-            <div className={`${styles.normalFlex}`}>
-              <div className="relative cursor-pointer mr-[15px]">
-                {isAuthenticated ? (
-                  <Link to="/profile">
-                    <img
-                      src={`${user?.avatar?.url}`}
-                      alt="Image "
-                      className="w-[35px] rounded-full h-[35px]"
-                    />
-                  </Link>
-                ) : (
-                  <Link to="/login">
-                    <CgProfile size={30} color="rgb(255 255 255 / 83%)" />
-                  </Link>
-                )}
-              </div>
-            </div>
-            {/* Cart popup */}
-            {openCart ? <Cart setOpenCart={setOpenCart} /> : null}
-            {/* Wishlist popup */}
-            {openWishList ? (
-              <WishList setOpenWishList={setOpenWishList} />
-            ) : null}
+
+          {/* Actions */}
+          <div className="flex items-center gap-5">
+            <motion.button
+              whileHover={{ scale: 1.12 }}
+              whileTap={{ scale: 0.9 }}
+              className="relative cursor-pointer text-white/85 transition-colors hover:text-white"
+              onClick={() => setOpenWishList(true)}
+              aria-label="Open wishlist"
+            >
+              <AiOutlineHeart size={26} />
+              <CountBadge count={(wishlist && wishlist.length) || 0} />
+            </motion.button>
+
+            <motion.button
+              whileHover={{ scale: 1.12 }}
+              whileTap={{ scale: 0.9 }}
+              className="relative cursor-pointer text-white/85 transition-colors hover:text-white"
+              onClick={() => setOpenCart(true)}
+              aria-label="Open cart"
+            >
+              <AiOutlineShoppingCart size={26} />
+              <CountBadge count={(cart && cart.length) || 0} />
+            </motion.button>
+
+            <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.94 }}>
+              {isAuthenticated ? (
+                <Link to="/profile" aria-label="Your profile">
+                  <img
+                    src={`${user?.avatar?.url}`}
+                    alt="Profile"
+                    className="h-[36px] w-[36px] rounded-full object-cover ring-2 ring-white/25 transition-all duration-300 hover:ring-accent-400"
+                  />
+                </Link>
+              ) : (
+                <Link
+                  to="/login"
+                  aria-label="Sign in"
+                  className="block text-white/85 transition-colors hover:text-white"
+                >
+                  <CgProfile size={26} />
+                </Link>
+              )}
+            </motion.div>
           </div>
         </div>
       </div>
-      {/* Mobile header */}
+
+      {/* Spacer so content doesn't jump when the nav becomes fixed */}
+      {active && <div className="hidden flex-800px h-[64px] w-full" />}
+
+      {/* Popups (shared by desktop + mobile) */}
+      <AnimatePresence>
+        {openCart && <Cart setOpenCart={setOpenCart} />}
+      </AnimatePresence>
+      <AnimatePresence>
+        {openWishList && <WishList setOpenWishList={setOpenWishList} />}
+      </AnimatePresence>
+
+      {/* ================= Mobile header ============================ */}
       <div
-        className={`w-full h-[70px] mb-nav-hidden-at-800px bg-[#fff] z-50 top-0 left-0 shadow-sm ${
-          active === true ? "shadow-sm fixed top-0 left-0 z-10" : null
+        className={`mb-nav-hidden-at-800px left-0 top-0 z-50 h-[64px] w-full border-b border-ink-100 bg-white ${
+          active ? "fixed z-40 shadow-card" : "relative"
         }`}
       >
-        <div className="w-full flex items-center justify-between">
-          <div>
-            <BiMenuAltLeft
-              size={40}
-              className="ml-4 cursor-pointer"
-              onClick={() => setOpen(true)}
-            />
-          </div>
-          <div>
-            <Link to="/">
-              <img
-                src="https://shopo.quomodothemes.website/assets/images/logo.svg"
-                alt="Logo"
-                className="mt-3"
-              />
-            </Link>
-          </div>
-          <div>
-            <div
-              className="relative mr-[20px] cursor-pointer"
-              onClick={() => setOpenCart(true)}
-            >
-              <AiOutlineShoppingCart size={30} className="cursor-pointer" />
-              <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 top right p-0 m-0 text-white font-mono text-[12px] leading-tight text-center">
-                {cart && cart.length}
-              </span>
-            </div>
-          </div>
-          {/* Cart popup */}
-          {openCart ? <Cart setOpenCart={setOpenCart} /> : null}
-          {/* Wishlist popup */}
-          {openWishList ? <WishList setOpenWishList={setOpenWishList} /> : null}
+        <div className="flex h-full w-full items-center justify-between px-4">
+          <button onClick={() => setOpen(true)} aria-label="Open menu">
+            <BiMenuAltLeft size={32} className="cursor-pointer text-ink-800" />
+          </button>
+
+          <Link to="/">
+            <Logo size="sm" />
+          </Link>
+
+          <motion.button
+            whileTap={{ scale: 0.88 }}
+            className="relative cursor-pointer text-ink-800"
+            onClick={() => setOpenCart(true)}
+            aria-label="Open cart"
+          >
+            <AiOutlineShoppingCart size={26} />
+            <span className="absolute -right-1.5 -top-1.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-brand-600 px-1 text-[11px] font-bold leading-none text-white ring-2 ring-white">
+              {(cart && cart.length) || 0}
+            </span>
+          </motion.button>
         </div>
-        {/* Header sidebar */}
+      </div>
+      {active && <div className="mb-nav-hidden-at-800px h-[64px] w-full" />}
+
+      {/* ---- Mobile drawer ------------------------------------------ */}
+      <AnimatePresence>
         {open && (
-          <div className="fixed w-full bg-[#0000005f] z-20 h-full top-0 left-0 ">
-            <div className="fixed w-[70%] bg-[#fff] h-screen top-0 left-0 z-10 overflow-y-scroll">
-              <div className="w-full justify-between flex pr-3">
-                <div>
-                  <div
-                    className="relative mr-[15px] cursor-pointer"
-                    onClick={() => setOpenWishList(true) || setOpen(false)}
-                  >
-                    <AiOutlineHeart
-                      size={30}
-                      className="mt-5 ml-3 cursor-pointer"
-                    />
-                    <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 top right p-0 m-0 text-white font-mono text-[12px] leading-tight text-center">
-                      {wishlist && wishlist.length}
-                    </span>
-                  </div>
-                </div>
-                <RxCross1
-                  size={30}
-                  className="ml-4 mt-5 cursor-pointer"
+          <motion.div
+            variants={backdrop}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="fixed inset-0 z-[60] bg-ink-950/50 backdrop-blur-sm"
+            onClick={() => setOpen(false)}
+          >
+            <motion.div
+              variants={drawer("left")}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              onClick={e => e.stopPropagation()}
+              className="flex h-full w-[82%] max-w-[340px] flex-col overflow-y-auto bg-white shadow-panel"
+            >
+              {/* drawer head */}
+              <div className="flex items-center justify-between border-b border-ink-100 px-5 py-4">
+                <Logo size="sm" />
+                <button
                   onClick={() => setOpen(false)}
-                />
+                  aria-label="Close menu"
+                  className="grid h-9 w-9 place-items-center rounded-full text-ink-500 transition-colors hover:bg-ink-100 hover:text-ink-900"
+                >
+                  <RxCross1 size={17} />
+                </button>
               </div>
-              <div className="my-8 w-[92%] m-auto h-[40px] relative">
-                <input
-                  type="search"
-                  placeholder="Search products..."
-                  value={searchTerm}
-                  onChange={handleSearchChange}
-                  className="w-full h-[40px] px-2 border-[2px] border-[#3597db] rounded-md"
-                />
-                {searchData && (
-                  <div className="absolute bg-[#fff] z-10 shadow w-full left-0 p-3">
-                    {searchData.map((prod, i) => {
-                      return (
-                        <Link to={`/product/${prod._id}`} key={i}>
-                          <div className="flex items-center cursor-pointer">
+
+              {/* drawer search */}
+              <div className="px-5 pt-5">
+                <div className="relative">
+                  <AiOutlineSearch
+                    size={18}
+                    className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-400"
+                  />
+                  <input
+                    type="search"
+                    placeholder="Search products…"
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    className="h-[44px] w-full rounded-xl border border-ink-200 bg-ink-50 pl-10 pr-3 text-[14px] transition-all duration-200 focus:border-brand-400 focus:bg-white focus:ring-4 focus:ring-brand-500/10"
+                  />
+                </div>
+
+                <AnimatePresence>
+                  {searchData !== null && searchTerm.trim() && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="mt-2 overflow-hidden rounded-xl border border-ink-100"
+                    >
+                      {searchResults.length === 0 ? (
+                        <p className="px-3 py-4 text-center text-[13px] text-ink-400">
+                          No products found.
+                        </p>
+                      ) : (
+                        searchResults.map((prod, i) => (
+                          <Link
+                            to={`/product/${prod._id}`}
+                            key={prod._id || i}
+                            onClick={() => setOpen(false)}
+                            className="flex items-center gap-3 border-b border-ink-100 px-3 py-2.5 last:border-0 hover:bg-ink-50"
+                          >
                             <img
                               src={prod?.images[0]?.url}
-                              className="w-[50px] mr-2"
+                              alt={prod.name}
+                              className="h-9 w-9 rounded-md object-contain"
                             />
-                            <h5>{prod.name}</h5>
-                          </div>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                )}
+                            <span className="truncate text-[13px] text-ink-700">
+                              {prod.name}
+                            </span>
+                          </Link>
+                        ))
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
-              <Navbar active={activeHeading} />
-              <div className={`${styles.button} ml-4 !rounded-xl text-[20px]`}>
-                <Link to="/shop-create">
-                  <h1 className="text-[#fff] text-[17px] flex font-bold items-center cursor-pointer">
-                    {isSeller ? "Your Shop" : "Become Seller"}
-                    <IoIosArrowForward className="ml-1 cursor-pointer" />
-                  </h1>
+
+              {/* drawer nav */}
+              <div className="mt-5 flex-1 px-2">
+                <Navbar active={activeHeading} mobile />
+              </div>
+
+              {/* drawer footer */}
+              <div className="space-y-4 border-t border-ink-100 p-5">
+                <button
+                  onClick={() => {
+                    setOpenWishList(true);
+                    setOpen(false);
+                  }}
+                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] font-medium text-ink-700 transition-colors hover:bg-ink-50"
+                >
+                  <span className="relative">
+                    <AiOutlineHeart size={22} />
+                    <span className="absolute -right-2 -top-1.5 grid h-[16px] min-w-[16px] place-items-center rounded-full bg-danger-500 px-1 text-[10px] font-bold text-white">
+                      {(wishlist && wishlist.length) || 0}
+                    </span>
+                  </span>
+                  Wishlist
+                </button>
+
+                <Link
+                  to={isSeller ? "/dashboard" : "/shop-create"}
+                  onClick={() => setOpen(false)}
+                  className="flex h-[46px] w-full items-center justify-center gap-1 rounded-xl bg-ink-900 font-semibold text-white transition-colors hover:bg-ink-800"
+                >
+                  {isSeller ? "Your Shop" : "Become Seller"}
+                  <IoIosArrowForward />
                 </Link>
-              </div>
-              <br />
-              <br />
-              <br />
-              <div className="flex w-full justify-center">
+
                 {!isAuthenticated ? (
-                  <>
+                  <div className="flex gap-3">
                     <Link
-                      to={"/login"}
-                      className="cursor-pointer text-[18px] pr-[10px] text-[#000000b7]"
+                      to="/login"
+                      onClick={() => setOpen(false)}
+                      className="flex h-[44px] flex-1 items-center justify-center rounded-xl border border-ink-200 font-semibold text-ink-700 transition-colors hover:bg-ink-50"
                     >
-                      Login /
+                      Login
                     </Link>
                     <Link
-                      to={"/sign-up"}
-                      className="text-[18px] pr-[10px] text-[#000000b7]"
+                      to="/sign-up"
+                      onClick={() => setOpen(false)}
+                      className="flex h-[44px] flex-1 items-center justify-center rounded-xl bg-brand-600 font-semibold text-white transition-colors hover:bg-brand-700"
                     >
                       Sign up
                     </Link>
-                  </>
-                ) : (
-                  <div>
-                    <Link to={"/profile"}>
-                      <img
-                        src={`${user?.avatar?.url}`}
-                        alt="Image "
-                        className="w-[60px] rounded-full h-[60px] border-[3px] border-[#14febc] cursor-pointer"
-                      />
-                    </Link>
                   </div>
+                ) : (
+                  <Link
+                    to="/profile"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-3 rounded-xl border border-ink-100 p-3 transition-colors hover:bg-ink-50"
+                  >
+                    <img
+                      src={`${user?.avatar?.url}`}
+                      alt="Profile"
+                      className="h-11 w-11 rounded-full object-cover ring-2 ring-brand-100"
+                    />
+                    <div className="min-w-0">
+                      <p className="truncate text-[14px] font-semibold text-ink-900">
+                        {user?.fullName}
+                      </p>
+                      <p className="text-[12px] text-ink-400">View profile</p>
+                    </div>
+                  </Link>
                 )}
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
     </>
   );
 }

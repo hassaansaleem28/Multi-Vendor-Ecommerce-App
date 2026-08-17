@@ -1,20 +1,15 @@
 import CreateEvent from "./CreateEvent";
-import DashboardHeader from "./DashboardHeader";
-import DashboardSidebar from "./DashboardSidebar";
+import SellerLayout from "./SellerLayout";
 
 function ShopCreateEvent() {
   return (
-    <div>
-      <DashboardHeader />
-      <div className="flex items-center justify-between w-full">
-        <div className="w-[330px]">
-          <DashboardSidebar activeHeading={6} />
-        </div>
-        <div className="w-full flex justify-center">
-          <CreateEvent />
-        </div>
-      </div>
-    </div>
+    <SellerLayout
+      active={6}
+      title="Create event"
+      subtitle="Run a time-boxed promotion on one of your products."
+    >
+      <CreateEvent />
+    </SellerLayout>
   );
 }
 

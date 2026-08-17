@@ -1,15 +1,16 @@
 import { AiOutlineArrowRight } from "react-icons/ai";
-import { DataGrid } from "@mui/x-data-grid";
 import { Link } from "react-router-dom";
-import Button from "@mui/material/Button";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getAllOrdersUser } from "../../redux-toolkit/actions/orderActions";
+import DataTable from "../ui/DataTable";
+import StatusPill from "../ui/StatusPill";
 
 function AllOrders() {
   const { orders } = useSelector(state => state.orders);
   const { user } = useSelector(state => state.user);
   const dispatch = useDispatch();
+
   const columns = [
     {
       field: "id",
@@ -20,10 +21,9 @@ function AllOrders() {
     {
       field: "status",
       headerName: "Status",
-      minWidth: 130,
+      minWidth: 150,
       flex: 0.7,
-      cellClassName: params =>
-        params.row.status === "Delivered" ? "greenColor" : "redColor",
+      renderCell: params => <StatusPill status={params.row.status} />,
     },
     {
       field: "itemsQty",
@@ -43,13 +43,15 @@ function AllOrders() {
       field: "actions",
       headerName: "",
       sortable: false,
-      minWidth: 150,
+      minWidth: 120,
       flex: 1,
       renderCell: params => (
-        <Link to={`/user/order/${params.id}`}>
-          <Button>
-            <AiOutlineArrowRight size={20} />
-          </Button>
+        <Link
+          to={`/user/order/${params.id}`}
+          className="inline-flex h-8 items-center gap-1.5 rounded-lg px-3 text-[13px] font-semibold text-brand-600 transition-colors hover:bg-brand-50"
+        >
+          View
+          <AiOutlineArrowRight size={15} />
         </Link>
       ),
     },
@@ -69,19 +71,14 @@ function AllOrders() {
         status: item?.status,
       });
     });
+
   return (
-    <div className="pl-8 pt-1 flex flex-col min-h-[200px] max-h-[600px]">
-      <DataGrid
-        rows={row}
-        columns={columns}
-        pageSizeOptions={[10]}
-        initialState={{
-          pagination: { paginationModel: { pageSize: 10, page: 0 } },
-        }}
-        disableRowSelectionOnClick
-        sx={{ flexGrow: 1 }}
-      />
-    </div>
+    <DataTable
+      title="Your orders"
+      subtitle={`${row.length} order${row.length === 1 ? "" : "s"} placed`}
+      rows={row}
+      columns={columns}
+    />
   );
 }
 

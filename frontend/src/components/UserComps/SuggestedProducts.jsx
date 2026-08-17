@@ -1,34 +1,39 @@
 import { useEffect, useState } from "react";
 import styles from "../../styles/styles";
-import ProductCard from "./ProductCard";
 import { useSelector } from "react-redux";
+import SectionHeading from "../ui/SectionHeading";
+import ProductGrid from "../ui/ProductGrid";
 
 function SuggestedProducts({ data }) {
   const [products, setProducts] = useState(null);
   const { allProducts } = useSelector(state => state.product);
 
-  useEffect(function () {
-    const d =
-      allProducts &&
-      allProducts.filter(prod => prod.category === data.category);
-    setProducts(d);
-  }, []);
+  useEffect(
+    function () {
+      const d =
+        allProducts &&
+        allProducts.filter(
+          prod => prod.category === data.category && prod._id !== data._id
+        );
+      setProducts(d);
+    },
+    [allProducts, data]
+  );
+
+  if (!data || !products || products.length === 0) return null;
+
   return (
-    <div>
-      {data ? (
-        <div className={`${styles.section}`}>
-          <h2
-            className={`${styles.heading} text-[25px] font-[Roboto] font-[800] border-b mb-5 p-4`}
-          >
-            Related Product
-          </h2>
-          <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[25px] lg:*:grid-cols-4 lg:gap-[25px] xl:grid-cols-5 xl:gap-[30px] mb-12">
-            {products &&
-              products.map((prod, i) => <ProductCard product={prod} key={i} />)}
-          </div>
-        </div>
-      ) : null}
-    </div>
+    <section className={`${styles.section} mb-16`}>
+      <SectionHeading
+        eyebrow="You might also like"
+        title="Related products"
+        subtitle={`More from ${data.category}.`}
+        actionLabel="View category"
+        actionTo={`/products?category=${data.category}`}
+      />
+
+      <ProductGrid products={products} />
+    </section>
   );
 }
 

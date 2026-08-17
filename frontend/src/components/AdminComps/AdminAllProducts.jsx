@@ -1,11 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { DataGrid } from "@mui/x-data-grid";
 import Loader from "../UserComps/Loader";
 import { getAllProductsAdmin } from "../../redux-toolkit/actions/productActions";
-import Button from "@mui/material/Button";
 import { AiOutlineEye } from "react-icons/ai";
-import { Link } from "react-router-dom";
+import DataTable from "../ui/DataTable";
+import TableAction from "../ui/TableAction";
 
 function AdminAllProducts() {
   const dispatch = useDispatch();
@@ -19,57 +18,48 @@ function AdminAllProducts() {
     },
     [dispatch]
   );
-  if (isProductsLoading) return <Loader />;
 
   const columns = [
-    {
-      field: "id",
-      headerName: "Order ID",
-      minWidth: 150,
-      flex: 0.7,
-    },
-    {
-      field: "name",
-      headerName: "Product name",
-      minWidth: 130,
-      flex: 0.7,
-    },
+    { field: "id", headerName: "Product ID", minWidth: 150, flex: 0.7 },
+    { field: "name", headerName: "Product name", minWidth: 130, flex: 1.2 },
     {
       field: "price",
       headerName: "Price",
       type: "text",
-      minWidth: 130,
-      flex: 0.7,
+      minWidth: 110,
+      flex: 0.6,
     },
     {
       field: "Stock",
       headerName: "Stock",
       type: "text",
-      minWidth: 130,
-      flex: 0.7,
+      minWidth: 100,
+      flex: 0.5,
     },
     {
       field: "Sold",
       headerName: "Sold",
       type: "text",
-      minWidth: 130,
-      flex: 0.8,
+      minWidth: 100,
+      flex: 0.5,
     },
     {
       field: "",
-      headerName: "Preview Product",
+      headerName: "",
       sortable: false,
-      minWidth: 150,
-      flex: 1,
+      minWidth: 80,
+      flex: 0.4,
       renderCell: params => (
-        <Link to={`/product/${params.id}`}>
-          <Button>
-            <AiOutlineEye size={20} />
-          </Button>
-        </Link>
+        <TableAction
+          icon={AiOutlineEye}
+          to={`/product/${params.id}`}
+          title="Preview product"
+          tone="brand"
+        />
       ),
     },
   ];
+
   const row = [];
   allProductsAdmin &&
     allProductsAdmin.forEach(item => {
@@ -82,24 +72,15 @@ function AdminAllProducts() {
       });
     });
 
+  if (isProductsLoading) return <Loader label="Loading products" />;
+
   return (
-    <div className="w-full flex justify-center pt-5">
-      <div className="w-[97%]">
-        <h3 className="text-[32px] font-[Poppins] pb-2">All Products</h3>
-        <div className="w-full min-h-[45vh] bg-white rounded">
-          <DataGrid
-            rows={row}
-            columns={columns}
-            pageSizeOptions={[10]}
-            initialState={{
-              pagination: { paginationModel: { pageSize: 10, page: 0 } },
-            }}
-            disableRowSelectionOnClick
-            sx={{ flexGrow: 1 }}
-          />
-        </div>
-      </div>
-    </div>
+    <DataTable
+      title="Products"
+      subtitle={`${row.length} product${row.length === 1 ? "" : "s"} listed marketplace-wide`}
+      rows={row}
+      columns={columns}
+    />
   );
 }
 

@@ -1,12 +1,16 @@
 import { useState } from "react";
-import styles from "../../styles/styles";
 import { RxCross1 } from "react-icons/rx";
 import { HiOutlineMinus, HiPlus } from "react-icons/hi";
+import { motion } from "framer-motion";
 import { toast } from "react-toastify";
+import { easeOutSoft } from "../../lib/motion";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-function CartSingle({ item, quantityChangeHandler, removeFromCarthandler }) {
+function CartSingle({
+  item,
+  index = 0,
+  quantityChangeHandler,
+  removeFromCarthandler,
+}) {
   const [val, setVal] = useState(item.qty);
   const totalPrice = item.discountPrice * val;
 
@@ -24,44 +28,81 @@ function CartSingle({ item, quantityChangeHandler, removeFromCarthandler }) {
     const updateCartData = { ...data, qty: val === 1 ? 1 : val - 1 };
     quantityChangeHandler(updateCartData);
   }
+
   return (
-    <div className="border-b p-4">
-      <div className="w-full flex-800px items-center">
-        <div>
-          <div
-            className={`bg-[#e44343] border border-[#e4434373] rounded-full w-[25px] h-[25px] ${styles.normalFlex} justify-center cursor-pointer`}
-            onClick={() => Increment(item)}
+    <motion.div
+      layout
+      initial={{ opacity: 0, x: 24 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 40, height: 0, marginTop: 0, paddingTop: 0, paddingBottom: 0 }}
+      transition={{ duration: 0.32, ease: easeOutSoft, delay: index * 0.04 }}
+      className="flex gap-3 border-b border-ink-100 px-5 py-4"
+    >
+      {/* image */}
+      <img
+        src={`${item ? item && item?.images[0].url : ""}`}
+        alt={item.name}
+        className="h-[76px] w-[76px] shrink-0 rounded-xl border border-ink-100 bg-white object-contain p-1.5"
+      />
+
+      {/* details */}
+      <div className="min-w-0 flex-1">
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="line-clamp-2 text-[14px] font-medium leading-snug text-ink-900">
+            {item.name}
+          </h3>
+          <button
+            onClick={() => removeFromCarthandler(item)}
+            aria-label={`Remove ${item.name} from cart`}
+            className="grid h-7 w-7 shrink-0 cursor-pointer place-items-center rounded-full text-ink-400 transition-colors hover:bg-danger-50 hover:text-danger-500"
           >
-            <HiPlus size={18} color="rgb(255, 255, 255)" />
+            <RxCross1 size={13} />
+          </button>
+        </div>
+
+        <p className="mt-1 text-[12px] text-ink-400">
+          ${item?.discountPrice} each
+        </p>
+
+        <div className="mt-2.5 flex items-center justify-between">
+          {/* quantity stepper */}
+          <div className="flex items-center gap-2.5">
+            <motion.button
+              whileTap={{ scale: 0.85 }}
+              onClick={() => Decrement(item)}
+              aria-label="Decrease quantity"
+              className="grid h-7 w-7 cursor-pointer place-items-center rounded-full bg-ink-100 text-ink-600 transition-colors hover:bg-ink-200 disabled:opacity-40"
+              disabled={val <= 1}
+            >
+              <HiOutlineMinus size={14} />
+            </motion.button>
+
+            <span className="min-w-[18px] text-center font-display text-[14px] font-bold tabular-nums text-ink-900">
+              {val}
+            </span>
+
+            <motion.button
+              whileTap={{ scale: 0.85 }}
+              onClick={() => Increment(item)}
+              aria-label="Increase quantity"
+              className="grid h-7 w-7 cursor-pointer place-items-center rounded-full bg-brand-600 text-white transition-colors hover:bg-brand-700"
+            >
+              <HiPlus size={14} />
+            </motion.button>
           </div>
-          <span className="pl-[8px]">{item.qty}</span>
-          <div
-            className="bg-[#a7abb14f] rounded-full w-[25px] h-[25px] flex items-center justify-center cursor-pointer"
-            onClick={() => Decrement(item)}
+
+          <motion.span
+            key={totalPrice}
+            initial={{ scale: 1.15 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.22 }}
+            className="font-display text-[16px] font-bold text-ink-900"
           >
-            <HiOutlineMinus size={16} color="#7d879c" />
-          </div>
+            ${totalPrice.toFixed(2)}
+          </motion.span>
         </div>
-        <img
-          src={`${item ? item && item?.images[0].url : ""}`}
-          alt="Image"
-          className="w-[130px] h-min ml-2 mr-2 rounded-[5px]"
-        />
-        <div className="pl-[5px]">
-          <h1 className="">{item.name}</h1>
-          <h4 className="font-[400] text-[15px] text-[#00000082]">
-            ${item?.discountPrice} * {val}
-          </h4>
-          <h4 className="font-[600] text-[17px] pt-[3px] text-[#d02222] font-Roboto">
-            US ${totalPrice}
-          </h4>
-        </div>
-        <RxCross1
-          className="cursor-pointer"
-          onClick={() => removeFromCarthandler(item)}
-        />
       </div>
-    </div>
+    </motion.div>
   );
 }
 

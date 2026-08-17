@@ -1,14 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUsers } from "../../redux-toolkit/actions/userActions";
 import { useEffect, useState } from "react";
-import Button from "@mui/material/Button";
 import { AiOutlineDelete } from "react-icons/ai";
-import { DataGrid } from "@mui/x-data-grid";
 import Loader from "../UserComps/Loader";
-import styles from "../../styles/styles";
-import { RxCross1 } from "react-icons/rx";
 import axios from "axios";
 import { toast } from "react-toastify";
+import DataTable from "../ui/DataTable";
+import TableAction from "../ui/TableAction";
+import ConfirmDialog from "../ui/ConfirmDialog";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -24,7 +23,6 @@ function AdminAllUsers() {
     },
     [dispatch]
   );
-  if (isUsersLoading) return <Loader />;
 
   async function handleDelete(id) {
     try {
@@ -78,17 +76,21 @@ function AdminAllUsers() {
     },
     {
       field: "actions",
-      headerName: "Delete User",
+      headerName: "",
       sortable: false,
-      minWidth: 150,
-      flex: 1,
+      minWidth: 90,
+      flex: 0.5,
       renderCell: params => (
-        <Button onClick={() => setUserId(params.id) || setOpen(true)}>
-          <AiOutlineDelete size={20} />
-        </Button>
+        <TableAction
+          icon={AiOutlineDelete}
+          onClick={() => setUserId(params.id) || setOpen(true)}
+          title="Delete user"
+          tone="danger"
+        />
       ),
     },
   ];
+
   const row = [];
   users &&
     users.forEach(item => {
@@ -101,50 +103,26 @@ function AdminAllUsers() {
       });
     });
 
+  if (isUsersLoading) return <Loader label="Loading users" />;
+
   return (
-    <div className="w-full flex justify-center pt-5">
-      <div className="w-[97%]">
-        <h3 className="text-[32px] font-[Poppins] pb-2">All Users</h3>
-        <div className="w-full min-h-[45vh] bg-white rounded">
-          <DataGrid
-            rows={row}
-            columns={columns}
-            pageSizeOptions={[10]}
-            initialState={{
-              pagination: { paginationModel: { pageSize: 10, page: 0 } },
-            }}
-            disableRowSelectionOnClick
-            sx={{ flexGrow: 1 }}
-          />
-        </div>
-        {open && (
-          <div className="w-full fixed top-0 left-0 z-[999] bg-[#00000039] flex items-center justify-center h-screen">
-            <div className="p-6 width-800px-40 w-[95%] min-h-[20vh] bg-white rounded-xl shadow">
-              <div className="w-full flex justify-end cursor-pointer">
-                <RxCross1 size={20} onClick={() => setOpen(false)} />
-              </div>
-              <h3 className="text-[25px] text-center py-5 font-[Poppins] text-[#000000cb]">
-                Are you sure you want to delete this user?
-              </h3>
-              <div className="w-full flex items-center p-8 gap-8 justify-center">
-                <button
-                  onClick={() => setOpen(false)}
-                  className={`${styles.button} cursor-pointer text-[18px] rounded-2xl text-white !bg-[#100f0f] !h-[42px] active:translate-y-0.5 transition-all`}
-                >
-                  Cancel
-                </button>
-                <button
-                  className={`${styles.button} cursor-pointer text-[18px] rounded-2xl text-white !bg-[#100f0f] !h-[42px] active:translate-y-0.5 transition-all`}
-                  onClick={() => setOpen(false) || handleDelete(userId)}
-                >
-                  Confirm
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+    <>
+      <DataTable
+        title="Users"
+        subtitle={`${row.length} registered user${row.length === 1 ? "" : "s"}`}
+        rows={row}
+        columns={columns}
+      />
+
+      <ConfirmDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        onConfirm={() => setOpen(false) || handleDelete(userId)}
+        title="Delete this user?"
+        message="This permanently removes the account and everything tied to it. This can't be undone."
+        confirmLabel="Delete user"
+      />
+    </>
   );
 }
 

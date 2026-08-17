@@ -5,10 +5,10 @@ import {
   getAllProductsShop,
 } from "../../redux-toolkit/actions/productActions";
 import { Link } from "react-router-dom";
-import Button from "@mui/material/Button";
-import { AiOutlineDelete, AiOutlineEye } from "react-icons/ai";
+import { AiOutlineDelete, AiOutlineEye, AiOutlinePlus } from "react-icons/ai";
 import Loader from "../UserComps/Loader";
-import { DataGrid } from "@mui/x-data-grid";
+import DataTable from "../ui/DataTable";
+import TableAction from "../ui/TableAction";
 
 function AllProducts() {
   const { product, isLoading } = useSelector(state => state.product);
@@ -21,6 +21,7 @@ function AllProducts() {
     },
     [dispatch]
   );
+
   const columns = [
     { field: "id", headerName: "Product Id", minWidth: 150, flex: 0.7 },
     { field: "name", headerName: "Name", minWidth: 180, flex: 1.4 },
@@ -44,38 +45,35 @@ function AllProducts() {
       headerName: "",
       type: "number",
       sortable: false,
-      minWidth: 100,
-      flex: 0.8,
-      renderCell: params => {
-        return (
-          <>
-            <Link to={`/product/${params.id}`}>
-              <Button>
-                <AiOutlineEye size={20} />
-              </Button>
-            </Link>
-          </>
-        );
-      },
+      minWidth: 80,
+      flex: 0.5,
+      renderCell: params => (
+        <TableAction
+          icon={AiOutlineEye}
+          to={`/product/${params.id}`}
+          title="Preview product"
+          tone="brand"
+        />
+      ),
     },
     {
       field: "Delete",
-      flex: 0.8,
-      minWidth: 120,
+      flex: 0.5,
+      minWidth: 80,
       headerName: "",
       type: "number",
       sortable: false,
-      renderCell: params => {
-        return (
-          <>
-            <Button onClick={() => handleDelete(params.id)}>
-              <AiOutlineDelete size={20} />
-            </Button>
-          </>
-        );
-      },
+      renderCell: params => (
+        <TableAction
+          icon={AiOutlineDelete}
+          onClick={() => handleDelete(params.id)}
+          title="Delete product"
+          tone="danger"
+        />
+      ),
     },
   ];
+
   const row = [];
   product &&
     product.forEach(item => {
@@ -87,29 +85,30 @@ function AllProducts() {
         sold: 10,
       });
     });
+
   function handleDelete(id) {
     dispatch(deleteProduct(id));
     window.location.reload();
   }
+
+  if (isLoading) return <Loader label="Loading products" />;
+
   return (
-    <>
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <div className="w-full mx-8 pt-1 mt-10 bg-white flex flex-col min-h-[200px] max-h-[600px]">
-          <DataGrid
-            rows={row}
-            columns={columns}
-            pageSizeOptions={[10]}
-            disableRowSelectionOnClick
-            initialState={{
-              pagination: { paginationModel: { pageSize: 10, page: 0 } },
-            }}
-            sx={{ flexGrow: 1 }}
-          />
-        </div>
-      )}
-    </>
+    <DataTable
+      title="Products"
+      subtitle={`${row.length} product${row.length === 1 ? "" : "s"} listed`}
+      rows={row}
+      columns={columns}
+      action={
+        <Link
+          to="/dashboard-create-product"
+          className="inline-flex h-[42px] items-center gap-2 rounded-xl bg-brand-600 px-4 text-[14px] font-semibold text-white transition-all duration-300 hover:bg-brand-700 active:scale-95"
+        >
+          <AiOutlinePlus size={16} />
+          New product
+        </Link>
+      }
+    />
   );
 }
 

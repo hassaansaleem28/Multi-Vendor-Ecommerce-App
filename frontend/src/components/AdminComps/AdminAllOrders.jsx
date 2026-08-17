@@ -1,8 +1,9 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { DataGrid } from "@mui/x-data-grid";
 import Loader from "../UserComps/Loader";
 import { getAllOrdersAdmin } from "../../redux-toolkit/actions/orderActions";
+import DataTable from "../ui/DataTable";
+import StatusPill from "../ui/StatusPill";
 
 function AdminAllOrders() {
   const dispatch = useDispatch();
@@ -16,20 +17,15 @@ function AdminAllOrders() {
     },
     [dispatch]
   );
-  if (isOrdersLoading) return <Loader />;
 
   const columns = [
-    {
-      field: "id",
-      headerName: "Order ID",
-      minWidth: 150,
-      flex: 0.7,
-    },
+    { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
     {
       field: "status",
       headerName: "Status",
-      minWidth: 130,
+      minWidth: 170,
       flex: 0.7,
+      renderCell: params => <StatusPill status={params.row.status} />,
     },
     {
       field: "itemsQty",
@@ -53,6 +49,7 @@ function AdminAllOrders() {
       flex: 0.8,
     },
   ];
+
   const row = [];
   adminOrders &&
     adminOrders.forEach(item => {
@@ -65,24 +62,15 @@ function AdminAllOrders() {
       });
     });
 
+  if (isOrdersLoading) return <Loader label="Loading orders" />;
+
   return (
-    <div className="w-full flex justify-center pt-5">
-      <div className="w-[97%]">
-        <h3 className="text-[32px] font-[Poppins] pb-2">All Orders</h3>
-        <div className="w-full min-h-[45vh] bg-white rounded">
-          <DataGrid
-            rows={row}
-            columns={columns}
-            pageSizeOptions={[10]}
-            initialState={{
-              pagination: { paginationModel: { pageSize: 10, page: 0 } },
-            }}
-            disableRowSelectionOnClick
-            sx={{ flexGrow: 1 }}
-          />
-        </div>
-      </div>
-    </div>
+    <DataTable
+      title="Orders"
+      subtitle={`${row.length} order${row.length === 1 ? "" : "s"} marketplace-wide`}
+      rows={row}
+      columns={columns}
+    />
   );
 }
 

@@ -1,13 +1,17 @@
-import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import styles from "../../styles/styles";
 import { BsPencil } from "react-icons/bs";
 import { RxCross1 } from "react-icons/rx";
+import { HiChevronDown } from "react-icons/hi";
+import { AnimatePresence, motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { getAllWithdraws } from "../../redux-toolkit/actions/withdrawActions";
 import Loader from "../../components/UserComps/Loader";
+import DataTable from "../ui/DataTable";
+import TableAction from "../ui/TableAction";
+import StatusPill from "../ui/StatusPill";
+import { backdrop, modal } from "../../lib/motion";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -27,7 +31,7 @@ function AdminWithdrawRequest() {
     },
     [dispatch]
   );
-  if (isWithdrawsLoading) return <Loader />;
+
   async function handleSubmit(e) {
     e.preventDefault();
     try {
@@ -51,39 +55,23 @@ function AdminWithdrawRequest() {
   }
 
   const columns = [
-    {
-      field: "id",
-      headerName: "Withdraw ID",
-      minWidth: 150,
-      flex: 0.7,
-    },
-    {
-      field: "name",
-      headerName: "Seller Name",
-      minWidth: 130,
-      flex: 0.7,
-      cellClassName: params =>
-        params.row.status === "Delivered" ? "greenColor" : "redColor",
-    },
-    {
-      field: "shopId",
-      headerName: "Shop Id",
-      minWidth: 130,
-      flex: 0.7,
-    },
+    { field: "id", headerName: "Withdraw ID", minWidth: 150, flex: 0.7 },
+    { field: "name", headerName: "Seller Name", minWidth: 130, flex: 0.7 },
+    { field: "shopId", headerName: "Shop Id", minWidth: 130, flex: 0.7 },
     {
       field: "amount",
       headerName: "Amount",
       type: "number",
-      minWidth: 130,
-      flex: 0.7,
+      minWidth: 110,
+      flex: 0.6,
     },
     {
       field: "status",
       headerName: "Status",
       type: "text",
-      minWidth: 130,
+      minWidth: 150,
       flex: 0.7,
+      renderCell: params => <StatusPill status={params.row.status} />,
     },
     {
       field: "createdAt",
@@ -94,24 +82,21 @@ function AdminWithdrawRequest() {
     },
     {
       field: " ",
-      headerName: "Update Status",
+      headerName: "",
       type: "number",
       sortable: false,
-      minWidth: 100,
-      flex: 0.8,
-      renderCell: params => {
-        return (
-          <div className="flex items-center justify-center mt-3 ml-15">
-            <BsPencil
-              size={20}
-              className={`${
-                params.row.status !== "Processing" ? "hidden" : "block"
-              } cursor-pointer`}
-              onClick={() => setOpen(true) || setWithdrawData(params.row)}
-            />
-          </div>
-        );
-      },
+      minWidth: 90,
+      flex: 0.5,
+      renderCell: params =>
+        params.row.status !== "Processing" ? null : (
+          <TableAction
+            icon={BsPencil}
+            onClick={() => setOpen(true) || setWithdrawData(params.row)}
+            title="Update status"
+            tone="brand"
+            size={16}
+          />
+        ),
     },
   ];
 
@@ -128,54 +113,93 @@ function AdminWithdrawRequest() {
       });
     });
 
+  if (isWithdrawsLoading) return <Loader label="Loading withdraw requests" />;
+
   return (
-    <div className="w-full mx-8 pt-1 mt-10 bg-white flex flex-col min-h-[200px] max-h-[600px]">
-      <DataGrid
+    <>
+      <DataTable
+        title="Withdraw requests"
+        subtitle={`${row.length} request${row.length === 1 ? "" : "s"} on record`}
         rows={row}
         columns={columns}
-        pageSizeOptions={[10]}
-        disableRowSelectionOnClick
-        initialState={{
-          pagination: { paginationModel: { pageSize: 10, page: 0 } },
-        }}
-        sx={{ flexGrow: 1 }}
       />
-      {open && (
-        <div className="w-full fixed h-screen top-0 left-0 bg-[#00000031] z-[9999] flex items-center justify-center">
-          <div className="w-[30%] min-h-[40vh] bg-white rounded shadow p-4">
-            <div className="flex justify-end w-full">
-              <RxCross1
-                size={25}
-                className="cursor-pointer"
-                onClick={() => setOpen(false)}
-              />
-            </div>
-            <h1 className="text-[25px] text-center text-[Poppins]">
-              Update Withdraw status
-            </h1>
-            <br />
-            <div className="flex flex-col mt-12 justify-center items-center">
-              <select
-                name=""
-                id=""
-                onChange={e => setWithdrawStatus(e.target.value)}
-                className="w-[200px] h-[35px] border rounded mb-2"
-              >
-                <option value={withdrawStatus}>{withdrawData.status}</option>
-                <option value={withdrawStatus}>Succeed</option>
-              </select>
-              <button
-                type="submit"
-                className={`block ${styles.button} text-white cursor-pointer !h-[42px] mt-4 text-[21px] rounded-2xl`}
-                onClick={handleSubmit}
-              >
-                {isLoading ? "Wait..." : "Update"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            variants={backdrop}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            onClick={() => setOpen(false)}
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-ink-950/50 p-4 backdrop-blur-sm"
+          >
+            <motion.div
+              variants={modal}
+              onClick={e => e.stopPropagation()}
+              className="relative w-full max-w-[440px] rounded-2xl bg-white shadow-panel"
+            >
+              <header className="flex items-center justify-between border-b border-ink-100 px-6 py-5">
+                <h3 className="font-display text-[18px] font-bold text-ink-900">
+                  Update withdraw status
+                </h3>
+                <button
+                  onClick={() => setOpen(false)}
+                  aria-label="Close"
+                  className="grid h-9 w-9 cursor-pointer place-items-center rounded-full text-ink-500 transition-colors hover:bg-ink-100 hover:text-ink-900"
+                >
+                  <RxCross1 size={16} />
+                </button>
+              </header>
+
+              <div className="p-6">
+                <div className="mb-6 space-y-2.5 rounded-xl border border-ink-100 bg-ink-50/60 p-4">
+                  <div className="flex items-center justify-between text-[14px]">
+                    <span className="text-ink-500">Seller</span>
+                    <span className="font-semibold text-ink-900">
+                      {withdrawData.name}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-[14px]">
+                    <span className="text-ink-500">Amount</span>
+                    <span className="font-display text-[17px] font-bold text-ink-900">
+                      ${withdrawData.amount}
+                    </span>
+                  </div>
+                </div>
+
+                <label className="mb-1.5 block text-[13px] font-semibold text-ink-700">
+                  New status
+                </label>
+                <div className="relative">
+                  <select
+                    onChange={e => setWithdrawStatus(e.target.value)}
+                    className="w-full cursor-pointer appearance-none rounded-xl border border-ink-200 bg-ink-50/60 py-2.5 pl-4 pr-10 text-[15px] text-ink-900 transition-all duration-200 focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-500/10"
+                  >
+                    <option value={withdrawStatus}>{withdrawData.status}</option>
+                    <option value={withdrawStatus}>Succeed</option>
+                  </select>
+                  <HiChevronDown
+                    size={18}
+                    className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-400"
+                  />
+                </div>
+
+                <motion.button
+                  type="submit"
+                  whileHover={{ scale: 1.015 }}
+                  whileTap={{ scale: 0.985 }}
+                  onClick={handleSubmit}
+                  className="mt-6 flex h-[48px] w-full cursor-pointer items-center justify-center rounded-xl bg-brand-600 font-semibold text-white shadow-card transition-colors duration-300 hover:bg-brand-700"
+                >
+                  {isLoading ? "Please wait…" : "Update status"}
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 

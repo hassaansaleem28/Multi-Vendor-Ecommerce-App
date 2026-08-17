@@ -13,6 +13,7 @@ import orderRouter from "./routes/orderRoutes.js";
 import conversationRouter from "./routes/conversationRoutes.js";
 import messagesRouter from "./routes/messagesRoutes.js";
 import withdrawRouter from "./routes/withdrawRoutes.js";
+import aiRouter from "./routes/aiRoutes.js";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -24,9 +25,9 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: "http://localhost:5173",
     credentials: true,
-  })
+  }),
 );
 app.use("/", express.static(path.join(__dirname, "./uploads")));
 connectDB();
@@ -45,6 +46,7 @@ app.use("/api/v2/order", orderRouter);
 app.use("/api/v2/conversation", conversationRouter);
 app.use("/api/v2/messages", messagesRouter);
 app.use("/api/v2/withdraw-request", withdrawRouter);
+app.use("/api/v2/ai", aiRouter);
 
 app.listen(process.env.PORT || 5000, () => {
   console.log(`Server is running on port ${process.env.PORT || 5000}...`);

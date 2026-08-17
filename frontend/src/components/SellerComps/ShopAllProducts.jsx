@@ -1,20 +1,15 @@
 import AllProducts from "./AllProducts";
-import DashboardHeader from "./DashboardHeader";
-import DashboardSidebar from "./DashboardSidebar";
+import SellerLayout from "./SellerLayout";
 
 function ShopAllProducts() {
   return (
-    <div>
-      <DashboardHeader />
-      <div className="flex justify-between w-full">
-        <div className="w-[80px] width-at-800px">
-          <DashboardSidebar activeHeading={3} />
-        </div>
-        <div className="w-full justify-center flex">
-          <AllProducts />
-        </div>
-      </div>
-    </div>
+    <SellerLayout
+      active={3}
+      title="All products"
+      subtitle="Everything your shop currently has listed."
+    >
+      <AllProducts />
+    </SellerLayout>
   );
 }
 

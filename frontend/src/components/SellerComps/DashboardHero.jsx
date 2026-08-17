@@ -1,13 +1,16 @@
 import { AiOutlineArrowRight, AiOutlineMoneyCollect } from "react-icons/ai";
 import { MdBorderClear } from "react-icons/md";
-import styles from "../../styles/styles";
+import { FiPackage } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
+import { motion } from "framer-motion";
 import { getAllOrdersShop } from "../../redux-toolkit/actions/orderActions";
 import { getAllProductsShop } from "../../redux-toolkit/actions/productActions";
-import Button from "@mui/material/Button";
-import { DataGrid } from "@mui/x-data-grid";
+import DataTable from "../ui/DataTable";
+import StatCard from "../ui/StatCard";
+import StatusPill from "../ui/StatusPill";
+import { easeOutSoft } from "../../lib/motion";
 
 function DashboardHero() {
   const dispatch = useDispatch();
@@ -15,6 +18,7 @@ function DashboardHero() {
   const { shopOrders } = useSelector(state => state.orders);
   const { product } = useSelector(state => state.product);
   const availableBalance = seller?.availableBalance.toFixed(2);
+
   useEffect(
     function () {
       dispatch(getAllOrdersShop(seller._id));
@@ -33,10 +37,9 @@ function DashboardHero() {
     {
       field: "status",
       headerName: "Status",
-      minWidth: 130,
+      minWidth: 170,
       flex: 0.7,
-      cellClassName: params =>
-        params.row.status === "Delivered" ? "greenColor" : "redColor",
+      renderCell: params => <StatusPill status={params.row.status} />,
     },
     {
       field: "itemsQty",
@@ -56,17 +59,20 @@ function DashboardHero() {
       field: "actions",
       headerName: "",
       sortable: false,
-      minWidth: 150,
+      minWidth: 120,
       flex: 1,
       renderCell: params => (
-        <Link to={`/order/${params.id}`}>
-          <Button>
-            <AiOutlineArrowRight size={20} />
-          </Button>
+        <Link
+          to={`/order/${params.id}`}
+          className="inline-flex h-8 items-center gap-1.5 rounded-lg px-3 text-[13px] font-semibold text-brand-600 transition-colors hover:bg-brand-50"
+        >
+          View
+          <AiOutlineArrowRight size={15} />
         </Link>
       ),
     },
   ];
+
   const row = [];
   shopOrders &&
     shopOrders.forEach(item => {
@@ -79,68 +85,66 @@ function DashboardHero() {
     });
 
   return (
-    <div className="w-full p-8">
-      <h3 className="text-[22px] font-[Poppins] pb-2">Overview </h3>
-      <div className="w-full block flex-800px items-center justify-between">
-        <div className="w-full mb-4 width-800px-30 min-h-[20vh] bg-white shadow rounded px-2 py-5">
-          <div className="flex items-center">
-            <AiOutlineMoneyCollect size={30} className="mr-2" fill="00000085" />
-            <h3
-              className={`${styles.productTitle} !text-[18px] leading-5 !font-[400] text-[#00000085]`}
-            >
-              Account Balance
-              <span className="text-[16px]">(with 10% service charges)</span>
-            </h3>
-          </div>
-          <h5 className="pt-2 pl-[36px] text-[22px] font-[500]">
-            ${availableBalance}
-          </h5>
-          <Link to={"/dashboard-withdraw-money"}>
-            <h5 className="pt-4 pl-2 text-[#077f9c]">Withdraw Money</h5>
-          </Link>
-        </div>
-        <div className="w-full mb-4 width-800px-30 min-h-[20vh] bg-white shadow rounded px-2 py-5">
-          <div className="flex items-center">
-            <MdBorderClear size={30} className="mr-2" fill="00000085" />
-            <h3
-              className={`${styles.productTitle} !text-[18px] leading-5 !font-[400] text-[#00000085]`}
-            >
-              All Orders
-            </h3>
-          </div>
-          <h5 className="pt-2 pl-[36px] text-[22px] font-[500]">
-            {shopOrders && shopOrders.length}
-          </h5>
-          <Link to={"/dashboard-orders"}>
-            <h5 className="pt-4 pl-2 text-[#077f9c]">View Orders</h5>
-          </Link>
-        </div>
-        <div className="w-full mb-4 width-800px-30 min-h-[20vh] bg-white shadow rounded px-2 py-5">
-          <div className="flex items-center">
-            <AiOutlineMoneyCollect size={30} className="mr-2" fill="00000085" />
-            <h3
-              className={`${styles.productTitle} !text-[18px] leading-5 !font-[400] text-[#00000085]`}
-            >
-              All Products
-            </h3>
-          </div>
-          <h5 className="pt-2 pl-[36px] text-[22px] font-[500]">
-            {product && product.length}
-          </h5>
-          <Link to={"/dashboard-products"}>
-            <h5 className="pt-4 pl-2 text-[#077f9c]">View Products</h5>
-          </Link>
-        </div>
+    <div>
+      {/* ---- Greeting ------------------------------------------- */}
+      <motion.div
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, ease: easeOutSoft }}
+        className="mb-7"
+      >
+        <h1 className="font-display text-[26px] font-bold tracking-tight text-ink-900">
+          Welcome back, {seller?.name}
+        </h1>
+        <p className="mt-1 text-[14px] text-ink-500">
+          Here&apos;s how your shop is doing today.
+        </p>
+      </motion.div>
+
+      {/* ---- KPIs ----------------------------------------------- */}
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <StatCard
+          index={0}
+          icon={AiOutlineMoneyCollect}
+          tone="success"
+          label="Account balance"
+          hint="After 10% service charge"
+          value={`$${availableBalance}`}
+          to="/dashboard-withdraw-money"
+          linkLabel="Withdraw money"
+        />
+
+        <StatCard
+          index={1}
+          icon={MdBorderClear}
+          tone="brand"
+          label="All orders"
+          hint="Lifetime orders received"
+          value={(shopOrders && shopOrders.length) || 0}
+          to="/dashboard-orders"
+          linkLabel="View orders"
+        />
+
+        <StatCard
+          index={2}
+          icon={FiPackage}
+          tone="accent"
+          label="All products"
+          hint="Currently listed"
+          value={(product && product.length) || 0}
+          to="/dashboard-products"
+          linkLabel="View products"
+        />
       </div>
-      <br />
-      <h3 className="text-[22px] font-[Poppins] pb-2">Latest Orders</h3>
-      <div className="w-full min-h-[45vh] bg-white rounded">
-        <DataGrid
+
+      {/* ---- Latest orders --------------------------------------- */}
+      <div className="mt-8">
+        <DataTable
+          title="Latest orders"
+          subtitle="The most recent orders placed with your shop."
           rows={row}
           columns={columns}
-          pageSize={10}
-          disableSelectionOnClick
-          autoHeight
+          height={520}
         />
       </div>
     </div>

@@ -2,14 +2,10 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllOrdersShop } from "../../redux-toolkit/actions/orderActions";
 import { Link } from "react-router-dom";
-import Button from "@mui/material/Button";
-import {
-  AiOutlineArrowRight,
-  AiOutlineDelete,
-  AiOutlineEye,
-} from "react-icons/ai";
+import { AiOutlineArrowRight } from "react-icons/ai";
 import Loader from "../UserComps/Loader";
-import { DataGrid } from "@mui/x-data-grid";
+import DataTable from "../ui/DataTable";
+import StatusPill from "../ui/StatusPill";
 
 function AllRefunds() {
   const { shopOrders, isLoading } = useSelector(state => state.orders);
@@ -22,13 +18,14 @@ function AllRefunds() {
     },
     [dispatch]
   );
+
   const refundOrders =
     shopOrders &&
     shopOrders.filter(
       item =>
         item.status === "Processing refund" || item.status === "Refund Success"
     );
-  console.log(shopOrders);
+
   const columns = [
     {
       field: "id",
@@ -39,10 +36,9 @@ function AllRefunds() {
     {
       field: "status",
       headerName: "Status",
-      minWidth: 130,
+      minWidth: 170,
       flex: 0.7,
-      cellClassName: params =>
-        params.row.status === "Delivered" ? "greenColor" : "redColor",
+      renderCell: params => <StatusPill status={params.row.status} />,
     },
     {
       field: "itemsQty",
@@ -62,13 +58,15 @@ function AllRefunds() {
       field: "actions",
       headerName: "",
       sortable: false,
-      minWidth: 150,
+      minWidth: 120,
       flex: 1,
       renderCell: params => (
-        <Link to={`/order/${params.id}`}>
-          <Button>
-            <AiOutlineArrowRight size={20} />
-          </Button>
+        <Link
+          to={`/order/${params.id}`}
+          className="inline-flex h-8 items-center gap-1.5 rounded-lg px-3 text-[13px] font-semibold text-brand-600 transition-colors hover:bg-brand-50"
+        >
+          Manage
+          <AiOutlineArrowRight size={15} />
         </Link>
       ),
     },
@@ -85,25 +83,15 @@ function AllRefunds() {
       });
     });
 
+  if (isLoading) return <Loader label="Loading refunds" />;
+
   return (
-    <>
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <div className="w-full mx-8 pt-1 mt-10 bg-white flex flex-col min-h-[200px] max-h-[600px]">
-          <DataGrid
-            rows={row}
-            columns={columns}
-            pageSizeOptions={[10]}
-            disableRowSelectionOnClick
-            initialState={{
-              pagination: { paginationModel: { pageSize: 10, page: 0 } },
-            }}
-            sx={{ flexGrow: 1 }}
-          />
-        </div>
-      )}
-    </>
+    <DataTable
+      title="Refunds"
+      subtitle={`${row.length} refund request${row.length === 1 ? "" : "s"}`}
+      rows={row}
+      columns={columns}
+    />
   );
 }
 
