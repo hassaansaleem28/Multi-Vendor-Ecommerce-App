@@ -32,6 +32,35 @@ const HIDDEN_PREFIXES = [
   "/activation",
 ];
 
+/**
+ * Tidy up an answer for display.
+ *
+ * The system prompt asks for plain prose, but open models leak markdown and
+ * citation artefacts often enough that the UI shouldn't depend on it
+ * behaving. Strips citations, renders `**bold**`, and drops the stray
+ * literal "(ref)" the model sometimes writes instead of a number.
+ */
+function renderAnswer(text = "") {
+  const cleaned = text
+    .replace(/\s*\[\d{1,2}\]/g, "")
+    .replace(/\s*[[(]\s*ref\s*[\])]/gi, "")
+    .replace(/[ \t]{2,}/g, " ")
+    .trim();
+
+  return cleaned
+    .split(/(\*\*[^*]+\*\*)/g)
+    .filter(Boolean)
+    .map((part, i) =>
+      part.startsWith("**") && part.endsWith("**") ? (
+        <strong key={i} className="font-semibold text-ink-900">
+          {part.slice(2, -2)}
+        </strong>
+      ) : (
+        <span key={i}>{part}</span>
+      )
+    );
+}
+
 /** Compact product row shown beneath an answer. */
 function ResultRow({ product, onNavigate }) {
   const outOfStock = product?.stock < 1;
@@ -136,7 +165,7 @@ function AiAssistant() {
         ...prev,
         {
           role: "assistant",
-          content: (data.answer || "").replace(/\s*\[\d{1,2}\]/g, ""),
+          content: data.answer || "",
           products: data.products || [],
         },
       ]);
@@ -314,7 +343,9 @@ function AiAssistant() {
                           className="mb-1 inline-block text-danger-500"
                         />
                       )}
-                      <span className="whitespace-pre-line">{turn.content}</span>
+                      <span className="whitespace-pre-line">
+                        {turn.error ? turn.content : renderAnswer(turn.content)}
+                      </span>
                     </div>
 
                     {turn.products?.length > 0 && (

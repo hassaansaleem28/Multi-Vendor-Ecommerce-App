@@ -6,6 +6,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Slide } from "react-toastify";
 import ScrollToTop from "./components/ui/ScrollToTop";
+import AiAssistant from "./components/UserComps/AiAssistant";
 import { useEffect, useState } from "react";
 import { loadUser } from "./redux-toolkit/actions/userActions";
 import { useDispatch } from "react-redux";
@@ -321,6 +322,8 @@ function App() {
           }
         />
       </Routes>
+      {/* Floating shopping assistant — hides itself on dashboard/admin routes */}
+      <AiAssistant />
       <ToastContainer
         position="top-right"
         autoClose={4000}
